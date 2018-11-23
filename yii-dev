@@ -8,9 +8,10 @@ if (PHP_MAJOR_VERSION < 7) {
 if (!isset($argv)) {
     $argv = $_SERVER['argv'];
 }
-$enableColor = DIRECTORY_SEPARATOR === '\\'
+define('ENABLE_COLOR', DIRECTORY_SEPARATOR === '\\'
     ? getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON'
-    : function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR);
+    : function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR)
+);
 
 /**
  * @param string $text the text to print.
@@ -18,8 +19,7 @@ $enableColor = DIRECTORY_SEPARATOR === '\\'
  */
 function ansicolor(string $text, int $color = null): string
 {
-    global $enableColor;
-    if ($color !== null && $enableColor) {
+    if ($color !== null && ENABLE_COLOR) {
         return "\e[{$color}m$text\e[0m";
     }
     return $text;
