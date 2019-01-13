@@ -4,7 +4,7 @@ $packages = [
     // repo => path
 
     // core packages
-    'yiisoft/core' => 'core',
+    'yiisoft/yii-core' => 'yii-core',
     'yiisoft/di' => 'di',
 
     // console
@@ -32,4 +32,3 @@ if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
 }
 
 return $packages;
-
