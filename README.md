@@ -33,4 +33,10 @@ Usage
 
 TBD
 
+### Docker
 
+Start a shell in a container
+
+    docker-compose run --rm php bash
+
+Afterwards you can run the above commands like `yii-dev install`.
