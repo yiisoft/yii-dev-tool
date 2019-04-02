@@ -9,7 +9,7 @@ It allows to work on separate packages and test the result in other packages at 
 Requirements
 ------------
 
-- This is currently only tested on GNU/Linux, if you have another system, please try and report if something is not working.
+- This is currently only tested on GNU/Linux and Windows with bash, if you have another system, please try and report if something is not working.
 - PHP 7.1 or higher
 - [Composer](https://getcomposer.org/) installed and
   available [as `composer` on the command line](https://getcomposer.org/doc/00-intro.md#globally)
