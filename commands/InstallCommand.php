@@ -110,8 +110,7 @@ class InstallCommand
             }
             if (file_exists("$targetPath/vendor/$installedPackage")) {
                 // rm dir and replace it with link
-                passthru('rm -rf '.escapeshellarg("$targetPath/vendor/$installedPackage"));
-                clearstatcache();
+                $this->removeDirectory("$targetPath/vendor/$installedPackage");
                 symlink($installedPath, "$targetPath/vendor/$installedPackage");
             }
         }
@@ -143,5 +142,50 @@ class InstallCommand
         closedir($handle);
 
         return $list;
+    }
+
+    private function removeDirectory(string $directory)
+    {
+        if (!is_dir($directory)) {
+            return;
+        }
+        if (!is_link($directory)) {
+            if (!($handle = opendir($directory))) {
+                return;
+            }
+            while (($file = readdir($handle)) !== false) {
+                if ($file === '.' || $file === '..') {
+                    continue;
+                }
+                $path = $directory . '/' . $file;
+                if (is_dir($path)) {
+                    $this->removeDirectory($path);
+                } else {
+                    $this->unlink($path);
+                }
+            }
+            closedir($handle);
+        }
+        if (is_link($directory)) {
+            $this->unlink($directory);
+        } else {
+            rmdir($directory);
+        }
+
+    }
+
+    private function unlink(string $path): bool
+    {
+        $isWindows = DIRECTORY_SEPARATOR === '\\';
+
+        if (!$isWindows) {
+            return unlink($path);
+        }
+
+        if (is_link($path) && is_dir($path)) {
+            return rmdir($path);
+        }
+
+        return unlink($path);
     }
 }
