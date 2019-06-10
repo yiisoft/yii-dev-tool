@@ -10,7 +10,7 @@ Requirements
 ------------
 
 - This is currently only tested on GNU/Linux and Windows with bash, if you have another system, please try and report if something is not working.
-- PHP 7.1 or higher
+- PHP 7.2 or higher
 - [Composer](https://getcomposer.org/) installed and
   available [as `composer` on the command line](https://getcomposer.org/doc/00-intro.md#globally)
 
@@ -28,10 +28,16 @@ You may select packages by providing a second argument:
     ./yii-dev install yiisoft/db
     ...
 
-Usage
------
+Status
+------
 
-TBD
+In order to show git status for all packages, run the following command:
+
+    ./yii-dev status
+
+You can specify which package status to display:
+
+    ./yii-dev yii-demo
 
 ### Docker
 

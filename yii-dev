@@ -2,7 +2,7 @@
 <?php
 
 if (PHP_MAJOR_VERSION < 7) {
-    echo 'PHP 7.0 or higher is required to work with this tool. Yii 3.0 requires PHP 7.2!' . PHP_EOL;
+    echo 'PHP 7.2 or higher is required to work with this tool. Yii 3.0 requires PHP 7.2!' . PHP_EOL;
     exit(1);
 }
 if (!isset($argv)) {
