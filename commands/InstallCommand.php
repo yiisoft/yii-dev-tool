@@ -11,29 +11,29 @@ class InstallCommand
 
     // TODO implement setting these
     public $useHttp = false;
-    public $baseDir = __DIR__.'/../dev';
+    public $baseDir = __DIR__ . '/../dev';
 
-    public function __construct($package = null)
+    public function __construct(string $package = null)
     {
         $this->package = $package;
     }
 
-    public function run()
+    public function run(): void
     {
-        $packages = require __DIR__.'/../packages.php';
+        $packages = require __DIR__ . '/../packages.php';
 
         if ($this->package === null) {
             // install all packages
             foreach ($packages as $p => $dir) {
-                $targetPath = $this->baseDir.DIRECTORY_SEPARATOR.$dir;
+                $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
                 $this->install($p, $targetPath);
-                $this->clearlinks($p, $targetPath);
+                $this->clearlinks($targetPath);
                 $this->composerInstall($p, $targetPath);
             }
         } elseif (isset($packages[$this->package])) {
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
             $this->install($this->package, $targetPath);
-            $this->clearlinks($this->package, $targetPath);
+            $this->clearlinks($targetPath);
             $this->composerInstall($this->package, $targetPath);
         } else {
             stderrln("Package '$this->package' not found in packages.php");
@@ -42,26 +42,26 @@ class InstallCommand
 
         $installedPackages = [];
         foreach ($packages as $p => $dir) {
-            if (file_exists($this->baseDir.DIRECTORY_SEPARATOR.$dir)) {
-                $installedPackages[$p] = $this->baseDir.DIRECTORY_SEPARATOR.$dir;
+            if (file_exists($this->baseDir . DIRECTORY_SEPARATOR . $dir)) {
+                $installedPackages[$p] = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
             }
         }
 
         stderrln('Re-linking vendor directories...');
         foreach ($packages as $p => $dir) {
             stderrln($p);
-            $targetPath = $this->baseDir.DIRECTORY_SEPARATOR.$dir;
+            $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
             $this->linkPackages($p, $targetPath, $installedPackages);
         }
         stdoutln('done.', 32);
     }
 
-    private function install($package, $targetPath)
+    private function install(string $package, string $targetPath): void
     {
         stdout('Installing package  ');
         stdout($package, 33);
 
-        $repo = ($this->useHttp ? 'https://github.com/' : 'git@github.com:').$package.'.git';
+        $repo = ($this->useHttp ? 'https://github.com/' : 'git@github.com:') . $package . '.git';
 
         if (file_exists($targetPath)) {
             stdoutln(' - already installed', 32);
@@ -70,22 +70,21 @@ class InstallCommand
         }
         stdoutln('...');
 
-        passthru('git clone '.escapeshellarg($repo).' '.escapeshellarg($targetPath));
+        passthru('git clone ' . escapeshellarg($repo) . ' ' . escapeshellarg($targetPath));
 
         stdoutln('done.', 32);
     }
 
-    private function clearLinks($package, $targetPath)
+    private function clearLinks(string $targetPath): void
     {
-        $yiisoftPackages = $this->findDirs("$targetPath/vendor/yiisoft");
-        foreach ($yiisoftPackages as $yp) {
-            if (is_link($link = "$targetPath/vendor/yiisoft/$yp")) {
+        foreach ($this->findDirs("$targetPath/vendor/yiisoft") as $yiisoftPackage) {
+            if (is_link($link = "$targetPath/vendor/yiisoft/$yiisoftPackage")) {
                 unlink($link);
             }
         }
     }
 
-    private function composerInstall($package, $targetPath)
+    private function composerInstall(string $package, string $targetPath): void
     {
         if (!is_file("$targetPath/composer.json")) {
             stdout('no composer.json in ');
@@ -98,12 +97,12 @@ class InstallCommand
         stdout($package, 33);
         stdoutln('...');
 
-        $command = 'composer install --prefer-dist --no-progress --working-dir '.escapeshellarg($targetPath).(ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
+        $command = 'composer install --prefer-dist --no-progress --working-dir ' . escapeshellarg($targetPath) . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
         passthru($command);
         stdoutln('done.', 32);
     }
 
-    private function linkPackages($package, $targetPath, $installedPackages)
+    private function linkPackages(string $package, string $targetPath, array $installedPackages): void
     {
         foreach ($installedPackages as $installedPackage => $installedPath) {
             if ($package === $installedPackage) {
@@ -111,7 +110,8 @@ class InstallCommand
             }
             if (file_exists("$targetPath/vendor/$installedPackage")) {
                 // rm dir and replace it with link
-                passthru('rm -rf '.escapeshellarg("$targetPath/vendor/$installedPackage"));
+                passthru('rm -rf ' . escapeshellarg("$targetPath/vendor/$installedPackage"));
+                clearstatcache();
                 symlink($installedPath, "$targetPath/vendor/$installedPackage");
             }
         }
@@ -124,7 +124,7 @@ class InstallCommand
      *
      * @return array list of applications command can link
      */
-    protected function findDirs($dir)
+    protected function findDirs(string $dir): array
     {
         $list = [];
         $handle = @opendir($dir);
@@ -135,7 +135,7 @@ class InstallCommand
             if ($file === '.' || $file === '..') {
                 continue;
             }
-            $path = $dir.DIRECTORY_SEPARATOR.$file;
+            $path = $dir . DIRECTORY_SEPARATOR . $file;
             if (is_dir($path)) {
                 $list[] = $file;
             }
