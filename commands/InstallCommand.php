@@ -171,7 +171,6 @@ class InstallCommand
         } else {
             rmdir($directory);
         }
-
     }
 
     private function unlink(string $path): bool
