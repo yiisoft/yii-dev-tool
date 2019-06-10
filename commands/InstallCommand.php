@@ -31,9 +31,10 @@ class InstallCommand
                 $this->composerInstall($p, $targetPath);
             }
         } elseif (isset($packages[$this->package])) {
-            $this->install($this->package, $packages[$this->package]);
-            $this->clearlinks($this->package, $packages[$this->package]);
-            $this->composerInstall($this->package, $packages[$this->package]);
+            $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
+            $this->install($this->package, $targetPath);
+            $this->clearlinks($this->package, $targetPath);
+            $this->composerInstall($this->package, $targetPath);
         } else {
             stderrln("Package '$this->package' not found in packages.php");
             exit(1);
