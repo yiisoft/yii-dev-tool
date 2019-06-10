@@ -92,8 +92,9 @@ switch ($command) {
         break;
     case 'status':
 
-        // TODO implement
-        stderrln('Not implemented yet!', 31);
+        require __DIR__ . '/commands/StatusCommand.php';
+        $command = new \yiidev\commands\StatusCommand($argv[2] ?? null);
+        $command->run();
 
         break;
     case 'lint':
