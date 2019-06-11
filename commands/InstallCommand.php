@@ -79,7 +79,7 @@ class InstallCommand
     {
         foreach ($this->findDirs("$targetPath/vendor/yiisoft") as $yiisoftPackage) {
             if (is_link($link = "$targetPath/vendor/yiisoft/$yiisoftPackage")) {
-                unlink($link);
+                $this->unlink($link);
             }
         }
     }
