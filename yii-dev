@@ -73,11 +73,11 @@ YII
     stderrln('   Install a single package. <package> refers to the array key in packages.php');
 
     stderr('  update', 33);
-    stderrln('             Update all packages listed in packages.php');
+    stderrln('              Update all packages listed in packages.php');
 
     stderr('  update', 33);
     stderr(' <package>', 34);
-    stderrln('   Update a single package. <package> refers to the array key in packages.php');
+    stderrln('    Update a single package. <package> refers to the array key in packages.php');
 
     stderr('  status', 33);
     stderrln('              Show stats summary about all packages.');
