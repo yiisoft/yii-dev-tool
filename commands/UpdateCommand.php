@@ -5,7 +5,7 @@ namespace yiidev\commands;
 /**
  * @author Carsten Brandt <mail@cebe.cc>
  */
-class InstallCommand
+class UpdateCommand
 {
     private $package;
 
@@ -23,18 +23,18 @@ class InstallCommand
         $packages = require __DIR__ . '/../packages.php';
 
         if ($this->package === null) {
-            // install all packages
+            // update all packages
             foreach ($packages as $p => $dir) {
                 $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
                 $this->install($p, $targetPath);
                 $this->clearlinks($targetPath);
-                $this->composerInstall($p, $targetPath);
+                $this->composerUpdate($p, $targetPath);
             }
         } elseif (isset($packages[$this->package])) {
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
             $this->install($this->package, $targetPath);
             $this->clearlinks($targetPath);
-            $this->composerInstall($this->package, $targetPath);
+            $this->composerUpdate($this->package, $targetPath);
         } else {
             stderrln("Package '$this->package' not found in packages.php");
             exit(1);
@@ -58,7 +58,7 @@ class InstallCommand
 
     private function install(string $package, string $targetPath): void
     {
-        stdout('Installing package  ');
+        stdout('Ensuring package is installed  ');
         stdout($package, 33);
 
         $repo = ($this->useHttp ? 'https://github.com/' : 'git@github.com:') . $package . '.git';
@@ -84,20 +84,20 @@ class InstallCommand
         }
     }
 
-    private function composerInstall(string $package, string $targetPath): void
+    private function composerUpdate(string $package, string $targetPath): void
     {
         if (!is_file("$targetPath/composer.json")) {
             stdout('no composer.json in ');
             stdout($package, 33);
-            stdoutln(', skipping composer install.');
+            stdoutln(', skipping composer update.');
 
             return;
         }
-        stdout('composer install in ');
+        stdout('composer update in ');
         stdout($package, 33);
         stdoutln('...');
 
-        $command = 'composer install --prefer-dist --no-progress --working-dir ' . escapeshellarg($targetPath) . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
+        $command = 'composer update --prefer-dist --no-progress --working-dir ' . escapeshellarg($targetPath) . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
         passthru($command);
         stdoutln('done.', 32);
     }

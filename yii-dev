@@ -72,6 +72,13 @@ YII
     stderr(' <package>', 34);
     stderrln('   Install a single package. <package> refers to the array key in packages.php');
 
+    stderr('  update', 33);
+    stderrln('             Update all packages listed in packages.php');
+
+    stderr('  update', 33);
+    stderr(' <package>', 34);
+    stderrln('   Update a single package. <package> refers to the array key in packages.php');
+
     stderr('  status', 33);
     stderrln('              Show stats summary about all packages.');
 
@@ -87,6 +94,13 @@ switch ($command) {
 
         require __DIR__ . '/commands/InstallCommand.php';
         $command = new \yiidev\commands\InstallCommand($argv[2] ?? null);
+        $command->run();
+
+        break;
+    case 'update':
+
+        require __DIR__ . '/commands/UpdateCommand.php';
+        $command = new \yiidev\commands\UpdateCommand($argv[2] ?? null);
         $command->run();
 
         break;
