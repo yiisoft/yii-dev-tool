@@ -3,6 +3,8 @@
 $packages = [
     // repo => path
 
+    'yiisoft/docs' => 'docs',
+
     // core packages
     'yiisoft/yii-core' => 'yii-core',
     'yiisoft/di' => 'di',
