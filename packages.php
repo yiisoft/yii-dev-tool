@@ -12,6 +12,7 @@ $packages = [
     'yiisoft/factory' => 'factory',
     'yiisoft/access' => 'access',
     'yiisoft/event-dispatcher' => 'event-dispatcher',
+    'yiisoft/security' => 'security',
 
     // cache
 
