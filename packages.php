@@ -24,7 +24,7 @@ $packages = [
 
     // RBAC
     'yiisoft/rbac' => 'rbac',
-    'yiisoft/rbac-db' => 'yiisoft/rbac-db',
+    'yiisoft/rbac-db' => 'rbac-db',
     'yiisoft/rbac-php' => 'rbac-php',
 
     // log
