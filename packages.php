@@ -104,6 +104,9 @@ $packages = [
 
     // other
     'yiisoft/yii-docker' => 'yii-docker',
+
+    // repository template
+    'yiisoft/template' => 'template',
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
