@@ -66,14 +66,14 @@ class ReplicateCommand
 
     private function copy(string $source, string $target): void
     {
-            $destinationDirectory = dirname($target);
-            if (!file_exists($destinationDirectory)) {
-                if (!mkdir($destinationDirectory, 0777, true) && !is_dir($destinationDirectory)) {
-                    throw new \RuntimeException(sprintf('Directory "%s" was not created', $destinationDirectory));
-                }
+        $destinationDirectory = dirname($target);
+        if (!file_exists($destinationDirectory)) {
+            if (!mkdir($destinationDirectory, 0777, true) && !is_dir($destinationDirectory)) {
+                throw new \RuntimeException(sprintf('Directory "%s" was not created', $destinationDirectory));
             }
-            if (!copy($source, $target)) {
-                throw new \RuntimeException(sprintf('Copy "%s" to "%s" failed', $source, $target));
-            }
+        }
+        if (!copy($source, $target)) {
+            throw new \RuntimeException(sprintf('Copy "%s" to "%s" failed', $source, $target));
+        }
     }
 }
