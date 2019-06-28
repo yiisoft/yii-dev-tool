@@ -2,7 +2,7 @@
 
 namespace yiidev\commands;
 
-class StatusCommand
+class PushCommand
 {
     private $package;
 
@@ -22,22 +22,23 @@ class StatusCommand
             // install all packages
             foreach ($packages as $p => $dir) {
                 $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
-                $this->printStatus($p, $targetPath);
+                $this->push($p, $targetPath);
             }
         } elseif (isset($packages[$this->package])) {
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
-            $this->printStatus($this->package, $targetPath);
+            $this->push($this->package, $targetPath);
         } else {
             stderrln("Package '$this->package' not found in packages.php");
             exit(1);
         }
     }
 
-    private function printStatus(string $package, string $targetPath): void
+    private function push(string $package, string $targetPath): void
     {
-        $command = 'cd ' . escapeshellarg($targetPath) . ' && git status -s';
+        stdoutln($package, 32);
+        $command = 'cd ' . escapeshellarg($targetPath) . ' && git push';
         $output = trim(shell_exec($command));
-        stdoutln($package, empty($output) ? 32 : 33);
+
         if (!empty($output)) {
             echo $output . "\n\n";
         }

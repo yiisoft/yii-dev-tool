@@ -66,24 +66,33 @@ YII
     stderrln('');
 
     stderr('  install', 33);
-    stderrln('             Install all packages listed in packages.php');
+    stderrln('             Install all packages listed in packages.php or package specified');
 
     stderr('  install', 33);
     stderr(' <package>', 34);
     stderrln('   Install a single package. <package> refers to the array key in packages.php');
 
     stderr('  update', 33);
-    stderrln('              Update all packages listed in packages.php');
+    stderrln('              Update all packages listed in packages.php or package specified');
 
     stderr('  update', 33);
     stderr(' <package>', 34);
     stderrln('    Update a single package. <package> refers to the array key in packages.php');
 
     stderr('  status', 33);
-    stderrln('              Show stats summary about all packages.');
+    stderrln('              Show git status for all packages');
+
+    stderr('  replicate', 33);
+    stderrln('           Copy files specified in replicate.php into each package or package specified');
+
+    stderr('  commit', 33);
+    stderrln('              Add and commit changes into each repository');
+
+    stderr('  push', 33);
+    stderrln('                Push changes into each repository');
 
     stderr('  lint', 33);
-    stderrln('                Check packages for common mistakes.');
+    stderrln('                Check packages for common mistakes');
     stderrln('');
 }
 
@@ -108,6 +117,24 @@ switch ($command) {
 
         require __DIR__ . '/commands/StatusCommand.php';
         $command = new \yiidev\commands\StatusCommand($argv[2] ?? null);
+        $command->run();
+
+        break;
+    case 'replicate':
+        require __DIR__ . '/commands/ReplicateCommand.php';
+        $command = new \yiidev\commands\ReplicateCommand($argv[2] ?? null);
+        $command->run();
+
+        break;
+    case 'commit':
+        require __DIR__ . '/commands/CommitCommand.php';
+        $command = new \yiidev\commands\CommitCommand($argv[2] ?? null, $argv[3] ?? null);
+        $command->run();
+
+        break;
+    case 'push':
+        require __DIR__ . '/commands/PushCommand.php';
+        $command = new \yiidev\commands\PushCommand($argv[2] ?? null);
         $command->run();
 
         break;

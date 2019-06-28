@@ -2,16 +2,23 @@
 
 namespace yiidev\commands;
 
-class StatusCommand
+class CommitCommand
 {
     private $package;
+    private $message;
 
     // TODO implement setting these
     public $baseDir = __DIR__ . '/../dev';
 
-    public function __construct(string $package = null)
+    public function __construct(string $message = null, string $package = null)
     {
+        if ($message === null) {
+            stderrln('Message is required.');
+            exit(1);
+        }
+
         $this->package = $package;
+        $this->message = $message;
     }
 
     public function run(): void
@@ -22,22 +29,23 @@ class StatusCommand
             // install all packages
             foreach ($packages as $p => $dir) {
                 $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
-                $this->printStatus($p, $targetPath);
+                $this->commit($p, $targetPath);
             }
         } elseif (isset($packages[$this->package])) {
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
-            $this->printStatus($this->package, $targetPath);
+            $this->commit($this->package, $targetPath);
         } else {
             stderrln("Package '$this->package' not found in packages.php");
             exit(1);
         }
     }
 
-    private function printStatus(string $package, string $targetPath): void
+    private function commit(string $package, string $targetPath): void
     {
-        $command = 'cd ' . escapeshellarg($targetPath) . ' && git status -s';
+        stdoutln($package, 32);
+        $command = 'cd ' . escapeshellarg($targetPath) . ' && git add . && git commit -m ' . escapeshellarg($this->message);
         $output = trim(shell_exec($command));
-        stdoutln($package, empty($output) ? 32 : 33);
+
         if (!empty($output)) {
             echo $output . "\n\n";
         }
