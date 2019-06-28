@@ -36,9 +36,9 @@ class StatusCommand
     private function printStatus(string $package, string $targetPath): void
     {
         $output = trim(shell_exec('cd ' . escapeshellarg($targetPath) . ' && git status -s'));
-        stdoutln("\n$package", empty($output) ? 32 : 33);
+        stdoutln($package, empty($output) ? 32 : 33);
         if (!empty($output)) {
-            echo $output . "\n";
+            echo $output . "\n\n";
         }
     }
 }
