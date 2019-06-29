@@ -36,7 +36,6 @@ class Console
 
     public static function help(): void
     {
-
         self::stdErrLn(<<<YII
   _   _  _  _ 
  | | | |(_)(_)
