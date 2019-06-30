@@ -91,6 +91,9 @@ YII
     stderr('  push', 33);
     stderrln('                Push changes into each repository');
 
+    stderr('  pull', 33);
+    stderrln('                Pull changes for each repository');
+
     stderr('  lint', 33);
     stderrln('                Check packages for common mistakes');
     stderrln('');
@@ -121,20 +124,30 @@ switch ($command) {
 
         break;
     case 'replicate':
+
         require __DIR__ . '/commands/ReplicateCommand.php';
         $command = new \yiidev\commands\ReplicateCommand($argv[2] ?? null);
         $command->run();
 
         break;
     case 'commit':
+
         require __DIR__ . '/commands/CommitCommand.php';
         $command = new \yiidev\commands\CommitCommand($argv[2] ?? null, $argv[3] ?? null);
         $command->run();
 
         break;
     case 'push':
+
         require __DIR__ . '/commands/PushCommand.php';
         $command = new \yiidev\commands\PushCommand($argv[2] ?? null);
+        $command->run();
+
+        break;
+    case 'pull':
+
+        require __DIR__ . '/commands/PullCommand.php';
+        $command = new \yiidev\commands\PullCommand($argv[2] ?? null);
         $command->run();
 
         break;
