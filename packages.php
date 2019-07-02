@@ -75,6 +75,7 @@ $packages = [
     'yiisoft/db-sqlite' => 'db-sqlite',
     'yiisoft/db-mssql' => 'db-mssql',
     'yiisoft/db-oracle' => 'db-oracle',
+    'yiisoft/db-mongodb' => 'db-mongodb',
     'yiisoft/active-record' => 'active-record',
     //'yiisoft/migration' => 'migration',
 
