@@ -13,6 +13,7 @@ class DependencyVerifyCommand
     public $lockFile = __DIR__ . '/../runtime/composer-verify.lock';
     private $errored = [];
     private $isParent = true;
+    private $forks = [];
 
     public function run(array $allowed = [])
     {
@@ -56,20 +57,22 @@ class DependencyVerifyCommand
             $time = round(microtime(true) - $start, 2);
             stdoutln('');
             stdoutln('');
-            stdoutln("Finished in $time sec. You can see error details (if any) in $this->logFile", Color::GREEN);
+            stdoutln("Finished in $time sec. You can see error details (if any) below and in $this->logFile", Color::GREEN);
+            stdoutln('');
+            stdoutln(file_get_contents($this->logFile));
         }
     }
 
     private function composerUpdate(string $package, string $targetPath)
     {
         $path = escapeshellarg($targetPath);
-        $command = "composer update --prefer-dist --no-progress --working-dir $path --no-ansi 2>&1";
+        $command = "composer update --prefer-dist --no-progress --working-dir $path " . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi') . ' 2>&1';
         $output = [];
 
         exec($command, $output, $result);
 
         if ($result === 0) {
-            stderrln("Package $package is ok", Color::GREEN);
+            stdoutln("✔ $package", Color::GREEN);
         } else {
             $this->errored[] = $package;
 
@@ -79,7 +82,7 @@ class DependencyVerifyCommand
             fwrite($file, PHP_EOL . str_repeat('-', 10) . PHP_EOL);
             flock($file, LOCK_UN);
 
-            stderrln("Package $package errored", Color::RED);
+            stdoutln("❌ $package", Color::RED);
         }
     }
 
@@ -105,7 +108,7 @@ class DependencyVerifyCommand
 
     private function fork(): bool
     {
-        if (function_exists('posix_fork')) {
+        if (function_exists('pcntl_fork')) {
             $pid = pcntl_fork();
 
             if ($pid < 0) {
@@ -120,6 +123,8 @@ class DependencyVerifyCommand
                 return true;
             }
 
+            $this->forks[$pid] = true;
+
             // We just created a fork, so we shouldn't do anything
             return false;
         }
@@ -131,9 +136,9 @@ class DependencyVerifyCommand
     private function waitForks()
     {
         if (function_exists('pcntl_wait')) {
-            for ($i = 0; $i < self::THREADS_MAX; $i++) {
-                pcntl_wait($status);
-            }
+            do {
+                $pid = pcntl_wait($status);
+            } while ($pid >= 0);
         }
     }
 }
