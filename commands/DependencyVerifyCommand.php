@@ -20,6 +20,9 @@ class DependencyVerifyCommand
 
         for ($i = 0; $i < self::THREADS_MAX; $i++) {
             $shouldWork = $this->fork();
+            if ($shouldWork) {
+                break;
+            }
         }
 
         if ($this->isParent) {
