@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 class CommitCommand
 {
     private $package;
@@ -42,7 +44,7 @@ class CommitCommand
 
     private function commit(string $package, string $targetPath): void
     {
-        stdoutln($package, 32);
+        stdoutln($package, Color::GREEN);
         $command = 'cd ' . escapeshellarg($targetPath) . ' && git add . && git commit -m ' . escapeshellarg($this->message);
         $output = trim(shell_exec($command));
 

@@ -13,6 +13,26 @@ define('ENABLE_COLOR', DIRECTORY_SEPARATOR === '\\'
     : function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR)
 );
 
+class Color {
+    public const DEFAULT = 39;
+    public const BLACK = 30;
+    public const RED = 31;
+    public const GREEN = 32;
+    public const YELLOW = 33;
+    public const BLUE = 34;
+    public const MAGENTA = 35;
+    public const CYAN = 36;
+    public const LIGHT_GRAY = 37;
+    public const DARK_GRAY = 90;
+    public const LIGHT_RED = 91;
+    public const LIGHT_GREEN = 92;
+    public const LIGHT_YELLOW = 93;
+    public const LIGHT_BLUE = 94;
+    public const LIGHT_MAGENTA = 95;
+    public const LIGHT_CYAN = 96;
+    public const WHITE = 97;
+}
+
 /**
  * @param string $text the text to print.
  * @param int|null $color color according to https://en.wikipedia.org/wiki/ANSI_escape_code#3/4_bit
@@ -154,7 +174,14 @@ switch ($command) {
     case 'lint':
 
         // TODO implement
-        stderrln('Not implemented yet!', 31);
+        stderrln('Not implemented yet!', Color::RED);
+
+        break;
+    case 'composer-verify':
+
+        require __DIR__ . '/commands/DependencyVerifyCommand.php';
+        $command = new \yiidev\commands\DependencyVerifyCommand();
+        $command->run();
 
         break;
     default:
