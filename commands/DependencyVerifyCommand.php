@@ -13,7 +13,6 @@ class DependencyVerifyCommand
     public $lockFile = __DIR__ . '/../runtime/composer-verify.lock';
     private $errored = [];
     private $isParent = true;
-    private $forks = [];
 
     public function run(array $allowed = [])
     {
@@ -122,8 +121,6 @@ class DependencyVerifyCommand
                 // We are a fork, so we should make the main work
                 return true;
             }
-
-            $this->forks[$pid] = true;
 
             // We just created a fork, so we shouldn't do anything
             return false;
