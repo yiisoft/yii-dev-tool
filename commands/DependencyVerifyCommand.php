@@ -14,7 +14,7 @@ class DependencyVerifyCommand
     private $errored = [];
     private $isParent = true;
 
-    public function run()
+    public function run(array $allowed = [])
     {
         $packages = require __DIR__ . '/../packages.php';
 
@@ -37,7 +37,7 @@ class DependencyVerifyCommand
         }
 
         foreach ($packages as $package => $directory) {
-            if ($shouldWork) {
+            if ($shouldWork && ($allowed === [] || in_array($package, $allowed, true))) {
                 if ($this->canUse($package)) {
                     $targetPath = $this->packagesDir . DIRECTORY_SEPARATOR . $directory;
 
@@ -56,7 +56,7 @@ class DependencyVerifyCommand
             $time = round(microtime(true) - $start, 2);
             stdoutln('');
             stdoutln('');
-            stdoutln("Finished in $time sec. You can see the result in $this->logFile", Color::GREEN);
+            stdoutln("Finished in $time sec. You can see error details (if any) in $this->logFile", Color::GREEN);
         }
     }
 
@@ -89,7 +89,7 @@ class DependencyVerifyCommand
         $file = fopen($this->lockFile, 'a+b');
         flock($file, LOCK_EX);
         fseek($file, 0);
-        $content = fread($file, filesize($this->lockFile));
+        $content = @fread($file, filesize($this->lockFile));
         $locked = explode(PHP_EOL, $content);
 
         if (!in_array($package, $locked)) {
