@@ -11,32 +11,48 @@ class DependencyVerifyCommand
     public $packagesDir = __DIR__ . '/../dev';
     public $logFile = __DIR__ . '/../runtime/composer-verify.log';
     public $lockFile = __DIR__ . '/../runtime/composer-verify.lock';
-    private $errored = [];
-    private $isParent = true;
+    public $forkLockFile = __DIR__ . '/../runtime/verify-fork.lock';
 
     public function run(array $allowed = [])
     {
+        touch($this->forkLockFile);
         $packages = require __DIR__ . '/../packages.php';
 
         for ($i = 0; $i < self::THREADS_MAX; $i++) {
-            $shouldWork = $this->fork();
+            $pid = $this->fork();
+
+            $shouldWork = $pid === -1 || $pid === 0;
             if ($shouldWork) {
                 break;
             }
         }
 
-        if ($this->isParent) {
+        if ($pid > 0) {
+            $this->printForkOk(true);
+        } elseif ($pid === -1) {
+            $this->printForkOk(false);
+        } else {
+            // allow parent to clean and create all files
+            while (file_exists($this->forkLockFile)) {
+                usleep(100);
+            }
+        }
+
+        if ($pid > 0) {
             $start = microtime(true);
+            usleep(100);
 
             if (file_exists($this->logFile)) {
                 unlink($this->logFile);
             }
+            touch($this->logFile);
+
             if (file_exists($this->lockFile)) {
                 unlink($this->lockFile);
             }
-
-            touch($this->logFile);
             touch($this->lockFile);
+
+            unlink($this->forkLockFile);
         }
 
         foreach ($packages as $package => $directory) {
@@ -53,7 +69,7 @@ class DependencyVerifyCommand
             }
         }
 
-        if ($this->isParent) {
+        if ($pid > 0) {
             $this->waitForks();
 
             $time = round(microtime(true) - $start, 2);
@@ -76,12 +92,12 @@ class DependencyVerifyCommand
         if ($result === 0) {
             stdoutln("✔ $package", Color::GREEN);
         } else {
-            $this->errored[] = $package;
+            $output = array_merge(["Updating $package:"], $output);
 
             $file = fopen($this->logFile, 'ab');
             flock($file, LOCK_EX);
             fwrite($file, implode(PHP_EOL, $output));
-            fwrite($file, PHP_EOL . str_repeat('-', 10) . PHP_EOL);
+            fwrite($file, PHP_EOL . str_repeat('-', 40) . PHP_EOL);
             flock($file, LOCK_UN);
 
             stdoutln("❌ $package", Color::RED);
@@ -91,14 +107,19 @@ class DependencyVerifyCommand
     private function canUse(string $package)
     {
         $result = false;
+
         $file = fopen($this->lockFile, 'a+b');
-        flock($file, LOCK_EX);
+        do {
+            $lock = flock($file, LOCK_EX);
+        } while(!$lock);
+
         fseek($file, 0);
         $content = @fread($file, filesize($this->lockFile));
         $locked = explode(PHP_EOL, $content);
 
         if (!in_array($package, $locked)) {
             fwrite($file, PHP_EOL . $package);
+            fflush($file);
             $result = true;
         }
 
@@ -108,7 +129,10 @@ class DependencyVerifyCommand
         return $result;
     }
 
-    private function fork(): bool
+    /**
+     * @return int Process id if fork is created, 0 if this process is a fork or -1 if we can't use pcntl_fork()
+     */
+    private function fork(): int
     {
         if (function_exists('pcntl_fork')) {
             $pid = pcntl_fork();
@@ -118,19 +142,10 @@ class DependencyVerifyCommand
                 exit(1);
             }
 
-            if ($pid === 0) {
-                $this->isParent = false;
-
-                // We are a fork, so we should make the main work
-                return true;
-            }
-
-            // We just created a fork, so we shouldn't do anything
-            return false;
+            return $pid;
         }
 
-        // We can't create a fork, so we must do our best ourselves
-        return true;
+        return -1;
     }
 
     private function waitForks()
@@ -139,6 +154,15 @@ class DependencyVerifyCommand
             do {
                 $pid = pcntl_wait($status);
             } while ($pid >= 0);
+        }
+    }
+
+    private function printForkOk(bool $ok): void
+    {
+        if ($ok === true) {
+            stdoutln('Forking is ok, running in parallel');
+        } else {
+            stdoutln('Forking failed, continuing in a single thread');
         }
     }
 }
