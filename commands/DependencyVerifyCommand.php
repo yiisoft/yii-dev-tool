@@ -138,7 +138,7 @@ class DependencyVerifyCommand
             $pid = pcntl_fork();
 
             if ($pid < 0) {
-                stdoutln("Cannot fork", Color::RED);
+                stderrln("Cannot fork", Color::RED);
                 exit(1);
             }
 
