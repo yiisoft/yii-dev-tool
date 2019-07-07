@@ -14,6 +14,7 @@ $packages = [
     'yiisoft/event-dispatcher' => 'event-dispatcher',
     'yiisoft/security' => 'security',
     'yiisoft/data' => 'data',
+    'yiisoft/profiler' => 'profiler',
 
     // cache
 
