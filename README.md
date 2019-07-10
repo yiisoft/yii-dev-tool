@@ -27,6 +27,9 @@ You may select packages by providing a second argument:
     ./yii-dev install yiisoft/core
     ./yii-dev install yiisoft/db
     ...
+    
+> Tip: You can speed up Composer significantly by installing [prestissimo](https://github.com/hirak/prestissimo) plugin
+> globally.
 
 Status
 ------
