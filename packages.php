@@ -15,6 +15,7 @@ $packages = [
     'yiisoft/security' => 'security',
     'yiisoft/data' => 'data',
     'yiisoft/profiler' => 'profiler',
+    'yiisoft/aliases' => 'aliases',
 
     // cache
 
