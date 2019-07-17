@@ -56,7 +56,7 @@ $packages = [
 
     // mailer
     'yiisoft/mailer' => 'mailer',
-    'yiisoft/yii-swiftmailer' => 'yii-swiftmailer',
+    'yiisoft/mailer-swiftmailer' => 'mailer-swiftmailer',
 
     //filesystem
 
