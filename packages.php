@@ -16,9 +16,9 @@ $packages = [
     'yiisoft/data' => 'data',
     'yiisoft/profiler' => 'profiler',
     'yiisoft/aliases' => 'aliases',
+    'yiisoft/serializer' => 'serializer',
 
     // cache
-
     'yiisoft/cache' => 'cache',
     'yiisoft/cache-apc' => 'cache-apc',
     'yiisoft/cache-wincache' => 'cache-wincache',
