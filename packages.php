@@ -58,11 +58,10 @@ $packages = [
     'yiisoft/mailer' => 'mailer',
     'yiisoft/mailer-swiftmailer' => 'mailer-swiftmailer',
 
-    //filesystem
-
     // helpers
     'yiisoft/arrays' => 'arrays',
     'yiisoft/strings' => 'strings',
+    'yiisoft/files' => 'files',
     'yiisoft/var-dumper' => 'vardumper',
 
     // console
@@ -111,6 +110,9 @@ $packages = [
 
     // repository template
     'yiisoft/template' => 'template',
+
+    // requirements checker
+    'yiisoft/requirements' => 'requirements',
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
