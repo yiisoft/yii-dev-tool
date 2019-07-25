@@ -63,6 +63,8 @@ $packages = [
     'yiisoft/strings' => 'strings',
     'yiisoft/files' => 'files',
     'yiisoft/var-dumper' => 'vardumper',
+    'yiisoft/html' => 'html',
+    'yiisoft/json' => 'json',
 
     // console
     'yiisoft/yii-console' => 'yii-console',
