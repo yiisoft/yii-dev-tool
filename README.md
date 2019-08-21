@@ -34,6 +34,11 @@ You may select packages by providing a second argument:
 > Note: In case you are using PhpStorm you have to add `yiisoft` exclusion pattern in "Settings → Directories → Exclude Files".
 > Else it would go into infinite indexing cycle.
 
+Using your own fork
+-------------------
+
+In order to use your own fork copy `packages.php` to `packages.local.php` and replace `yiisoft` with your github username.
+
 Status
 ------
 
