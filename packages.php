@@ -6,7 +6,6 @@ $packages = [
     'yiisoft/docs' => 'docs',
 
     // core packages
-    'yiisoft/yii-core' => 'yii-core',
     'yiisoft/di' => 'di',
     'yiisoft/injector' => 'injector',
     'yiisoft/factory' => 'factory',
