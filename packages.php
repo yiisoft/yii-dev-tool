@@ -93,6 +93,8 @@ $packages = [
     'yiisoft/yii-masked-input' => 'yii-masked-input ',
     'yiisoft/yii-dataview' => 'yii-dataview',
     'yiisoft/yii-debug' => 'yii-debug',
+    'yiisoft/yii-gii' => 'yii-gii',
+    'yiisoft/yii-bootstrap4' => 'yii-bootsrap4',
 
     'yiisoft/yii-captcha' => 'yii-captcha',
 
