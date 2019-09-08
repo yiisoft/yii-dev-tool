@@ -94,7 +94,6 @@ $packages = [
     'yiisoft/yii-dataview' => 'yii-dataview',
     'yiisoft/yii-debug' => 'yii-debug',
 
-    'yiisoft/yii-bootstrap3' => 'yii-bootstrap3',
     'yiisoft/yii-captcha' => 'yii-captcha',
 
     'yiisoft/yii-auth-client' => 'yii-auth-client',
