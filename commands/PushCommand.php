@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 class PushCommand
 {
     private $package;
@@ -35,7 +37,7 @@ class PushCommand
 
     private function push(string $package, string $targetPath): void
     {
-        stdoutln($package, 32);
+        stdoutln($package, Color::GREEN);
         $command = 'cd ' . escapeshellarg($targetPath) . ' && git push';
         $output = trim(shell_exec($command));
 

@@ -13,6 +13,26 @@ define('ENABLE_COLOR', DIRECTORY_SEPARATOR === '\\'
     : function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR)
 );
 
+class Color {
+    public const DEFAULT = 39;
+    public const BLACK = 30;
+    public const RED = 31;
+    public const GREEN = 32;
+    public const YELLOW = 33;
+    public const BLUE = 34;
+    public const MAGENTA = 35;
+    public const CYAN = 36;
+    public const LIGHT_GRAY = 37;
+    public const DARK_GRAY = 90;
+    public const LIGHT_RED = 91;
+    public const LIGHT_GREEN = 92;
+    public const LIGHT_YELLOW = 93;
+    public const LIGHT_BLUE = 94;
+    public const LIGHT_MAGENTA = 95;
+    public const LIGHT_CYAN = 96;
+    public const WHITE = 97;
+}
+
 /**
  * @param string $text the text to print.
  * @param int|null $color color according to https://en.wikipedia.org/wiki/ANSI_escape_code#3/4_bit
@@ -65,36 +85,36 @@ YII
     stderrln('Available Commands:');
     stderrln('');
 
-    stderr('  install', 33);
+    stderr('  install', Color::YELLOW);
     stderrln('             Install all packages listed in packages.php or package specified');
 
-    stderr('  install', 33);
-    stderr(' <package>', 34);
+    stderr('  install', Color::YELLOW);
+    stderr(' <package>', Color::BLUE);
     stderrln('   Install a single package. <package> refers to the array key in packages.php');
 
-    stderr('  update', 33);
+    stderr('  update', Color::YELLOW);
     stderrln('              Update all packages listed in packages.php or package specified');
 
-    stderr('  update', 33);
-    stderr(' <package>', 34);
+    stderr('  update', Color::YELLOW);
+    stderr(' <package>', Color::BLUE);
     stderrln('    Update a single package. <package> refers to the array key in packages.php');
 
-    stderr('  status', 33);
+    stderr('  status', Color::YELLOW);
     stderrln('              Show git status for all packages');
 
-    stderr('  replicate', 33);
+    stderr('  replicate', Color::YELLOW);
     stderrln('           Copy files specified in replicate.php into each package or package specified');
 
-    stderr('  commit', 33);
+    stderr('  commit', Color::YELLOW);
     stderrln('              Add and commit changes into each repository');
 
-    stderr('  push', 33);
+    stderr('  push', Color::YELLOW);
     stderrln('                Push changes into each repository');
 
-    stderr('  pull', 33);
+    stderr('  pull', Color::YELLOW);
     stderrln('                Pull changes for each repository');
 
-    stderr('  lint', 33);
+    stderr('  lint', Color::YELLOW);
     stderrln('                Check packages for common mistakes');
     stderrln('');
 }
@@ -154,7 +174,7 @@ switch ($command) {
     case 'lint':
 
         // TODO implement
-        stderrln('Not implemented yet!', 31);
+        stderrln('Not implemented yet!', Color::RED);
 
         break;
     default:

@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 class PullCommand
 {
     private $package;
@@ -35,7 +37,7 @@ class PullCommand
 
     private function pull(string $package, string $targetPath): void
     {
-        stdoutln($package, 32);
+        stdoutln($package, Color::GREEN);
         $command = 'cd ' . escapeshellarg($targetPath) . ' && git pull';
         $output = trim(shell_exec($command));
 

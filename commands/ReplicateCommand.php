@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 class ReplicateCommand
 {
     private $package;
@@ -50,7 +52,7 @@ class ReplicateCommand
 
     private function replicate(string $package, string $targetPath, string $sourcePath, array $sourceFiles): void
     {
-        stdout("$package ", 32);
+        stdout("$package ", Color::GREEN);
 
         if (!\file_exists($targetPath)) {
             echo stdoutln('❌');
