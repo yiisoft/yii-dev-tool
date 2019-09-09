@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 class StatusCommand
 {
     private $package;
@@ -37,7 +39,7 @@ class StatusCommand
     {
         $command = 'cd ' . escapeshellarg($targetPath) . ' && git status -s';
         $output = trim(shell_exec($command));
-        stdoutln($package, empty($output) ? 32 : 33);
+        stdoutln($package, empty($output) ? Color::GREEN : Color::YELLOW);
         if (!empty($output)) {
             echo $output . "\n\n";
         }

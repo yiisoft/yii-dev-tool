@@ -2,6 +2,8 @@
 
 namespace yiidev\commands;
 
+use Color;
+
 /**
  * @author Carsten Brandt <mail@cebe.cc>
  */
@@ -53,18 +55,18 @@ class InstallCommand
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
             $this->linkPackages($p, $targetPath, $installedPackages);
         }
-        stdoutln('done.', 32);
+        stdoutln('done.', Color::GREEN);
     }
 
     private function install(string $package, string $targetPath): void
     {
         stdout('Installing package  ');
-        stdout($package, 33);
+        stdout($package, Color::YELLOW);
 
         $repo = ($this->useHttp ? 'https://github.com/' : 'git@github.com:') . $package . '.git';
 
         if (file_exists($targetPath)) {
-            stdoutln(' - already installed', 32);
+            stdoutln(' - already installed', Color::GREEN);
 
             return;
         }
@@ -72,7 +74,7 @@ class InstallCommand
 
         passthru('git clone ' . escapeshellarg($repo) . ' ' . escapeshellarg($targetPath));
 
-        stdoutln('done.', 32);
+        stdoutln('done.', Color::GREEN);
     }
 
     private function clearLinks(string $targetPath): void
@@ -88,18 +90,18 @@ class InstallCommand
     {
         if (!is_file("$targetPath/composer.json")) {
             stdout('no composer.json in ');
-            stdout($package, 33);
+            stdout($package, Color::YELLOW);
             stdoutln(', skipping composer install.');
 
             return;
         }
         stdout('composer install in ');
-        stdout($package, 33);
+        stdout($package, Color::YELLOW);
         stdoutln('...');
 
         $command = 'composer install --prefer-dist --no-progress --working-dir ' . escapeshellarg($targetPath) . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
         passthru($command);
-        stdoutln('done.', 32);
+        stdoutln('done.', Color::GREEN);
     }
 
     private function linkPackages(string $package, string $targetPath, array $installedPackages): void
