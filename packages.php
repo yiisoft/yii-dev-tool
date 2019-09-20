@@ -111,6 +111,7 @@ $packages = [
     // other
     'yiisoft/yii-docker' => 'yii-docker',
     'yiisoft/validator' => 'validator',
+    'yiisoft/friendlyexception' => 'friendlyexception',
 
     // repository template
     'yiisoft/template' => 'template',
