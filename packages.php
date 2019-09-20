@@ -19,7 +19,7 @@ $packages = [
 
     // cache
     'yiisoft/cache' => 'cache',
-    'yiisoft/cache-apc' => 'cache-apc',
+    'yiisoft/cache-apcu' => 'cache-apcu',
     'yiisoft/cache-wincache' => 'cache-wincache',
     'yiisoft/cache-file' => 'cache-file',
     'yiisoft/cache-db' => 'cache-db',
@@ -110,6 +110,7 @@ $packages = [
 
     // other
     'yiisoft/yii-docker' => 'yii-docker',
+    'yiisoft/validator' => 'validator',
 
     // repository template
     'yiisoft/template' => 'template',
