@@ -15,8 +15,11 @@ class InstallCommand
     public $useHttp = false;
     public $baseDir = __DIR__ . '/../dev';
 
-    public function __construct(string $package = null)
+    public function __construct(string $useHttp = null, string $package = null)
     {
+        if ($useHttp === '--http') {
+            $this->useHttp = true;
+        }
         $this->package = $package;
     }
 

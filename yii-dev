@@ -80,42 +80,52 @@ YII
     );
     stderrln('This tool helps with setting up a development environment for Yii 3 packages.');
     stderrln('');
-    stderrln('Usage: ' . ($argv[0] ?? 'yii-dev') . ' <command>');
+    stderrln('Usage: ' . ($argv[0] ?? 'yii-dev') . ' [OPTIONS] <command>');
     stderrln('');
+
+    stderrln('Options:');
+    stderrln('');
+
+    stderr('  --http', Color::GREEN);
+    stderrln('   Cloning git repositories with HTTPS URLs (default SSH)');
+    stderrln('');
+
     stderrln('Available Commands:');
     stderrln('');
 
     stderr('  install', Color::YELLOW);
+    stderr(' [--http]', Color::GREEN);
     stderrln('             Install all packages listed in packages.php or package specified');
 
     stderr('  install', Color::YELLOW);
+    stderr(' [--http]', Color::GREEN);
     stderr(' <package>', Color::BLUE);
     stderrln('   Install a single package. <package> refers to the array key in packages.php');
 
     stderr('  update', Color::YELLOW);
-    stderrln('              Update all packages listed in packages.php or package specified');
+    stderrln('                       Update all packages listed in packages.php or package specified');
 
     stderr('  update', Color::YELLOW);
     stderr(' <package>', Color::BLUE);
-    stderrln('    Update a single package. <package> refers to the array key in packages.php');
+    stderrln('             Update a single package. <package> refers to the array key in packages.php');
 
     stderr('  status', Color::YELLOW);
-    stderrln('              Show git status for all packages');
+    stderrln('                       Show git status for all packages');
 
     stderr('  replicate', Color::YELLOW);
-    stderrln('           Copy files specified in replicate.php into each package or package specified');
+    stderrln('                    Copy files specified in replicate.php into each package or package specified');
 
     stderr('  commit', Color::YELLOW);
-    stderrln('              Add and commit changes into each repository');
+    stderrln('                       Add and commit changes into each repository');
 
     stderr('  push', Color::YELLOW);
-    stderrln('                Push changes into each repository');
+    stderrln('                         Push changes into each repository');
 
     stderr('  pull', Color::YELLOW);
-    stderrln('                Pull changes for each repository');
+    stderrln('                         Pull changes for each repository');
 
     stderr('  lint', Color::YELLOW);
-    stderrln('                Check packages for common mistakes');
+    stderrln('                         Check packages for common mistakes');
     stderrln('');
 }
 
@@ -125,7 +135,7 @@ switch ($command) {
     case 'install':
 
         require __DIR__ . '/commands/InstallCommand.php';
-        $command = new \yiidev\commands\InstallCommand($argv[2] ?? null);
+        $command = new \yiidev\commands\InstallCommand($argv[2] ?? null, $argv[3] ?? null);
         $command->run();
 
         break;
