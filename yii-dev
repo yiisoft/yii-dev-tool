@@ -1,75 +1,35 @@
 #!/usr/bin/env php
 <?php
 
-if (PHP_MAJOR_VERSION < 7) {
+use yiidev\commands\CommitCommand;
+use yiidev\commands\InstallCommand;
+use yiidev\commands\PullCommand;
+use yiidev\commands\PushCommand;
+use yiidev\commands\ReplicateCommand;
+use yiidev\commands\StatusCommand;
+use yiidev\commands\UpdateCommand;
+use yiidev\components\console\Color;
+use yiidev\components\console\Printer;
+
+if (PHP_VERSION_ID < 70200) {
     echo 'PHP 7.2 or higher is required to work with this tool. Yii 3.0 requires PHP 7.2!' . PHP_EOL;
     exit(1);
 }
+
 if (!isset($argv)) {
     $argv = $_SERVER['argv'];
 }
-define('ENABLE_COLOR', DIRECTORY_SEPARATOR === '\\'
-    ? getenv('ANSICON') !== false || getenv('ConEmuANSI') === 'ON'
-    : function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR)
-);
 
-class Color {
-    public const DEFAULT = 39;
-    public const BLACK = 30;
-    public const RED = 31;
-    public const GREEN = 32;
-    public const YELLOW = 33;
-    public const BLUE = 34;
-    public const MAGENTA = 35;
-    public const CYAN = 36;
-    public const LIGHT_GRAY = 37;
-    public const DARK_GRAY = 90;
-    public const LIGHT_RED = 91;
-    public const LIGHT_GREEN = 92;
-    public const LIGHT_YELLOW = 93;
-    public const LIGHT_BLUE = 94;
-    public const LIGHT_MAGENTA = 95;
-    public const LIGHT_CYAN = 96;
-    public const WHITE = 97;
-}
-
-/**
- * @param string $text the text to print.
- * @param int|null $color color according to https://en.wikipedia.org/wiki/ANSI_escape_code#3/4_bit
- */
-function ansicolor(string $text, int $color = null): string
-{
-    if ($color !== null && ENABLE_COLOR) {
-        return "\e[{$color}m$text\e[0m";
+spl_autoload_register(function($className){
+    if (substr($className, 0, 7) === 'yiidev\\') {
+        /** @noinspection PhpIncludeInspection */
+        include_once __DIR__ . str_replace(['yiidev\\', '\\'], DIRECTORY_SEPARATOR, $className) . '.php';
     }
-    return $text;
-}
+});
 
-function stdout(string $text, int $color = null): void
+function help(array $argv, Printer $printer)
 {
-    fwrite(STDOUT, ansicolor($text, $color));
-}
-
-function stdoutln(string $text, int $color = null): void
-{
-    stdout(ansicolor($text, $color) . PHP_EOL);
-}
-
-function stderr(string $text, int $color = null): void
-{
-    fwrite(STDERR, ansicolor($text, $color));
-}
-
-function stderrln(string $text, int $color = null): void
-{
-    stderr(ansicolor($text, $color) . PHP_EOL, $color);
-}
-
-function help()
-{
-    global $argv;
-
-    stderrln(<<<YII
+    $printer->stderrln(<<<YII
   _   _  _  _ 
  | | | |(_)(_)
  | |_| || || |  Development Tool
@@ -77,117 +37,127 @@ function help()
   |___/         for Yii 3.0
 
 YII
-    );
-    stderrln('This tool helps with setting up a development environment for Yii 3 packages.');
-    stderrln('');
-    stderrln('Usage: ' . ($argv[0] ?? 'yii-dev') . ' [OPTIONS] <command>');
-    stderrln('');
+    )
+    ->stderrln('This tool helps with setting up a development environment for Yii 3 packages.')
+    ->stderrln()
+    ->stderrln('Usage: ' . ($argv[0] ?? 'yii-dev') . ' [OPTIONS] <command>')
+    ->stderrln()
 
-    stderrln('Options:');
-    stderrln('');
+    ->stderrln('Options:')
+    ->stderrln()
 
-    stderr('  --http', Color::GREEN);
-    stderrln('   Cloning git repositories with HTTPS URLs (default SSH)');
-    stderrln('');
+    ->stderr('  --http', Color::GREEN)
+    ->stderrln('   Cloning git repositories with HTTPS URLs (default SSH)')
+    ->stderrln()
 
-    stderrln('Available Commands:');
-    stderrln('');
+    ->stderrln('Available Commands:')
+    ->stderrln()
 
-    stderr('  install', Color::YELLOW);
-    stderr(' [--http]', Color::GREEN);
-    stderrln('             Install all packages listed in packages.php or package specified');
+    ->stderr('  install', Color::YELLOW)
+    ->stderr(' [--http]', Color::GREEN)
+    ->stderrln('             Install all packages listed in packages.php')
 
-    stderr('  install', Color::YELLOW);
-    stderr(' [--http]', Color::GREEN);
-    stderr(' <package>', Color::BLUE);
-    stderrln('   Install a single package. <package> refers to the array key in packages.php');
+    ->stderr('  install', Color::YELLOW)
+    ->stderr(' [--http]', Color::GREEN)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('   Install a single package. <package> refers to the array key in packages.php')
 
-    stderr('  update', Color::YELLOW);
-    stderrln('                       Update all packages listed in packages.php or package specified');
+    ->stderr('  update', Color::YELLOW)
+    ->stderr('  [--http]', Color::GREEN)
+    ->stderrln('             Update all packages listed in packages.php')
 
-    stderr('  update', Color::YELLOW);
-    stderr(' <package>', Color::BLUE);
-    stderrln('             Update a single package. <package> refers to the array key in packages.php');
+    ->stderr('  update', Color::YELLOW)
+    ->stderr('  [--http]', Color::GREEN)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('   Update a single package. <package> refers to the array key in packages.php')
 
-    stderr('  status', Color::YELLOW);
-    stderrln('                       Show git status for all packages');
+    ->stderr('  status', Color::YELLOW)
+    ->stderrln('                       Show git status for all packages listed in packages.php')
 
-    stderr('  replicate', Color::YELLOW);
-    stderrln('                    Copy files specified in replicate.php into each package or package specified');
+    ->stderr('  status', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('             Show git status for a single package. <package> refers to the array key in packages.php')
 
-    stderr('  commit', Color::YELLOW);
-    stderrln('                       Add and commit changes into each repository');
+    ->stderr('  replicate', Color::YELLOW)
+    ->stderrln('                    Copy files specified in replicate.php into each package listed in packages.php')
 
-    stderr('  push', Color::YELLOW);
-    stderrln('                         Push changes into each repository');
+    ->stderr('  replicate', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('          Copy files specified in replicate.php into a single package. <package> refers to the array key in packages.php')
 
-    stderr('  pull', Color::YELLOW);
-    stderrln('                         Pull changes for each repository');
+    ->stderr('  commit', Color::YELLOW)
+    ->stderr(' <message>', Color::BLUE)
+    ->stderrln('             Add and commit changes into each package repository listed in packages.php')
 
-    stderr('  lint', Color::YELLOW);
-    stderrln('                         Check packages for common mistakes');
-    stderrln('');
+    ->stderr('  commit', Color::YELLOW)
+    ->stderr(' <message>', Color::BLUE)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('   Add and commit changes into a single package repository. <package> refers to the array key in packages.php')
+
+    ->stderr('  push', Color::YELLOW)
+    ->stderrln('                         Push changes into each package repository listed in packages.php')
+
+    ->stderr('  push', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('               Push changes into a single package repository. <package> refers to the array key in packages.php')
+
+    ->stderr('  pull', Color::YELLOW)
+    ->stderrln('                         Pull changes for each package repository listed in packages.php')
+
+    ->stderr('  pull', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('               Pull changes for a single package repository. <package> refers to the array key in packages.php')
+
+    ->stderr('  lint', Color::YELLOW)
+    ->stderrln('                         Check packages for common mistakes')
+    ->stderrln();
 }
 
-$command = $argv[1] ?? 'help';
+$printer = new Printer();
+$commandName = $argv[1] ?? 'help';
 
-switch ($command) {
+switch ($commandName) {
     case 'install':
-
-        require __DIR__ . '/commands/InstallCommand.php';
-        $command = new \yiidev\commands\InstallCommand($argv[2] ?? null, $argv[3] ?? null);
+        $command = new InstallCommand($printer, in_array('--http', $argv, true), $argv[3] ?? $argv[2] ?? null);
         $command->run();
 
         break;
     case 'update':
-
-        require __DIR__ . '/commands/UpdateCommand.php';
-        $command = new \yiidev\commands\UpdateCommand($argv[2] ?? null);
+        $command = new UpdateCommand($printer, in_array('--http', $argv, true), $argv[3] ?? $argv[2] ?? null);
         $command->run();
 
         break;
     case 'status':
-
-        require __DIR__ . '/commands/StatusCommand.php';
-        $command = new \yiidev\commands\StatusCommand($argv[2] ?? null);
+        $command = new StatusCommand($printer, $argv[2] ?? null);
         $command->run();
 
         break;
     case 'replicate':
-
-        require __DIR__ . '/commands/ReplicateCommand.php';
-        $command = new \yiidev\commands\ReplicateCommand($argv[2] ?? null);
+        $command = new ReplicateCommand($printer, $argv[2] ?? null);
         $command->run();
 
         break;
     case 'commit':
-
-        require __DIR__ . '/commands/CommitCommand.php';
-        $command = new \yiidev\commands\CommitCommand($argv[2] ?? null, $argv[3] ?? null);
+        $command = new CommitCommand($printer, $argv[2] ?? null, $argv[3] ?? null);
         $command->run();
 
         break;
     case 'push':
-
-        require __DIR__ . '/commands/PushCommand.php';
-        $command = new \yiidev\commands\PushCommand($argv[2] ?? null);
+        $command = new PushCommand($printer, $argv[2] ?? null);
         $command->run();
 
         break;
     case 'pull':
-
-        require __DIR__ . '/commands/PullCommand.php';
-        $command = new \yiidev\commands\PullCommand($argv[2] ?? null);
+        $command = new PullCommand($printer, $argv[2] ?? null);
         $command->run();
 
         break;
     case 'lint':
-
         // TODO implement
-        stderrln('Not implemented yet!', Color::RED);
+        $printer->stderrln('Not implemented yet!', Color::RED);
 
         break;
     default:
-        help();
+        help($argv, $printer);
         exit(1);
 }
