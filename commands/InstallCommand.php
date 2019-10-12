@@ -26,6 +26,7 @@ class InstallCommand
     public function run(): void
     {
         $packages = require __DIR__ . '/../packages.php';
+        $errors = [];
 
         if ($this->package === null) {
             // install all packages
@@ -33,13 +34,19 @@ class InstallCommand
                 $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
                 $this->install($p, $targetPath);
                 $this->clearlinks($targetPath);
-                $this->composerInstall($p, $targetPath);
+                $error = $this->composerInstall($p, $targetPath);
+                if ($error !== null) {
+                    $errors[$p] = $error;
+                }
             }
         } elseif (isset($packages[$this->package])) {
             $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
             $this->install($this->package, $targetPath);
             $this->clearlinks($targetPath);
-            $this->composerInstall($this->package, $targetPath);
+            $error = $this->composerInstall($this->package, $targetPath);
+            if ($error !== null) {
+                $errors[$this->package] = $error;
+            }
         } else {
             stderrln("Package '$this->package' not found in packages.php");
             exit(1);
@@ -59,6 +66,21 @@ class InstallCommand
             $this->linkPackages($p, $targetPath, $installedPackages);
         }
         stdoutln('done.', Color::GREEN);
+
+        if (count($errors)) {
+            stdout(PHP_EOL);
+            stdoutln('Some packages have dependency issues...', Color::LIGHT_RED);
+            stdout(PHP_EOL);
+
+            foreach ($errors as $package => $error) {
+                stdout('Package ');
+                stdout($package, Color::YELLOW);
+                stdoutln(' errors:');
+                stdout(PHP_EOL);
+
+                stdoutln($error);
+            }
+        }
     }
 
     private function install(string $package, string $targetPath): void
@@ -89,22 +111,34 @@ class InstallCommand
         }
     }
 
-    private function composerInstall(string $package, string $targetPath): void
+    /**
+     * @param string $package the package to be installed.
+     * @param string $targetPath the package installation directory.
+     * @return string|null the error string that occurred during the installation of the package.
+     * If there was no installation or there were no errors during installation, returns null.
+     */
+    private function composerInstall(string $package, string $targetPath): ?string
     {
         if (!is_file("$targetPath/composer.json")) {
             stdout('no composer.json in ');
             stdout($package, Color::YELLOW);
             stdoutln(', skipping composer install.');
 
-            return;
+            return null;
         }
         stdout('composer install in ');
         stdout($package, Color::YELLOW);
         stdoutln('...');
 
         $command = 'composer install --prefer-dist --no-progress --working-dir ' . escapeshellarg($targetPath) . (ENABLE_COLOR ? ' --ansi' : ' --no-ansi');
-        passthru($command);
+
+        $output = [];
+        exec($command . ' 2>&1', $output, $return_var);
+        $outputString = count($output) ? implode(PHP_EOL, $output) . PHP_EOL : '';
+        stdout($outputString);
         stdoutln('done.', Color::GREEN);
+
+        return $return_var > 0 ? $outputString : null;
     }
 
     private function linkPackages(string $package, string $targetPath, array $installedPackages): void

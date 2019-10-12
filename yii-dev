@@ -135,7 +135,7 @@ switch ($command) {
     case 'install':
 
         require __DIR__ . '/commands/InstallCommand.php';
-        $command = new \yiidev\commands\InstallCommand($argv[2] ?? null, $argv[3] ?? null);
+        $command = new \yiidev\commands\InstallCommand($argv[2] ?? null, $argv[3] ?? $argv[2] ?? null);
         $command->run();
 
         break;
