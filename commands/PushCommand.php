@@ -2,47 +2,46 @@
 
 namespace yiidev\commands;
 
-use Color;
+use yiidev\components\console\Printer;
+use yiidev\components\package\PackageList;
+use yiidev\components\package\PackageManager;
 
 class PushCommand
 {
-    private $package;
+    /** @var Printer */
+    private $printer;
 
-    // TODO implement setting these
-    public $baseDir = __DIR__ . '/../dev';
+    /** @var string|null */
+    private $targetPackageName;
 
-    public function __construct(string $package = null)
+    /** @var PackageList */
+    private $packageList;
+
+    public function __construct(Printer $printer, string $targetPackageName = null)
     {
-        $this->package = $package;
+        $this->printer = $printer;
+        $this->targetPackageName = $targetPackageName;
+
+        $this->packageList = new PackageList(
+            __DIR__ . '/../packages.php',
+            __DIR__ . '/../dev'
+        );
     }
 
     public function run(): void
     {
-        $packages = require __DIR__ . '/../packages.php';
+        $target = $this->targetPackageName;
+        $list = $this->packageList;
+        $manager = new PackageManager($this->printer);
 
-        if ($this->package === null) {
-            // install all packages
-            foreach ($packages as $p => $dir) {
-                $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
-                $this->push($p, $targetPath);
-            }
-        } elseif (isset($packages[$this->package])) {
-            $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
-            $this->push($this->package, $targetPath);
+        if ($target === null) {
+            $manager->gitPushAll($list);
+        } elseif ($list->hasPackage($target)) {
+            $manager->gitPush($list->getPackage($target));
         } else {
-            stderrln("Package '$this->package' not found in packages.php");
+            $this->printer->stderrln("Package '$target' not found in packages.php");
+
             exit(1);
-        }
-    }
-
-    private function push(string $package, string $targetPath): void
-    {
-        stdoutln($package, Color::GREEN);
-        $command = 'cd ' . escapeshellarg($targetPath) . ' && git push';
-        $output = trim(shell_exec($command));
-
-        if (!empty($output)) {
-            echo $output . "\n\n";
         }
     }
 }

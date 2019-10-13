@@ -2,80 +2,60 @@
 
 namespace yiidev\commands;
 
-use Color;
+use yiidev\components\console\Printer;
+use yiidev\components\package\Package;
+use yiidev\components\package\PackageList;
+use yiidev\components\package\PackageManager;
+use yiidev\components\package\ReplicationSource;
 
 class ReplicateCommand
 {
-    private $package;
+    /** @var Printer */
+    private $printer;
 
-    // TODO implement setting these
-    public $baseDir = __DIR__ . '/../dev';
+    /** @var string|null */
+    private $targetPackageName;
 
-    public function __construct(string $package = null)
+    /** @var PackageList */
+    private $packageList;
+
+    /** @var Package */
+    private $replicationSource;
+
+    public function __construct(Printer $printer, string $targetPackageName = null)
     {
-        $this->package = $package;
+        $this->printer = $printer;
+        $this->targetPackageName = $targetPackageName;
+
+        $this->packageList = new PackageList(
+            __DIR__ . '/../packages.php',
+            __DIR__ . '/../dev'
+        );
+
+        $replicationConfig = require __DIR__ . '/../replicate.php';
+
+        $this->replicationSource = new ReplicationSource(
+            $replicationConfig['sourcePackage'],
+            $this->packageList->getPackage($replicationConfig['sourcePackage'])->getDirectoryName(),
+            __DIR__ . '/../dev',
+            $replicationConfig['sourceFiles']
+        );
     }
 
     public function run(): void
     {
-        $packages = require __DIR__ . '/../packages.php';
-        $replicate = require __DIR__ . '/../replicate.php';
+        $target = $this->targetPackageName;
+        $list = $this->packageList;
+        $manager = new PackageManager($this->printer);
 
-        $sourcePackage = $replicate['sourcePackage'];
-        $sourcePath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$sourcePackage];
-        $sourceFiles = $replicate['sourceFiles'];
-
-        if ($this->package === null) {
-            // install all packages
-            foreach ($packages as $p => $dir) {
-                if ($p === $sourcePackage) {
-                    // skip source package
-                    continue;
-                }
-
-                $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
-                $this->replicate($p, $targetPath, $sourcePath, $sourceFiles);
-            }
-        } elseif (isset($packages[$this->package])) {
-            if ($this->package === $sourcePackage) {
-                stderrln('Cannot replicate into itself.');
-                exit(1);
-            }
-
-            $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
-            $this->replicate($this->package, $targetPath, $sourcePath, $sourceFiles);
+        if ($target === null) {
+            $manager->replicateToPackages($list, $this->replicationSource);
+        } elseif ($list->hasPackage($target)) {
+            $manager->replicateToPackage($list->getPackage($target), $this->replicationSource);
         } else {
-            stderrln("Package '$this->package' not found in packages.php");
+            $this->printer->stderrln("Package '$target' not found in packages.php");
+
             exit(1);
-        }
-    }
-
-    private function replicate(string $package, string $targetPath, string $sourcePath, array $sourceFiles): void
-    {
-        stdout("$package ", Color::GREEN);
-
-        if (!\file_exists($targetPath)) {
-            echo stdoutln('❌');
-            return;
-        }
-
-        foreach ($sourceFiles as $file) {
-            $this->copy($sourcePath . DIRECTORY_SEPARATOR . $file, $targetPath . DIRECTORY_SEPARATOR . $file);
-        }
-
-        stdoutln('✔');
-    }
-
-    private function copy(string $source, string $target): void
-    {
-        $destinationDirectory = dirname($target);
-        if (!file_exists($destinationDirectory)) {
-            if (!mkdir($destinationDirectory, 0777, true) && !is_dir($destinationDirectory)) {
-                throw new \RuntimeException(sprintf('Directory "%s" was not created', $destinationDirectory));
-            }
-        }
-        if (!copy($source, $target)) {
-            throw new \RuntimeException(sprintf('Copy "%s" to "%s" failed', $source, $target));
         }
     }
 }

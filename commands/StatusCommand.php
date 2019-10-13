@@ -2,46 +2,46 @@
 
 namespace yiidev\commands;
 
-use Color;
+use yiidev\components\console\Printer;
+use yiidev\components\package\PackageList;
+use yiidev\components\package\PackageManager;
 
 class StatusCommand
 {
-    private $package;
+    /** @var Printer */
+    private $printer;
 
-    // TODO implement setting these
-    public $baseDir = __DIR__ . '/../dev';
+    /** @var string|null */
+    private $targetPackageName;
 
-    public function __construct(string $package = null)
+    /** @var PackageList */
+    private $packageList;
+
+    public function __construct(Printer $printer, string $targetPackageName = null)
     {
-        $this->package = $package;
+        $this->printer = $printer;
+        $this->targetPackageName = $targetPackageName;
+
+        $this->packageList = new PackageList(
+            __DIR__ . '/../packages.php',
+            __DIR__ . '/../dev'
+        );
     }
 
     public function run(): void
     {
-        $packages = require __DIR__ . '/../packages.php';
+        $target = $this->targetPackageName;
+        $list = $this->packageList;
+        $manager = new PackageManager($this->printer);
 
-        if ($this->package === null) {
-            // install all packages
-            foreach ($packages as $p => $dir) {
-                $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $dir;
-                $this->printStatus($p, $targetPath);
-            }
-        } elseif (isset($packages[$this->package])) {
-            $targetPath = $this->baseDir . DIRECTORY_SEPARATOR . $packages[$this->package];
-            $this->printStatus($this->package, $targetPath);
+        if ($target === null) {
+            $manager->showGitStatuses($list);
+        } elseif ($list->hasPackage($target)) {
+            $manager->showGitStatus($list->getPackage($target));
         } else {
-            stderrln("Package '$this->package' not found in packages.php");
-            exit(1);
-        }
-    }
+            $this->printer->stderrln("Package '$target' not found in packages.php");
 
-    private function printStatus(string $package, string $targetPath): void
-    {
-        $command = 'cd ' . escapeshellarg($targetPath) . ' && git status -s';
-        $output = trim(shell_exec($command));
-        stdoutln($package, empty($output) ? Color::GREEN : Color::YELLOW);
-        if (!empty($output)) {
-            echo $output . "\n\n";
+            exit(1);
         }
     }
 }
