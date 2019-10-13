@@ -27,7 +27,6 @@ class Printer
     private function colorize(?string $text, int $color = null): ?string
     {
         if ($color !== null && $this->isColorsEnabled) {
-
             return "\e[{$color}m$text\e[0m";
         }
 
