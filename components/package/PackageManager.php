@@ -49,6 +49,7 @@ class PackageManager
     private function gitClone(Package $package, bool $useHttp): void
     {
         $printer = $this->printer;
+        $executor = $this->executor;
 
         $printer
             ->stdout('Cloning package ')
@@ -64,11 +65,15 @@ class PackageManager
 
         $repo = ($useHttp ? 'https://github.com/' : 'git@github.com:') . $package->getName() . '.git';
         $command = 'git clone ' . escapeshellarg($repo) . ' ' . escapeshellarg($package->getPath());
-        $output = $this->executor->execute($command)->getLastOutput();
+        $output = $executor->execute($command)->getLastOutput();
 
         $printer
             ->stdoutln($output)
             ->stdoutln('Done.', Color::GREEN);
+
+        if ($executor->hasErrorOccurred()) {
+            $package->setError($executor->getLastOutput());
+        }
     }
 
     private function removeSymbolicLinks(Package $package): void
@@ -102,7 +107,7 @@ class PackageManager
         $command =
             "composer $composerCommandName --prefer-dist --no-progress --working-dir " .
             escapeshellarg($package->getPath()) .
-            ($this->printer->isIsColorsEnabled() ? ' --ansi' : ' --no-ansi');
+            ($this->printer->isColorsEnabled() ? ' --ansi' : ' --no-ansi');
 
         $output = $this->executor->execute($command)->getLastOutput();
         $printer
@@ -296,14 +301,14 @@ class PackageManager
         if (count($packagesWithError)) {
             $printer
                 ->stdoutln()
-                ->stdoutln('Some packages have dependency issues...', Color::LIGHT_RED)
+                ->stdoutln('Some packages have issues...', Color::LIGHT_RED)
                 ->stdoutln();
 
             foreach ($packagesWithError as $package) {
                 $printer
-                    ->stdout('Errors of ')
+                    ->stdout('Package ')
                     ->stdout($package->getName(), Color::YELLOW)
-                    ->stdoutln(' package:')
+                    ->stdoutln(' error:')
                     ->stdoutln()
                     ->stdoutln($package->getError())
                     ->stdoutln();
