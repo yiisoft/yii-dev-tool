@@ -3,6 +3,7 @@
 
 use yiidev\commands\CommitCommand;
 use yiidev\commands\InstallCommand;
+use yiidev\commands\LintCommand;
 use yiidev\commands\PullCommand;
 use yiidev\commands\PushCommand;
 use yiidev\commands\ReplicateCommand;
@@ -109,7 +110,11 @@ YII
     ->stderrln('               Pull changes for a single package repository. <package> refers to the array key in packages.php')
 
     ->stderr('  lint', Color::YELLOW)
-    ->stderrln('                         Check packages for common mistakes')
+    ->stderrln('                         Check all packages for common mistakes')
+
+    ->stderr('  lint', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('               Check a single package for common mistakes. <package> refers to the array key in packages.php')
     ->stderrln();
 }
 
@@ -153,8 +158,8 @@ switch ($commandName) {
 
         break;
     case 'lint':
-        // TODO implement
-        $printer->stderrln('Not implemented yet!', Color::RED);
+        $command = new LintCommand($printer, $argv[2] ?? null);
+        $command->run();
 
         break;
     default:
