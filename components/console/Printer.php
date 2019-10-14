@@ -14,7 +14,7 @@ class Printer
             function_exists('posix_isatty') && @posix_isatty(STDOUT) && @posix_isatty(STDERR);
     }
 
-    public function isIsColorsEnabled(): bool
+    public function isColorsEnabled(): bool
     {
         return $this->isColorsEnabled;
     }
