@@ -1,16 +1,16 @@
 {
-    "name": "yiisoft/yii-dev",
+    "name": "yiisoft/yii-dev-tool",
     "type": "library",
     "description": "Yii development tool",
     "keywords": ["yii", "dev", "tool"],
     "homepage": "http://www.yiiframework.com/",
     "license": "BSD-3-Clause",
     "support": {
-        "issues": "https://github.com/yiisoft/yii-dev/issues",
+        "issues": "https://github.com/yiisoft/yii-dev-tool/issues",
         "forum": "http://www.yiiframework.com/forum/",
         "wiki": "http://www.yiiframework.com/wiki/",
         "irc": "irc://irc.freenode.net/yii",
-        "source": "https://github.com/yiisoft/yii-dev"
+        "source": "https://github.com/yiisoft/yii-dev-tool"
     },
     "require": {
         "php": "^7.2"
