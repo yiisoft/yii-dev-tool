@@ -330,7 +330,7 @@ class PackageManager
             $codeSnifferBinPath . ' ' .
             escapeshellarg($package->getPath()) . ' ' .
             ($printer->isColorsEnabled() ? '--colors ' : '') .
-            '--standard=PSR2 --ignore=*/vendor/*,*/docs/*';
+            '--standard=PSR12 --ignore=*/vendor/*,*/docs/*';
 
         $output = $executor->execute($command)->getLastOutput();
 
