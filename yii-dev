@@ -3,11 +3,13 @@
 
 use yiidev\commands\CommitCommand;
 use yiidev\commands\InstallCommand;
+use yiidev\commands\LintCommand;
 use yiidev\commands\PullCommand;
 use yiidev\commands\PushCommand;
 use yiidev\commands\ReplicateCommand;
 use yiidev\commands\StatusCommand;
 use yiidev\commands\UpdateCommand;
+use yiidev\components\console\Args;
 use yiidev\components\console\Color;
 use yiidev\components\console\Printer;
 
@@ -30,7 +32,7 @@ spl_autoload_register(function($className){
 function help(array $argv, Printer $printer)
 {
     $printer->stderrln(<<<YII
-  _   _  _  _ 
+  _   _  _  _
  | | | |(_)(_)
  | |_| || || |  Development Tool
   \__, ||_||_|
@@ -109,52 +111,58 @@ YII
     ->stderrln('               Pull changes for a single package repository. <package> refers to the array key in packages.php')
 
     ->stderr('  lint', Color::YELLOW)
-    ->stderrln('                         Check packages for common mistakes')
+    ->stderrln('                         Check all packages for common mistakes')
+
+    ->stderr('  lint', Color::YELLOW)
+    ->stderr(' <package>', Color::BLUE)
+    ->stderrln('               Check a single package for common mistakes. <package> refers to the array key in packages.php')
     ->stderrln();
 }
 
 $printer = new Printer();
-$commandName = $argv[1] ?? 'help';
+$args    = new Args();
+
+$commandName = $args->getCommand() ?? 'help';
 
 switch ($commandName) {
     case 'install':
-        $command = new InstallCommand($printer, in_array('--http', $argv, true), $argv[3] ?? $argv[2] ?? null);
+        $command = new InstallCommand($printer, $args->getHttp(), $args->getPackage() );
         $command->run();
 
         break;
     case 'update':
-        $command = new UpdateCommand($printer, in_array('--http', $argv, true), $argv[3] ?? $argv[2] ?? null);
+        $command = new UpdateCommand($printer,  $args->getHttp(), $args->getPackage());
         $command->run();
 
         break;
     case 'status':
-        $command = new StatusCommand($printer, $argv[2] ?? null);
+        $command = new StatusCommand($printer, $args->getPackage());
         $command->run();
 
         break;
     case 'replicate':
-        $command = new ReplicateCommand($printer, $argv[2] ?? null);
+        $command = new ReplicateCommand($printer, $args->getPackage());
         $command->run();
 
         break;
     case 'commit':
-        $command = new CommitCommand($printer, $argv[2] ?? null, $argv[3] ?? null);
+        $command = new CommitCommand($printer, $args->getPackage());
         $command->run();
 
         break;
     case 'push':
-        $command = new PushCommand($printer, $argv[2] ?? null);
+        $command = new PushCommand($printer, $args->getPackage());
         $command->run();
 
         break;
     case 'pull':
-        $command = new PullCommand($printer, $argv[2] ?? null);
+        $command = new PullCommand($printer, $args->getPackage());
         $command->run();
 
         break;
     case 'lint':
-        // TODO implement
-        $printer->stderrln('Not implemented yet!', Color::RED);
+        $command = new LintCommand($printer, $args->getPackage());
+        $command->run();
 
         break;
     default:
