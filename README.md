@@ -48,7 +48,7 @@ In order to show git status for all packages, run the following command:
 
 You can specify which package status to display:
 
-    ./yii-dev yii-demo
+    ./yii-dev status yii-demo
 
 ### Docker
 
