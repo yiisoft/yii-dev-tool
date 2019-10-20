@@ -38,7 +38,7 @@ class Args
 
 
         $this->verbose = array_key_exists('verbose', $opts) || array_key_exists('v', $opts);
-        $this->http    = array_key_exists('http',    $opts) || array_key_exists('h', $opts);
+        $this->http    = array_key_exists('http', $opts) || array_key_exists('h', $opts);
     }
 
     /**
@@ -49,7 +49,7 @@ class Args
         return $this->command;
     }
 
-   /**
+    /**
      * @return bool Setting of the Http flag
      */
     public function getHttp(): bool
