@@ -315,4 +315,42 @@ class PackageManager
             }
         }
     }
+
+    public function lint(Package $package, string $codeSnifferBinPath): void
+    {
+        $printer = $this->printer;
+        $executor = $this->executor;
+
+        $printer
+            ->stdout("Checking ")
+            ->stdout($package->getName(), Color::YELLOW)
+            ->stdoutln('...');
+
+        $command =
+            $codeSnifferBinPath . ' ' .
+            escapeshellarg($package->getPath()) . ' ' .
+            ($printer->isColorsEnabled() ? '--colors ' : '') .
+            '--standard=PSR12 --ignore=*/vendor/*,*/docs/*';
+
+        $output = $executor->execute($command)->getLastOutput();
+
+        // CodeSniffer exits with an error code if it finds problems
+        if ($executor->hasErrorOccurred()) {
+            $printer
+                ->stdoutln($output)
+                ->stdoutln();
+        } else {
+            $printer
+                ->stdoutln()
+                ->stdoutln('No problems found ✔', Color::GREEN)
+                ->stdoutln();
+        }
+    }
+
+    public function lintAll(PackageList $packageList, string $codeSnifferBinPath): void
+    {
+        foreach ($packageList->getAllPackages() as $package) {
+            $this->lint($package, $codeSnifferBinPath);
+        }
+    }
 }
