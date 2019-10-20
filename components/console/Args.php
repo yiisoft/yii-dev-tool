@@ -7,7 +7,7 @@ class Args
     /** @var string */
     private $script = null;
 
-   /** @var string */
+    /** @var string */
     private $command = null;
 
     /** @var string */
@@ -19,7 +19,7 @@ class Args
     /** @var $bool */
     private $http = false;
 
-   /**
+    /**
      *
      */
     public function __construct()
@@ -41,7 +41,7 @@ class Args
         $this->http    = array_key_exists('http',    $opts) || array_key_exists('h', $opts);
     }
 
-   /**
+    /**
      * @return string formatted text
      */
     public function getCommand(): ?string
@@ -49,7 +49,7 @@ class Args
         return $this->command;
     }
 
-  /**
+   /**
      * @return bool Setting of the Http flag
      */
     public function getHttp(): bool
@@ -57,7 +57,7 @@ class Args
         return $this->http;
     }
 
-   /**
+    /**
      * @return string formatted text
      */
     public function getPackage(): ?string
@@ -65,7 +65,7 @@ class Args
         return $this->package;
     }
 
-   /**
+    /**
      * @return string formatted text
      */
     public function getScript(): ?string
@@ -73,7 +73,7 @@ class Args
         return $this->script;
     }
 
-   /**
+    /**
      * @return bool Setting of the Verbose flag
      */
     public function getVerbose(): bool
