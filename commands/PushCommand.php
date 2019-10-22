@@ -2,46 +2,68 @@
 
 namespace yiidev\commands;
 
-use yiidev\components\console\Printer;
-use yiidev\components\package\PackageList;
-use yiidev\components\package\PackageManager;
+use yiidev\components\console\Color;
+use yiidev\components\package\Package;
+use yiidev\components\package\PackageCommand;
 
-class PushCommand
+class PushCommand extends PackageCommand
 {
-    /** @var Printer */
-    private $printer;
-
-    /** @var string|null */
-    private $targetPackageName;
-
-    /** @var PackageList */
-    private $packageList;
-
-    public function __construct(Printer $printer, string $targetPackageName = null)
-    {
-        $this->printer = $printer;
-        $this->targetPackageName = $targetPackageName;
-
-        $this->packageList = new PackageList(
-            __DIR__ . '/../packages.php',
-            __DIR__ . '/../dev'
-        );
-    }
-
     public function run(): void
     {
-        $target = $this->targetPackageName;
-        $list = $this->packageList;
-        $manager = new PackageManager($this->printer);
+        foreach ($this->getTargetPackages() as $package) {
+            $this->gitPush($package);
+        }
 
-        if ($target === null) {
-            $manager->gitPushAll($list);
-        } elseif ($list->hasPackage($target)) {
-            $manager->gitPush($list->getPackage($target));
+        $this->showPackageErrors();
+    }
+
+    private function printOperationHeader(Package $package): void
+    {
+        $this->getPrinter()
+            ->stdoutln('-----------------------------------------------------------------------')
+            ->stdout('Pushing package ')
+            ->stdoutln($package->getId(), Color::CYAN)
+            ->stdoutln('-----------------------------------------------------------------------')
+            ->stdoutln();
+    }
+
+    private function gitPush(Package $package): void
+    {
+        $printer = $this->getPrinter();
+        $executor = $this->getExecutor();
+
+        if (!$package->isGitRepositoryCloned()) {
+            if ($this->areTargetPackagesSpecifiedExplicitly() || $package->enabled()) {
+                $this->printOperationHeader($package);
+                $printer
+                    ->stdoutln('The package repository is not cloned.', Color::YELLOW)
+                    ->stdoutln('Pushing skipped.', Color::YELLOW)
+                    ->stdoutln();
+            }
+
+            return;
+        }
+
+        $this->printOperationHeader($package);
+
+        $command = 'cd ' . escapeshellarg($package->getPath()) . ' && git push';
+        $output = $executor->execute($command)->getLastOutput();
+
+        $printer->stdoutln($output);
+
+        if ($executor->hasErrorOccurred()) {
+            $package->setError($executor->getLastOutput(), 'pushing package repository');
+            $printer
+                ->stdoutln()
+                ->stderr('An error occurred during pushing package ', Color::LIGHT_RED)
+                ->stderr($package->getId(), Color::CYAN)
+                ->stderrln(' repository.', Color::LIGHT_RED)
+                ->stderrln('Package pushing aborted.', Color::LIGHT_RED)
+                ->stderrln();
         } else {
-            $this->printer->stderrln("Package '$target' not found in packages.php");
-
-            exit(1);
+            $printer
+                ->stdoutln('✔ Done.', Color::GREEN)
+                ->stdoutln();
         }
     }
 }

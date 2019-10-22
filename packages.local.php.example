@@ -1,0 +1,20 @@
+<?php
+
+$packages = [
+    // Install yiisoft 'di' package from GitHub using SSH:
+    'di' => true, // use git@github.com:yiisoft/di.git
+
+    // Install yiisoft 'yii-console' package from GitHub using HTTPS:
+    'yii-console' => 'https', // use https://github.com/yiisoft/yii-console.git
+
+    // Install own fork of 'injector' package from GitHub using SSH:
+    'injector' => 'samdark/injector', // use git@github.com:samdark/injector.git
+
+    // Install 'db-mysql' package using the specified repository address:
+    'db-mysql' => 'https://samdark@bitbucket.org/yii/db-mysql.git', // use https://samdark@bitbucket.org/yii/db-mysql.git
+
+    // Do not install 'rbac' package at all:
+    'rbac' => false,
+];
+
+return $packages;

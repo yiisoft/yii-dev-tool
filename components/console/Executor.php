@@ -2,12 +2,14 @@
 
 namespace yiidev\components\console;
 
+use RuntimeException;
+
 class Executor
 {
-    /** @var int */
+    /** @var int|null */
     private $lastResult;
 
-    /** @var string */
+    /** @var string|null */
     private $lastOutput;
 
     public function execute(string $escapedCommand): self
@@ -25,16 +27,24 @@ class Executor
 
     public function getLastResult(): int
     {
+        if ($this->lastResult === null) {
+            throw new RuntimeException('Method execute() must be called first.');
+        }
+
         return $this->lastResult;
     }
 
     public function getLastOutput(): string
     {
+        if ($this->lastOutput === null) {
+            throw new RuntimeException('Method execute() must be called first.');
+        }
+
         return $this->lastOutput;
     }
 
-    public function hasErrorOccurred(): int
+    public function hasErrorOccurred(): bool
     {
-        return $this->lastResult > 0;
+        return $this->getLastResult() > 0;
     }
 }
