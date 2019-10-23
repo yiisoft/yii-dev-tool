@@ -81,6 +81,7 @@ $packages = [
     'yiisoft/db-mongodb' => 'db-mongodb',
     'yiisoft/active-record' => 'active-record',
     //'yiisoft/migration' => 'migration',
+    'yiisoft/yii-cycle' => 'yii-cycle',
 
     // router
     'yiisoft/router' => 'router',
