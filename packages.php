@@ -16,6 +16,7 @@ $packages = [
     'yiisoft/profiler' => 'profiler',
     'yiisoft/aliases' => 'aliases',
     'yiisoft/serializer' => 'serializer',
+    'yiisoft/netutils' => 'netutils',
 
     // cache
     'yiisoft/cache' => 'cache',
