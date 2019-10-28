@@ -21,11 +21,10 @@ Install
     cd yii-dev-tool
     ./yii-dev install
     
-The above command will install all Yii 3 packages and run `composer install` in them.
+The above command will clone all Yii 3 packages and run `composer install` in them.
 You may select packages by providing a second argument:
 
-    ./yii-dev install yiisoft/core
-    ./yii-dev install yiisoft/db
+    ./yii-dev install di,rbac,db-mysql,view
     ...
     
 > Tip: You can speed up Composer significantly by installing [prestissimo](https://github.com/hirak/prestissimo) plugin
@@ -37,7 +36,7 @@ You may select packages by providing a second argument:
 Using your own fork
 -------------------
 
-In order to use your own fork copy `packages.php` to `packages.local.php` and replace `yiisoft` with your github username.
+In order to use your own fork copy `packages.local.php.example` to `packages.local.php` and customize it to your needs.
 
 Status
 ------
@@ -46,9 +45,9 @@ In order to show git status for all packages, run the following command:
 
     ./yii-dev status
 
-You can specify which package status to display:
+You can specify which packages status to display:
 
-    ./yii-dev status yii-demo
+    ./yii-dev status yii-demo,rbac,factory,di
 
 ### Docker
 
