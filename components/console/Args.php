@@ -4,80 +4,36 @@ namespace yiidev\components\console;
 
 class Args
 {
-    /** @var string */
-    private $script = null;
+    /** @var array */
+    private $argv = [];
 
     /** @var string */
-    private $command = null;
+    private $script;
 
-    /** @var string */
-    private $package = null;
+    /** @var string|null */
+    private $command;
 
-    /** @var bool */
-    private $verbose = false;
-
-    /** @var $bool */
-    private $http = false;
-
-    /**
-     *
-     */
     public function __construct()
     {
-        if (!isset($argv)) {
-            $argv = $_SERVER['argv'];
-            $argc = $_SERVER['argc'];
-        }
+        global $argv;
 
-        $opts    = getopt('hv', ['http','verbose'], $last);
-        $package = array_slice($argv, $last);
-
-        $this->script    = $argv[0];
-        $this->command   = $package[0] ?? null;
-        $this->package   = $package[1] ?? null;
-
-
-        $this->verbose = array_key_exists('verbose', $opts) || array_key_exists('v', $opts);
-        $this->http    = array_key_exists('http', $opts) || array_key_exists('h', $opts);
+        $this->argv = isset($argv) ? $argv : $_SERVER['argv'];
+        $this->script = $this->argv[0] ?? 'yii-dev';
+        $this->command = $this->argv[1] ?? null;
     }
 
-    /**
-     * @return string formatted text
-     */
+    public function getScript(): string
+    {
+        return $this->script;
+    }
+
     public function getCommand(): ?string
     {
         return $this->command;
     }
 
-    /**
-     * @return bool Setting of the Http flag
-     */
-    public function getHttp(): bool
+    public function getCommandArg(int $position): ?string
     {
-        return $this->http;
-    }
-
-    /**
-     * @return string formatted text
-     */
-    public function getPackage(): ?string
-    {
-        return $this->package;
-    }
-
-    /**
-     * @return string formatted text
-     */
-    public function getScript(): ?string
-    {
-        return $this->script;
-    }
-
-    /**
-     * @return bool Setting of the Verbose flag
-     */
-    public function getVerbose(): bool
-    {
-        return $this->verbose;
+        return $this->argv[$position + 1] ?? null;
     }
 }

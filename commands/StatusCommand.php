@@ -2,46 +2,59 @@
 
 namespace yiidev\commands;
 
-use yiidev\components\console\Printer;
-use yiidev\components\package\PackageList;
-use yiidev\components\package\PackageManager;
+use yiidev\components\console\Color;
+use yiidev\components\package\Package;
+use yiidev\components\package\PackageCommand;
 
-class StatusCommand
+class StatusCommand extends PackageCommand
 {
-    /** @var Printer */
-    private $printer;
-
-    /** @var string|null */
-    private $targetPackageName;
-
-    /** @var PackageList */
-    private $packageList;
-
-    public function __construct(Printer $printer, string $targetPackageName = null)
-    {
-        $this->printer = $printer;
-        $this->targetPackageName = $targetPackageName;
-
-        $this->packageList = new PackageList(
-            __DIR__ . '/../packages.php',
-            __DIR__ . '/../dev'
-        );
-    }
-
     public function run(): void
     {
-        $target = $this->targetPackageName;
-        $list = $this->packageList;
-        $manager = new PackageManager($this->printer);
+        foreach ($this->getTargetPackages() as $package) {
+            $this->showGitStatus($package);
+        }
+    }
 
-        if ($target === null) {
-            $manager->showGitStatuses($list);
-        } elseif ($list->hasPackage($target)) {
-            $manager->showGitStatus($list->getPackage($target));
+    private function printOperationHeader(Package $package): void
+    {
+        $this->getPrinter()
+            ->stdoutln('-----------------------------------------------------------------------')
+            ->stdout('Git status of package ')
+            ->stdoutln($package->getId(), Color::CYAN)
+            ->stdoutln('-----------------------------------------------------------------------')
+            ->stdoutln();
+    }
+
+    private function showGitStatus(Package $package): void
+    {
+        $printer = $this->getPrinter();
+        $executor = $this->getExecutor();
+
+        if (!$package->isGitRepositoryCloned()) {
+            if ($this->areTargetPackagesSpecifiedExplicitly()) {
+                $this->printOperationHeader($package);
+                $printer
+                    ->stdoutln('The package repository is not cloned.', Color::YELLOW)
+                    ->stdoutln('Git status check skipped.', Color::YELLOW)
+                    ->stdoutln();
+            }
+
+            return;
+        }
+
+        $this->printOperationHeader($package);
+
+        $command = 'cd ' . escapeshellarg($package->getPath()) . ' && git status -s';
+        $output = $executor->execute($command)->getLastOutput();
+
+        if (empty($output)) {
+            $printer
+                ->stdoutln('✔ nothing to commit, working tree clean', Color::GREEN)
+                ->stdoutln();
         } else {
-            $this->printer->stderrln("Package '$target' not found in packages.php");
-
-            exit(1);
+            $printer
+                ->stdoutln($output)
+                ->stdoutln();
         }
     }
 }

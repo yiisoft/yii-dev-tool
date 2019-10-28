@@ -10,13 +10,13 @@ class PackageList
     /** @var null|Package[] */
     private $installedList;
 
-    public function __construct(string $configFile, string $packagesBaseDirectoryPath)
+    public function __construct(string $configFile)
     {
         /** @noinspection PhpIncludeInspection */
         $config = require $configFile;
 
-        foreach ($config as $packageName => $packageDirectoryName) {
-            $this->list[$packageName] = new Package($packageName, $packageDirectoryName, $packagesBaseDirectoryPath);
+        foreach ($config as $packageId => $packageConfig) {
+            $this->list[$packageId] = new Package($packageId, $packageConfig);
         }
     }
 
@@ -28,14 +28,14 @@ class PackageList
         return $this->list;
     }
 
-    public function hasPackage(string $packageName): bool
+    public function hasPackage(string $packageId): bool
     {
-        return array_key_exists($packageName, $this->list);
+        return array_key_exists($packageId, $this->list);
     }
 
-    public function getPackage(string $packageName): ?Package
+    public function getPackage(string $packageId): ?Package
     {
-        return $this->hasPackage($packageName) ? $this->list[$packageName] : null;
+        return $this->hasPackage($packageId) ? $this->list[$packageId] : null;
     }
 
     /**
@@ -46,9 +46,9 @@ class PackageList
         if ($this->installedList === null) {
             $this->installedList = [];
 
-            foreach ($this->list as $name => $package) {
+            foreach ($this->list as $id => $package) {
                 if (file_exists($package->getPath())) {
-                    $this->installedList[$name] = $package;
+                    $this->installedList[$id] = $package;
                 }
             }
         }
@@ -63,9 +63,9 @@ class PackageList
     {
         $packages = [];
 
-        foreach ($this->list as $name => $package) {
+        foreach ($this->list as $id => $package) {
             if ($package->hasError()) {
-                $packages[$name] = $package;
+                $packages[$id] = $package;
             }
         }
 

@@ -8,7 +8,6 @@ use yiidev\commands\PullCommand;
 use yiidev\commands\PushCommand;
 use yiidev\commands\ReplicateCommand;
 use yiidev\commands\StatusCommand;
-use yiidev\commands\UpdateCommand;
 use yiidev\components\console\Args;
 use yiidev\components\console\Color;
 use yiidev\components\console\Printer;
@@ -18,10 +17,6 @@ if (PHP_VERSION_ID < 70200) {
     exit(1);
 }
 
-if (!isset($argv)) {
-    $argv = $_SERVER['argv'];
-}
-
 spl_autoload_register(function($className){
     if (substr($className, 0, 7) === 'yiidev\\') {
         /** @noinspection PhpIncludeInspection */
@@ -29,8 +24,9 @@ spl_autoload_register(function($className){
     }
 });
 
-function help(array $argv, Printer $printer)
+function help(Args $args, Printer $printer)
 {
+    /** @noinspection HtmlDeprecatedTag */
     $printer->stderrln(<<<YII
   _   _  _  _
  | | | |(_)(_)
@@ -42,130 +38,114 @@ YII
     )
     ->stderrln('This tool helps with setting up a development environment for Yii 3 packages.')
     ->stderrln()
-    ->stderrln('Usage: ' . ($argv[0] ?? 'yii-dev') . ' [OPTIONS] <command>')
+
+    ->stderrln('Usage: ')
+
+    ->stderr("  {$args->getScript()}", Color::GREEN)
+    ->stderr(' [<command>]', Color::YELLOW)
+    ->stderrln(' [<argument>]...', Color::CYAN)
+
     ->stderrln()
 
-    ->stderrln('Options:')
+    ->stderrln('Common arguments:')
+
+    ->stderr('  packages', Color::CYAN)
+    ->stderrln('  Package names separated by commas. For example:')
+    ->stderrln()
+    ->stderr('               ./yii-dev', Color::GREEN)
+    ->stderr(' install', Color::YELLOW)
+    ->stderrln(' rbac,di,yii-demo,db-mysql', Color::CYAN)
+    ->stderrln()
+    ->stderrln('            Array keys from package.php configuration can be specified.')
+    ->stderrln('            If it is not specified, then command will be applied to all packages.')
+
     ->stderrln()
 
-    ->stderr('  --http', Color::GREEN)
-    ->stderrln('   Cloning git repositories with HTTPS URLs (default SSH)')
-    ->stderrln()
-
-    ->stderrln('Available Commands:')
-    ->stderrln()
+    ->stderrln('Available commands:')
 
     ->stderr('  install', Color::YELLOW)
-    ->stderr(' [--http]', Color::GREEN)
-    ->stderrln('             Install all packages listed in packages.php')
-
-    ->stderr('  install', Color::YELLOW)
-    ->stderr(' [--http]', Color::GREEN)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('   Install a single package. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('           Install packages.')
 
     ->stderr('  update', Color::YELLOW)
-    ->stderr('  [--http]', Color::GREEN)
-    ->stderrln('             Update all packages listed in packages.php')
-
-    ->stderr('  update', Color::YELLOW)
-    ->stderr('  [--http]', Color::GREEN)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('   Update a single package. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('            Update packages.')
 
     ->stderr('  status', Color::YELLOW)
-    ->stderrln('                       Show git status for all packages listed in packages.php')
-
-    ->stderr('  status', Color::YELLOW)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('             Show git status for a single package. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('            Show git status of packages.')
 
     ->stderr('  replicate', Color::YELLOW)
-    ->stderrln('                    Copy files specified in replicate.php into each package listed in packages.php')
-
-    ->stderr('  replicate', Color::YELLOW)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('          Copy files specified in replicate.php into a single package. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('         Copy files specified in replicate.php into each package.')
 
     ->stderr('  commit', Color::YELLOW)
-    ->stderr(' <message>', Color::BLUE)
-    ->stderrln('             Add and commit changes into each package repository listed in packages.php')
-
-    ->stderr('  commit', Color::YELLOW)
-    ->stderr(' <message>', Color::BLUE)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('   Add and commit changes into a single package repository. <package> refers to the array key in packages.php')
+    ->stderr(' <message>', Color::CYAN)
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('  Add and commit changes into each package repository.')
 
     ->stderr('  push', Color::YELLOW)
-    ->stderrln('                         Push changes into each package repository listed in packages.php')
-
-    ->stderr('  push', Color::YELLOW)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('               Push changes into a single package repository. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('              Push changes into package repositories.')
 
     ->stderr('  pull', Color::YELLOW)
-    ->stderrln('                         Pull changes for each package repository listed in packages.php')
-
-    ->stderr('  pull', Color::YELLOW)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('               Pull changes for a single package repository. <package> refers to the array key in packages.php')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('              Pull changes from package repositories.')
 
     ->stderr('  lint', Color::YELLOW)
-    ->stderrln('                         Check all packages for common mistakes')
+    ->stderr(' [<packages>]', Color::CYAN)
+    ->stderrln('              Check packages according to PSR12 standard.')
 
-    ->stderr('  lint', Color::YELLOW)
-    ->stderr(' <package>', Color::BLUE)
-    ->stderrln('               Check a single package for common mistakes. <package> refers to the array key in packages.php')
     ->stderrln();
 }
 
 $printer = new Printer();
-$args    = new Args();
+$args = new Args();
 
 $commandName = $args->getCommand() ?? 'help';
 
 switch ($commandName) {
     case 'install':
-        $command = new InstallCommand($printer, $args->getHttp(), $args->getPackage() );
+        $command = new InstallCommand($printer, false, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'update':
-        $command = new UpdateCommand($printer,  $args->getHttp(), $args->getPackage());
+        $command = new InstallCommand($printer, true, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'status':
-        $command = new StatusCommand($printer, $args->getPackage());
+        $command = new StatusCommand($printer, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'replicate':
-        $command = new ReplicateCommand($printer, $args->getPackage());
+        $command = new ReplicateCommand($printer, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'commit':
-        $command = new CommitCommand($printer, $args->getPackage());
+        $command = new CommitCommand($printer, $args->getCommandArg(1), $args->getCommandArg(2));
         $command->run();
 
         break;
     case 'push':
-        $command = new PushCommand($printer, $args->getPackage());
+        $command = new PushCommand($printer, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'pull':
-        $command = new PullCommand($printer, $args->getPackage());
+        $command = new PullCommand($printer, $args->getCommandArg(1));
         $command->run();
 
         break;
     case 'lint':
-        $command = new LintCommand($printer, $args->getPackage());
+        $command = new LintCommand($printer, $args->getCommandArg(1));
         $command->run();
 
         break;
     default:
-        help($argv, $printer);
+        help($args, $printer);
         exit(1);
 }
