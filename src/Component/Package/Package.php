@@ -1,6 +1,6 @@
 <?php
 
-namespace yiidev\components\package;
+namespace Yiisoft\YiiDevTool\Component\Package;
 
 use InvalidArgumentException;
 
@@ -45,7 +45,7 @@ class Package
             $this->repositoryUrl = $config;
         }
 
-        $this->path = realpath(__DIR__ . '/../../') . '/dev/' . $id;
+        $this->path = realpath(__DIR__ . '/../../../') . '/dev/' . $id;
     }
 
     public function getId(): string
