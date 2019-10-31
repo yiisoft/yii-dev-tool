@@ -50,7 +50,7 @@ class PushCommand extends PackageCommand
         $io->header($header);
 
         $process = new Process(['git', 'push'], $package->getPath());
-        $process->run();
+        $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
             $io->write($process->getOutput() . $process->getErrorOutput());
