@@ -62,7 +62,7 @@ class InstallCommand extends PackageCommand
         $io->writeln("Repository url: <file>{$package->getRepositoryUrl()}</file>");
 
         $process = new Process(['git', 'clone', $package->getRepositoryUrl(), $package->getPath()]);
-        $process->run();
+        $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
             $io->write($process->getOutput() . $process->getErrorOutput());
@@ -133,7 +133,7 @@ class InstallCommand extends PackageCommand
             $io->hasColorSupport() ? '--ansi' : '--no-ansi',
         ]);
 
-        $process->run();
+        $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
             $io->write($process->getOutput() . $process->getErrorOutput());
