@@ -19,6 +19,7 @@ Install
 
     git clone https://github.com/yiisoft/yii-dev-tool
     cd yii-dev-tool
+    composer install
     ./yii-dev install
     
 The above command will clone all Yii 3 packages and run `composer install` in them.
