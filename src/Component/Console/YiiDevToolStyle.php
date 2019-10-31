@@ -23,6 +23,7 @@ class YiiDevToolStyle extends SymfonyStyle
         $formatter->setStyle('error', new OutputFormatterStyle('red', null, ['bold']));
         $formatter->setStyle('warning', new OutputFormatterStyle('yellow'));
         $formatter->setStyle('success', new OutputFormatterStyle('green'));
+        $formatter->setStyle('header', new OutputFormatterStyle('white', null, ['bold']));
 
         $this->hasColorSupport = $formatter->isDecorated();
     }
@@ -73,9 +74,7 @@ class YiiDevToolStyle extends SymfonyStyle
     public function header(string $message): void
     {
         $this->writeln([
-            '-----------------------------------------------------------------------',
-            $message,
-            '-----------------------------------------------------------------------',
+            '<header>▶ ' . $message . '</header>',
         ]);
 
         $this->newLine();
