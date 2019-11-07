@@ -35,21 +35,15 @@ class PullCommand extends PackageCommand
         $io = $this->getIO();
         $header = "Pulling package <package>{$package->getId()}</package>";
 
-        if (!$package->isGitRepositoryCloned()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly() || $package->enabled()) {
-                $io->header($header);
-                $io->warning([
-                    'The package repository is not cloned.',
-                    'Pulling skipped.',
-                ]);
-            }
-
-            return;
-        }
-
         $io->header($header);
 
-        $process = new Process(['git', 'pull'], $package->getPath());
+        if ($package->isConfiguredRepositoryPersonal()) {
+            $gitCommand = ['git', 'pull', 'upstream', 'master'];
+        } else {
+            $gitCommand = ['git', 'pull'];
+        }
+
+        $process = new Process($gitCommand, $package->getPath());
         $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {

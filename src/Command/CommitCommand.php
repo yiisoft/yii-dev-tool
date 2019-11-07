@@ -42,28 +42,11 @@ class CommitCommand extends PackageCommand
         $io = $this->getIO();
         $header = "Committing repository <package>{$package->getId()}</package>";
 
-        if (!$package->isGitRepositoryCloned()) {
-            if ($package->enabled()) {
-                $io->header($header);
-                $io->error([
-                    "An error occurred during committing package <package>{$package->getId()}</package> repository.",
-                    'The package repository is not cloned.',
-                    'Package committing aborted.',
-                ]);
-
-                $package->setError('The package repository is not cloned.', 'committing package repository');
-            }
-
-            return;
-        }
-
         $io->header($header);
         $io->writeln("Committing package <package>{$package->getId()}</package>...");
 
         $process = new Process(['git', 'add', '-A'], $package->getPath());
         $process->run();
-
-        // TODO: Handle errors during `git add`
 
         $process = new Process(['git', 'diff-index', '--quiet', 'HEAD'], $package->getPath());
         $process->run();

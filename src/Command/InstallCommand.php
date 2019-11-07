@@ -59,9 +59,9 @@ class InstallCommand extends PackageCommand
             return;
         }
 
-        $io->writeln("Repository url: <file>{$package->getRepositoryUrl()}</file>");
+        $io->writeln("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
 
-        $process = new Process(['git', 'clone', $package->getRepositoryUrl(), $package->getPath()]);
+        $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
         $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
@@ -77,6 +77,23 @@ class InstallCommand extends PackageCommand
             ]);
 
             $package->setError($output, 'cloning package repository');
+        }
+    }
+
+    private function setUpstream(Package $package): void
+    {
+        $io = $this->getIO();
+
+        if ($package->isConfiguredRepositoryPersonal()) {
+            $gitWorkingCopy = $package->getGitWorkingCopy();
+            $remoteName = 'upstream';
+
+            if (!$gitWorkingCopy->hasRemote($remoteName)) {
+                $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
+                $io->writeln("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
+                $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
+                $io->done();
+            }
         }
     }
 
@@ -156,18 +173,6 @@ class InstallCommand extends PackageCommand
         $io = $this->getIO();
         $header = ($this->updateMode ? 'Updating' : 'Installing') . " package <package>{$package->getId()}</package>";
 
-        if ($package->disabled()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly()) {
-                $io->header($header);
-                $io->warning([
-                    "Package <package>{$package->getId()}</package> disabled by configuration.",
-                    'Skipped.',
-                ]);
-            }
-
-            return;
-        }
-
         $io->header($header);
 
         $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
@@ -179,6 +184,8 @@ class InstallCommand extends PackageCommand
                 return;
             }
         }
+
+        $this->setUpstream($package);
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
             $this->removeSymbolicLinks($package);
