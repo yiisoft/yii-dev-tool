@@ -3,6 +3,7 @@
 namespace Yiisoft\YiiDevTool\Component\Console;
 
 use InvalidArgumentException;
+use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,14 +13,17 @@ use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
 class PackageCommand extends Command
 {
-    /** @var YiiDevToolStyle */
+    /** @var YiiDevToolStyle|null */
     private $io;
 
-    /** @var array|null */
-    private $targetPackageIds;
-
-    /** @var PackageList */
+    /** @var PackageList|null */
     private $packageList;
+
+    /** @var bool|null */
+    private $targetPackagesSpecifiedExplicitly;
+
+    /** @var Package[]|null */
+    private $targetPackages;
 
     protected function addPackageArgument(): void
     {
@@ -41,10 +45,14 @@ DESCRIPTION
 
     protected function getIO(): YiiDevToolStyle
     {
+        if ($this->io === null) {
+            throw new RuntimeException('IO is not initialized.');
+        }
+
         return $this->io;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    private function initPackageList(): void
     {
         $io = $this->getIO();
 
@@ -52,30 +60,142 @@ DESCRIPTION
             $this->packageList = new PackageList(__DIR__ . '/../../../packages.php');
         } catch (InvalidArgumentException $e) {
             $io->error([
-                'Invalid packages configuration.',
+                'Invalid local package configuration <file>packages.local.php</file>',
                 $e->getMessage(),
-                'See file <file>packages.local.php.example</file> for configuration examples.',
+                'See <file>packages.local.php.example</file> for configuration examples.',
             ]);
 
             exit(1);
         }
+    }
 
+    private function initTargetPackages(InputInterface $input): void
+    {
+        if ($this->packageList === null) {
+            throw new RuntimeException('Package list is not initialized.');
+        }
+
+        $io = $this->getIO();
         $commaSeparatedPackageIds = $input->getArgument('packages');
 
-        if ($commaSeparatedPackageIds !== null) {
-            $this->targetPackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
+        if ($commaSeparatedPackageIds === null) {
+            $this->targetPackagesSpecifiedExplicitly = false;
+            $this->targetPackages = $this->packageList->getEnabledPackages();
 
-            foreach ($this->targetPackageIds as $targetPackageId) {
-                if (!$this->packageList->hasPackage($targetPackageId)) {
+            return;
+        }
+
+        $targetPackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
+        $problemsFound = false;
+        $targetPackages = [];
+        foreach ($targetPackageIds as $targetPackageId) {
+            $package = $this->packageList->getPackage($targetPackageId);
+
+            if ($package === null) {
+                $io->error("Package <package>$targetPackageId</package> not found in <file>packages.php</file>");
+                $problemsFound = true;
+                continue;
+            }
+
+            if ($package->disabled()) {
+                $io->error("Package <package>$targetPackageId</package> disabled in <file>packages.local.php</file>");
+                $problemsFound = true;
+                continue;
+            }
+
+            $targetPackages[] = $package;
+        }
+
+        if ($problemsFound) {
+            exit(1);
+        }
+
+        $this->targetPackagesSpecifiedExplicitly = true;
+        $this->targetPackages = $targetPackages;
+    }
+
+    private function isCurrentInstallationValid(Package $package): bool
+    {
+        $io = $this->getIO();
+
+        if (!$package->isGitRepositoryCloned()) {
+            // TODO: Implement extensible validation instead of checking command names
+            if (in_array($this->getName(), ['install', 'update'], true)) {
+                return true;
+            }
+
+            $io->error([
+                "Package <package>{$package->getId()}</package> repository is not cloned.",
+                'To fix, run the command:',
+                '',
+                "  <cmd>./yii-dev install {$package->getId()}</cmd>",
+            ]);
+
+            if (!$this->areTargetPackagesSpecifiedExplicitly()) {
+                $io->error([
+                    'You can also disable the package in <file>packages.local.php</file>',
+                    'See <file>packages.local.php.example</file> for configuration examples.',
+                ]);
+            }
+
+            return false;
+        }
+
+        $gitWorkingCopy = $package->getGitWorkingCopy();
+        $remoteOriginUrl = $gitWorkingCopy->getRemoteUrl('origin');
+        if ($package->getConfiguredRepositoryUrl() !== $remoteOriginUrl) {
+            $io->error([
+                "Package <package>{$package->getId()}</package> repository is cloned from <file>{$remoteOriginUrl}</file>, but url <file>{$package->getConfiguredRepositoryUrl()}</file> is configured.",
+                'To fix, delete the existing working copy of the repository and run the command:',
+                '',
+                "  <cmd>./yii-dev install {$package->getId()}</cmd>",
+                '',
+                'Before deleting, make sure that you do not have local changes, branches and tags that are not sent to remote repository.',
+                'You can also reconfigure the package repository url in <file>packages.local.php</file>',
+                'See <file>packages.local.php.example</file> for configuration examples.',
+            ]);
+
+            return false;
+        }
+
+        // TODO: Implement extensible validation instead of checking command names
+        if ($this->getName() === 'pull') {
+            if ($package->isConfiguredRepositoryPersonal()) {
+                if (!$gitWorkingCopy->hasRemote('upstream')) {
                     $io->error([
-                        "Package <package>$targetPackageId</package> not found in <file>packages.php</file>.",
-                        'Execution aborted.',
+                        "Package <package>{$package->getId()}</package> repository is personal and has no remote 'upstream'.",
+                        'To fix, run the command:',
+                        '',
+                        "  <cmd>./yii-dev install {$package->getId()}</cmd>",
                     ]);
 
-                    exit(1);
+                    return false;
                 }
             }
         }
+
+        return true;
+    }
+
+    private function checkCurrentInstallation(): void
+    {
+        $problemsFound = false;
+        foreach ($this->getTargetPackages() as $package) {
+            if (!$this->isCurrentInstallationValid($package)) {
+                $problemsFound = true;
+            }
+        }
+
+        if ($problemsFound) {
+            exit(1);
+        }
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->initPackageList();
+        $this->initTargetPackages($input);
+        $this->checkCurrentInstallation();
     }
 
     protected function getPackageList(): PackageList
@@ -85,7 +205,11 @@ DESCRIPTION
 
     protected function areTargetPackagesSpecifiedExplicitly(): bool
     {
-        return $this->targetPackageIds !== null;
+        if ($this->targetPackagesSpecifiedExplicitly === null) {
+            throw new RuntimeException('Target packages are not initialized.');
+        }
+
+        return $this->targetPackagesSpecifiedExplicitly;
     }
 
     /**
@@ -93,19 +217,11 @@ DESCRIPTION
      */
     protected function getTargetPackages(): array
     {
-        $targetIds = $this->targetPackageIds;
-        $packageList = $this->packageList;
-
-        if ($targetIds === null) {
-            return $packageList->getAllPackages();
+        if ($this->targetPackages === null) {
+            throw new RuntimeException('Target packages are not initialized.');
         }
 
-        $packages = [];
-        foreach ($targetIds as $targetId) {
-            $packages[] = $packageList->getPackage($targetId);
-        }
-
-        return $packages;
+        return $this->targetPackages;
     }
 
     protected function showPackageErrors(): void
@@ -116,7 +232,7 @@ DESCRIPTION
         if (count($packagesWithError)) {
             $io->error([
                 '=======================================================================',
-                'SUMMARY OF ERRORS THAT OCCURED',
+                'SUMMARY OF ERRORS THAT OCCURRED',
                 '=======================================================================',
             ]);
 

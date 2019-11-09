@@ -67,7 +67,7 @@ class ReplicateCommand extends PackageCommand
                 'But such a package is not installed.',
                 'To fix, run the following command:',
                 '',
-                "  ./yii-dev install $replicationSourcePackageId",
+                "  <cmd>./yii-dev install $replicationSourcePackageId</cmd>",
                 '',
                 'Replication aborted.',
             ]);
@@ -89,21 +89,6 @@ class ReplicateCommand extends PackageCommand
                     'Cannot replicate into itself.',
                     "Package <package>{$package->getId()}</package> skipped.",
                 ]);
-            }
-
-            return;
-        }
-
-        if (!$package->doesPackageDirectoryExist()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly() || $package->enabled()) {
-                $io->header($header);
-                $io->error([
-                    'An error occurred during replication.',
-                    "Package directory <file>{$package->getPath()}</file> does not exist.",
-                    'Package replication aborted.',
-                ]);
-
-                $package->setError('Package directory does not exist.', "replication");
             }
 
             return;

@@ -2,15 +2,21 @@
 
 namespace Yiisoft\YiiDevTool\Component\Package;
 
+use GitWrapper\GitWorkingCopy;
+use GitWrapper\GitWrapper;
 use InvalidArgumentException;
+use RuntimeException;
 
 class Package
 {
+    /** @var GitWrapper|null */
+    private static $gitWrapper;
+
     /** @var string */
     private $id;
 
     /** @var string|null */
-    private $repositoryUrl;
+    private $configuredRepositoryUrl;
 
     /** @var string */
     private $path;
@@ -20,6 +26,18 @@ class Package
 
     /** @var string|null */
     private $errorDuring;
+
+    /** @var GitWorkingCopy|null */
+    private $gitWorkingCopy;
+
+    private static function getGitWrapper(): GitWrapper
+    {
+        if (static::$gitWrapper === null) {
+            static::$gitWrapper = new GitWrapper();
+        }
+
+        return static::$gitWrapper;
+    }
 
     public function __construct(string $id, $config)
     {
@@ -34,15 +52,15 @@ class Package
         }
 
         if ($config === false) {
-            $this->repositoryUrl = null;
+            $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {
-            $this->repositoryUrl = "git@github.com:yiisoft/$id.git";
+            $this->configuredRepositoryUrl = "git@github.com:yiisoft/$id.git";
         } elseif ($config === 'https') {
-            $this->repositoryUrl = "https://github.com/yiisoft/$id.git";
+            $this->configuredRepositoryUrl = "https://github.com/yiisoft/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
-            $this->repositoryUrl = "git@github.com:$config.git";
+            $this->configuredRepositoryUrl = "git@github.com:$config.git";
         } else {
-            $this->repositoryUrl = $config;
+            $this->configuredRepositoryUrl = $config;
         }
 
         $this->path = realpath(__DIR__ . '/../../../') . '/dev/' . $id;
@@ -53,14 +71,40 @@ class Package
         return $this->id;
     }
 
-    public function getRepositoryUrl(): ?string
+    public function getConfiguredRepositoryUrl(): string
     {
-        return $this->repositoryUrl;
+        if ($this->configuredRepositoryUrl === null) {
+            throw new RuntimeException('Package does not have repository url.');
+        }
+
+        return $this->configuredRepositoryUrl;
+    }
+
+    public function getOriginalRepositoryHttpsUrl(): string
+    {
+        return "https://github.com/yiisoft/{$this->id}.git";
+    }
+
+    public function getPossibleOriginalRepositoryUrls(): array
+    {
+        return [
+            "https://github.com/yiisoft/{$this->id}.git",
+            "git@github.com:yiisoft/{$this->id}.git",
+        ];
+    }
+
+    public function isConfiguredRepositoryPersonal(): bool
+    {
+        return !in_array(
+            $this->getConfiguredRepositoryUrl(),
+            $this->getPossibleOriginalRepositoryUrls(),
+            true
+        );
     }
 
     public function disabled(): bool
     {
-        return $this->repositoryUrl === null;
+        return $this->configuredRepositoryUrl === null;
     }
 
     public function enabled(): bool
@@ -75,12 +119,26 @@ class Package
 
     public function doesPackageDirectoryExist(): bool
     {
-        return file_exists($this->getPath());
+        return file_exists($this->path);
     }
 
     public function isGitRepositoryCloned(): bool
     {
-        return file_exists("{$this->getPath()}/.git");
+        return file_exists("{$this->path}/.git");
+    }
+
+    // TODO: Call all git commands through this interface
+    public function getGitWorkingCopy(): GitWorkingCopy
+    {
+        if (!$this->isGitRepositoryCloned()) {
+            throw new RuntimeException('Package does not have git working copy.');
+        }
+
+        if ($this->gitWorkingCopy === null) {
+            $this->gitWorkingCopy = static::getGitWrapper()->workingCopy($this->path);
+        }
+
+        return $this->gitWorkingCopy;
     }
 
     public function setError(string $error, string $during): void

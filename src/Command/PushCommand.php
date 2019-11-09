@@ -35,18 +35,6 @@ class PushCommand extends PackageCommand
         $io = $this->getIO();
         $header = "Pushing package <package>{$package->getId()}</package>";
 
-        if (!$package->isGitRepositoryCloned()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly() || $package->enabled()) {
-                $io->header($header);
-                $io->warning([
-                    'The package repository is not cloned.',
-                    'Pushing skipped.',
-                ]);
-            }
-
-            return;
-        }
-
         $io->header($header);
 
         $process = new Process(['git', 'push'], $package->getPath());

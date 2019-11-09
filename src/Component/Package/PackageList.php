@@ -71,4 +71,20 @@ class PackageList
 
         return $packages;
     }
+
+    /**
+     * @return Package[]
+     */
+    public function getEnabledPackages(): array
+    {
+        $packages = [];
+
+        foreach ($this->list as $id => $package) {
+            if ($package->enabled()) {
+                $packages[$id] = $package;
+            }
+        }
+
+        return $packages;
+    }
 }

@@ -44,19 +44,6 @@ class StatusCommand extends PackageCommand
 
         $header = ($io->isVerbose() ? 'Git status of package ' : '') . "<package>{$package->getId()}</package>";
 
-        if (!$package->isGitRepositoryCloned()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly()) {
-                $io->header($header);
-                $io->warning([
-                    'The package repository is not cloned.',
-                    'Git status check skipped.',
-                ]);
-            }
-
-            return;
-        }
-
-
         $process = new Process(['git', 'status', '-s'], $package->getPath());
         $process->run();
         $output = $process->getOutput();

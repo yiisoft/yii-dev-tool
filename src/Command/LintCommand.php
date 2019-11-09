@@ -33,18 +33,6 @@ class LintCommand extends PackageCommand
         $io = $this->getIO();
         $header = "Linting package <package>{$package->getId()}</package>";
 
-        if (!$package->isGitRepositoryCloned()) {
-            if ($this->areTargetPackagesSpecifiedExplicitly()) {
-                $io->header($header);
-                $io->warning([
-                    'The package repository is not cloned.',
-                    'Linting skipped.',
-                ]);
-            }
-
-            return;
-        }
-
         $io->header($header);
 
         $process = new Process([

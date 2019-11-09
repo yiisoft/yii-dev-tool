@@ -18,7 +18,8 @@
         "symfony/console": "^4.0",
         "symfony/filesystem": "^4.0",
         "symfony/finder": "^4.0",
-        "symfony/process": "^4.0"
+        "symfony/process": "^4.0",
+        "cpliakas/git-wrapper": "^2.0"
     },
     "autoload": {
         "psr-4": {
