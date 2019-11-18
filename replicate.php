@@ -10,6 +10,7 @@ return [
         '.github/CODE_OF_CONDUCT.md',
         '.github/SECURITY.md',
 
+        '.editorconfig',
         '.scrutinizer.yml',
         '.styleci.yml',
     ],
