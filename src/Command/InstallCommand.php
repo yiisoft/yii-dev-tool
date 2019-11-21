@@ -2,6 +2,7 @@
 
 namespace Yiisoft\YiiDevTool\Command;
 
+use GitWrapper\GitException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -185,7 +186,16 @@ class InstallCommand extends PackageCommand
             }
         }
 
-        $this->setUpstream($package);
+        try {
+            $this->setUpstream($package);
+        } catch (GitException $e) {
+            // Temporarily ignore git errors because
+            // there is some error in a third-party package in the Windows console.
+            //
+            // See https://github.com/yiisoft/yii-dev-tool/issues/42#issuecomment-556997426 for details.
+            //
+            // We will remove this hack when the third-party package is fixed.
+        }
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
             $this->removeSymbolicLinks($package);
