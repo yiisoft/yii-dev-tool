@@ -2,9 +2,9 @@
 
 namespace Yiisoft\YiiDevTool\Command;
 
+use GitWrapper\GitException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
@@ -37,22 +37,26 @@ class PushCommand extends PackageCommand
 
         $io->header($header);
 
-        $process = new Process(['git', 'push'], $package->getPath());
-        $process->setTimeout(null)->run();
+        $gitWorkingCopy = $package->getGitWorkingCopy();
 
-        if ($process->isSuccessful()) {
-            $io->write($process->getOutput() . $process->getErrorOutput());
+        try {
+            $currentBranch = $gitWorkingCopy->getBranches()->head();
+
+            if ($currentBranch === 'master') {
+                $gitWorkingCopy->push();
+            } else {
+                $gitWorkingCopy->push('origin', $currentBranch);
+            }
+
             $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->writeln($output);
+        } catch (GitException $e) {
             $io->error([
                 "An error occurred during pushing package <package>{$package->getId()}</package> repository.",
+                $e->getMessage(),
                 'Package push aborted.',
             ]);
 
-            $package->setError($output, 'pushing package repository');
+            $package->setError($e->getMessage(), 'pushing package repository');
         }
     }
 }
