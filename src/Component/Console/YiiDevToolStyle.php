@@ -25,6 +25,7 @@ class YiiDevToolStyle extends SymfonyStyle
         $formatter->setStyle('success', new OutputFormatterStyle('green'));
         $formatter->setStyle('header', new OutputFormatterStyle('white', null, ['bold']));
         $formatter->setStyle('cmd', new OutputFormatterStyle('green', null, ['bold']));
+        $formatter->setStyle('em', new OutputFormatterStyle('yellow', null, ['bold']));
 
         $this->hasColorSupport = $formatter->isDecorated();
     }

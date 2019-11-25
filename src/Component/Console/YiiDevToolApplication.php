@@ -8,6 +8,7 @@ use Symfony\Component\Console\Command\ListCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+use Yiisoft\YiiDevTool\Command\CheckoutBranchCommand;
 use Yiisoft\YiiDevTool\Command\CommitCommand;
 use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
@@ -39,6 +40,7 @@ HEADER;
         return [
             (new HelpCommand())->setHidden(true),
             (new ListCommand())->setHidden(true),
+            new CheckoutBranchCommand(),
             new CommitCommand(),
             new InstallCommand(),
             new LintCommand(),
