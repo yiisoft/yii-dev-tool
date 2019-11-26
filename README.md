@@ -8,14 +8,28 @@ It allows to work on separate packages and test the result in other packages at 
 Requirements
 ------------
 
-- This is currently only tested on GNU/Linux and Windows with bash, if you have another system, please try and report if something is not working.
+### Manual install
+
+If you prefer manual install, you need:
+- GNU/Linux or Windows **with bash**
 - PHP 7.2 or higher
 - [Composer](https://getcomposer.org/) installed and
   available [as `composer` on the command line](https://getcomposer.org/doc/00-intro.md#globally)
 
+### Vagrant
 
-Install
--------
+If you prefer Vagrant, you only need to install 
+[Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads),
+because our Vagrant environment already contains Ubuntu, PHP and Composer. 
+See our Vagrant [documentation](vagrant/README.md) for details.
+
+### Docker
+
+If you prefer Docker, you only need to install [Docker](https://www.docker.com/).
+
+
+Manual install
+--------------
 
 ```bash
 git clone https://github.com/yiisoft/yii-dev-tool
