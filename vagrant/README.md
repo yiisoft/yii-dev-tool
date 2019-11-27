@@ -17,9 +17,9 @@ Installation
 ### Manual for Linux/Unix users
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html)
-1. Create GitHub [personal API token](https://github.com/blog/1509-personal-api-tokens)
-1. Prepare project:
+2. Install [Vagrant](https://www.vagrantup.com/downloads.html)
+3. Create GitHub [personal API token](https://github.com/blog/1509-personal-api-tokens)
+4. Prepare project:
    
    ```bash
    git clone https://github.com/yiisoft/yii-dev-tool.git
@@ -27,14 +27,14 @@ Installation
    cp vagrant-local.example.yml vagrant-local.yml
    ```
    
-1. Place your GitHub personal API token to `vagrant-local.yml`
-1. Change directory to project root:
+5. Place your GitHub personal API token to `vagrant-local.yml`
+6. Change directory to project root:
 
    ```bash
    cd yii-dev-tool
    ```
 
-1. Run command:
+7. Run command:
 
    ```bash
    vagrant up
@@ -45,17 +45,17 @@ That's all. You just need to wait for completion!
 ### Manual for Windows users
 
 1. Install [VirtualBox](https://www.virtualbox.org/wiki/Downloads)
-1. Install [Vagrant](https://www.vagrantup.com/downloads.html)
-1. Reboot
-1. Create GitHub [personal API token](https://github.com/blog/1509-personal-api-tokens)
-1. Prepare project:
+2. Install [Vagrant](https://www.vagrantup.com/downloads.html)
+3. Reboot
+4. Create GitHub [personal API token](https://github.com/blog/1509-personal-api-tokens)
+5. Prepare project:
    * download repo [yiisoft/yii-dev-tool](https://github.com/yiisoft/yii-dev-tool/archive/master.zip)
    * unzip it
    * go into directory `yii-dev-tool-master/vagrant/config`
    * copy `vagrant-local.example.yml` to `vagrant-local.yml`
 
-1. Place your GitHub personal API token to `vagrant-local.yml`
-1. Open terminal (`cmd.exe`), **change directory to project root** and run command:
+6. Place your GitHub personal API token to `vagrant-local.yml`
+7. Open terminal (`cmd.exe`), **change directory to project root** and run command:
 
    ```bash
    vagrant up
