@@ -83,6 +83,15 @@ For example:
 ```
 
 
+SSH keys
+--------
+
+Our vagrant environment automatically uses SSH keys from the host machine. Therefore, you do not need 
+to separately generate keys for the guest machine. Just make sure the keys from your host machine are added 
+to [your list of keys](https://github.com/settings/keys) on GitHub. This is necessary in order to access 
+remote repositories via SSH protocol.
+
+
 Bash history
 ------------
 

@@ -51,6 +51,9 @@ Vagrant.configure(2) do |config|
   # sync: yii-dev-tool repository folder (host machine) -> folder '/yii-dev-tool' (guest machine)
   config.vm.synced_folder "./", "/yii-dev-tool", owner: "vagrant", group: "vagrant"
 
+  # use SSH keys from host machine on guest machine
+  config.ssh.forward_agent = true
+
   # hosts settings (host machine)
   config.vm.provision :hostmanager
   config.hostmanager.enabled            = true
