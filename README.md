@@ -221,7 +221,8 @@ Remember that **yii-dev-tool** contains many other commands for working with rep
 * `./yii-dev lint` – check packages according to PSR12 standard
 * `./yii-dev pull` – pull changes from package repositories
 * `./yii-dev push` – push changes into package repositories
-* `./yii-dev replicate` – copy files specified in `replicate.php` into each package
+* `./yii-dev replicate/files` – copy files specified in `config/replicate/files.php` into each package
+* `./yii-dev replicate/composer-config` – merge `config/replicate/composer.json` into `composer.json` of each package
 * `./yii-dev status` – show git status of packages
 * `./yii-dev update` – update packages
 
