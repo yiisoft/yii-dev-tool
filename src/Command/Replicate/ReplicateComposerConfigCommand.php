@@ -29,6 +29,30 @@ class ReplicateComposerConfigCommand extends PackageCommand
         $this->showPackageErrors();
     }
 
+    // TODO: Write tests
+    private function merge($a, $b): array
+    {
+        foreach ($b as $key => $value) {
+            if (is_string($key)) {
+                if (array_key_exists($key, $a) && is_array($value)) {
+                    $a[$key] = $this->merge($a[$key], $value);
+                } else {
+                    $a[$key] = $value;
+                }
+            } else {
+                $index = array_search($value, $a, true);
+
+                if ($index === false) {
+                    $a[] = $value;
+                } else {
+                    $a[$index] = $value;
+                }
+            }
+        }
+
+        return $a;
+    }
+
     private function replicateToPackage(Package $package): void
     {
         $io = $this->getIO();
@@ -52,7 +76,7 @@ class ReplicateComposerConfigCommand extends PackageCommand
         $replicationSourceContent = file_get_contents(__DIR__ . '/../../../config/replicate/composer.json');
         $replicationSourceConfig = json_decode($replicationSourceContent, true);
 
-        $mergedConfig = array_merge($currentConfig, $replicationSourceConfig);
+        $mergedConfig = $this->merge($currentConfig, $replicationSourceConfig);
         $mergedContent = json_encode($mergedConfig, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
         file_put_contents($targetPath, $mergedContent);
 
