@@ -1,0 +1,2 @@
+#!/bin/sh
+env PHP_IDE_CONFIG="serverName=console" XDEBUG_CONFIG="idekey=PHPSTORM" $@
