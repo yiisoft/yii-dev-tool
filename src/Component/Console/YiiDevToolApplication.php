@@ -14,7 +14,8 @@ use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\PullCommand;
 use Yiisoft\YiiDevTool\Command\PushCommand;
-use Yiisoft\YiiDevTool\Command\ReplicateCommand;
+use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
+use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\Command\StatusCommand;
 use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
@@ -46,7 +47,8 @@ HEADER;
             new LintCommand(),
             new PullCommand(),
             new PushCommand(),
-            new ReplicateCommand(),
+            new ReplicateFilesCommand(),
+            new ReplicateComposerConfigCommand(),
             new StatusCommand(),
             new UpdateCommand(),
         ];

@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Replicate;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,7 +10,7 @@ use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Package\ReplicationSource;
 
-class ReplicateCommand extends PackageCommand
+class ReplicateFilesCommand extends PackageCommand
 {
     /** @var ReplicationSource */
     private $replicationSource;
@@ -18,8 +18,8 @@ class ReplicateCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('replicate')
-            ->setDescription('Copy files specified in replicate.php into each package');
+            ->setName('replicate/files')
+            ->setDescription('Copy files specified in <fg=blue;options=bold>config/replicate/files.php</> into each package');
 
         $this->addPackageArgument();
     }
@@ -28,7 +28,7 @@ class ReplicateCommand extends PackageCommand
     {
         parent::execute($input, $output);
 
-        $replicationConfig = require __DIR__ . '/../../replicate.php';
+        $replicationConfig = require __DIR__ . '/../../../config/replicate/files.php';
 
         $this->replicationSource = new ReplicationSource(
             $replicationConfig['sourcePackage'],
