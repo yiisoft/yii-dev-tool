@@ -118,7 +118,7 @@ $packages = [
     // other
     'yii-docker' => true,
     'validator' => true,
-    'friendlyexception' => true,
+    'friendly-exception' => true,
 
     // repository template
     'template' => true,
