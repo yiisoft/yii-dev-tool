@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -13,7 +13,7 @@ class PullCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('pull')
+            ->setName('git/pull')
             ->setDescription('Pull changes from package repositories');
 
         $this->addPackageArgument();

@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -17,7 +17,7 @@ class CommitCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('commit')
+            ->setName('git/commit')
             ->addArgument('message', InputArgument::REQUIRED, 'Commit message')
             ->setDescription('Add and commit changes into each package repository');
 

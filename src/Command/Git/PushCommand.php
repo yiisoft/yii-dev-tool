@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Git;
 
 use GitWrapper\GitException;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,7 +13,7 @@ class PushCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('push')
+            ->setName('git/push')
             ->setDescription('Push changes into package repositories');
 
         $this->addPackageArgument();
