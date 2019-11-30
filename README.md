@@ -215,6 +215,7 @@ slightly different for different tasks and configurations.
 
 Remember that **yii-dev-tool** contains many other commands for working with repositories:
 
+* `./yii-dev exec` – executes the specified console command in each package
 * `./yii-dev git/checkout-branch` – creates, if not exists, and checkout a git branch
 * `./yii-dev git/commit` – add and commit changes into each package repository
 * `./yii-dev git/pull` – pull changes from package repositories
