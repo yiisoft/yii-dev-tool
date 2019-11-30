@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -17,7 +17,7 @@ class StatusCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('status')
+            ->setName('git/status')
             ->setDescription('Show git status of packages')
             ->addOption('--verbose', '-v', InputOption::VALUE_NONE, 'Increase the verbosity of messages');
 

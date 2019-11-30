@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -16,7 +16,7 @@ class CheckoutBranchCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('checkout-branch')
+            ->setName('git/checkout-branch')
             ->addArgument('branch', InputArgument::REQUIRED, 'Branch name')
             ->setDescription('Creates, if not exists, and checkout a git branch');
 

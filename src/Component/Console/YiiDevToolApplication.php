@@ -8,15 +8,15 @@ use Symfony\Component\Console\Command\ListCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
-use Yiisoft\YiiDevTool\Command\CheckoutBranchCommand;
-use Yiisoft\YiiDevTool\Command\CommitCommand;
+use Yiisoft\YiiDevTool\Command\Git\CheckoutBranchCommand;
+use Yiisoft\YiiDevTool\Command\Git\CommitCommand;
+use Yiisoft\YiiDevTool\Command\Git\PullCommand;
+use Yiisoft\YiiDevTool\Command\Git\PushCommand;
+use Yiisoft\YiiDevTool\Command\Git\StatusCommand;
 use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
-use Yiisoft\YiiDevTool\Command\PullCommand;
-use Yiisoft\YiiDevTool\Command\PushCommand;
-use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
-use Yiisoft\YiiDevTool\Command\StatusCommand;
+use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
 class YiiDevToolApplication extends Application

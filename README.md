@@ -167,7 +167,7 @@ Create a new **feature-x** branch in the repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev checkout-branch feature-x yii-demo,view,i18n
+./yii-dev git/checkout-branch feature-x yii-demo,view,i18n
 ```
 
 ### Step 6: writing the code
@@ -191,14 +191,14 @@ Commit the changes:
 
 ```bash
 cd yii-dev-tool
-./yii-dev commit "Add feature X" yii-demo,view,i18n
+./yii-dev git/commit "Add feature X" yii-demo,view,i18n
 ```
 
 Push the new code to remote repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev push yii-demo,view,i18n
+./yii-dev git/push yii-demo,view,i18n
 ```
 
 ### Step 9: create pull requests
@@ -215,15 +215,15 @@ slightly different for different tasks and configurations.
 
 Remember that **yii-dev-tool** contains many other commands for working with repositories:
 
-* `./yii-dev checkout-branch` – creates, if not exists, and checkout a git branch
-* `./yii-dev commit` – add and commit changes into each package repository
+* `./yii-dev git/checkout-branch` – creates, if not exists, and checkout a git branch
+* `./yii-dev git/commit` – add and commit changes into each package repository
+* `./yii-dev git/pull` – pull changes from package repositories
+* `./yii-dev git/push` – push changes into package repositories
+* `./yii-dev git/status` – show git status of packages
 * `./yii-dev install` – install packages
 * `./yii-dev lint` – check packages according to PSR12 standard
-* `./yii-dev pull` – pull changes from package repositories
-* `./yii-dev push` – push changes into package repositories
 * `./yii-dev replicate/files` – copy files specified in `config/replicate/files.php` into each package
 * `./yii-dev replicate/composer-config` – merge `config/replicate/composer.json` into `composer.json` of each package
-* `./yii-dev status` – show git status of packages
 * `./yii-dev update` – update packages
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
