@@ -26,7 +26,14 @@ class ReplicateComposerConfigCommand extends PackageCommand
             $this->replicateToPackage($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->done();
+        }
     }
 
     // TODO: Write tests
@@ -56,9 +63,7 @@ class ReplicateComposerConfigCommand extends PackageCommand
     private function replicateToPackage(Package $package): void
     {
         $io = $this->getIO();
-
-        $header = "Merging <file>config/replicate/composer.json</file> to package <package>{$package->getId()}</package>";
-        $io->header($header);
+        $io->preparePackageHeader($package, "Merging <file>config/replicate/composer.json</file> to package {package}");
 
         $targetPath = "{$package->getPath()}/composer.json";
         if (!file_exists($targetPath)) {

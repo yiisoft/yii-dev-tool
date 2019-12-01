@@ -27,15 +27,20 @@ class PushCommand extends PackageCommand
             $this->gitPush($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->done();
+        }
     }
 
     private function gitPush(Package $package): void
     {
         $io = $this->getIO();
-        $header = "Pushing package <package>{$package->getId()}</package>";
-
-        $io->header($header);
+        $io->preparePackageHeader($package, "Pushing package {package}");
 
         $gitWorkingCopy = $package->getGitWorkingCopy();
 

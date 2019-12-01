@@ -26,14 +26,19 @@ class LintCommand extends PackageCommand
         foreach ($this->getTargetPackages() as $package) {
             $this->lint($package);
         }
+
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->success('✔ No problems found.');
+        }
     }
 
     private function lint(Package $package): void
     {
         $io = $this->getIO();
-        $header = "Linting package <package>{$package->getId()}</package>";
-
-        $io->header($header);
+        $io->preparePackageHeader($package, "Linting package {package}");
 
         $process = new Process([
             './vendor/bin/phpcs',
@@ -46,7 +51,7 @@ class LintCommand extends PackageCommand
         $process->run();
 
         if ($process->getExitCode() > 0) {
-            $io->writeln($process->getOutput() . $process->getErrorOutput());
+            $io->important()->info($process->getOutput() . $process->getErrorOutput());
         } else {
             $io->success('✔ No problems found.');
         }

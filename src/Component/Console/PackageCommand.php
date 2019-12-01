@@ -13,7 +13,7 @@ use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
 class PackageCommand extends Command
 {
-    /** @var YiiDevToolStyle|null */
+    /** @var OutputManager|null */
     private $io;
 
     /** @var PackageList|null */
@@ -40,10 +40,10 @@ DESCRIPTION
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->io = new YiiDevToolStyle($input, $output);
+        $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
     }
 
-    protected function getIO(): YiiDevToolStyle
+    protected function getIO(): OutputManager
     {
         if ($this->io === null) {
             throw new RuntimeException('IO is not initialized.');
@@ -230,16 +230,17 @@ DESCRIPTION
         $packagesWithError = $this->getPackageList()->getPackagesWithError();
 
         if (count($packagesWithError)) {
-            $io->error([
+            $io->important()->info([
+                '<em>',
                 '=======================================================================',
                 'SUMMARY OF ERRORS THAT OCCURRED',
                 '=======================================================================',
+                '</em>',
             ]);
 
             foreach ($packagesWithError as $package) {
-                $io->header("Package <package>{$package->getId()}</package> error occurred during <fg=yellow>{$package->getErrorDuring()}</>:");
-                $io->writeln($package->getError());
-                $io->newLine();
+                $io->preparePackageHeader($package, "Package {package} error occurred during <em>{$package->getErrorDuring()}</em>:");
+                $io->important()->info($package->getError());
             }
         }
     }

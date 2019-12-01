@@ -61,6 +61,7 @@ HEADER;
         return new InputDefinition([
             new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'),
             new InputOption('--help', '-h', InputOption::VALUE_NONE, 'Display this help message'),
+            new InputOption('--verbose', '-v', InputOption::VALUE_NONE, 'Increase the verbosity of messages'),
         ]);
     }
 }

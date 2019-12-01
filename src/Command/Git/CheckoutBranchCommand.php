@@ -33,15 +33,20 @@ class CheckoutBranchCommand extends PackageCommand
             $this->gitCheckoutBranch($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->done();
+        }
     }
 
     private function gitCheckoutBranch(Package $package): void
     {
         $io = $this->getIO();
-        $header = "Checkout branch <em>{$this->branch}</em> in <package>{$package->getId()}</package> repository";
-
-        $io->header($header);
+        $io->preparePackageHeader($package, "Checkout branch <em>{$this->branch}</em> in {package} repository");
 
         $gitWorkingCopy = $package->getGitWorkingCopy();
         $branches = $gitWorkingCopy->getBranches()->all();

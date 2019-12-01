@@ -34,16 +34,20 @@ class CommitCommand extends PackageCommand
             $this->gitCommit($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->warning('Nothing to commit');
+        }
     }
 
     private function gitCommit(Package $package): void
     {
         $io = $this->getIO();
-        $header = "Committing repository <package>{$package->getId()}</package>";
-
-        $io->header($header);
-        $io->writeln("Committing package <package>{$package->getId()}</package>...");
+        $io->preparePackageHeader($package, "Committing {package} repository");
 
         $process = new Process(['git', 'add', '-A'], $package->getPath());
         $process->run();
@@ -64,12 +68,12 @@ class CommitCommand extends PackageCommand
         $process->run();
 
         if ($process->isSuccessful()) {
-            $io->write($process->getOutput() . $process->getErrorOutput());
+            $io->important()->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->writeln($output);
+            $io->important()->info($output);
             $io->error([
                 "An error occurred during committing package <package>{$package->getId()}</package> repository.",
                 'Package committing aborted.',

@@ -27,15 +27,20 @@ class PullCommand extends PackageCommand
             $this->gitPull($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->warning('Nothing to pull');
+        }
     }
 
     private function gitPull(Package $package): void
     {
         $io = $this->getIO();
-        $header = "Pulling package <package>{$package->getId()}</package>";
-
-        $io->header($header);
+        $io->preparePackageHeader($package, "Pulling package {package}");
 
         if ($package->isConfiguredRepositoryPersonal()) {
             $gitCommand = ['git', 'pull', 'upstream', 'master'];
@@ -47,12 +52,14 @@ class PullCommand extends PackageCommand
         $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
-            $io->write($process->getOutput() . $process->getErrorOutput());
+            $output = $process->getOutput() . $process->getErrorOutput();
+
+            $io->important(trim($output) !== 'Already up to date.')->info($output);
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->writeln($output);
+            $io->important()->info($output);
             $io->error([
                 "An error occurred during pulling package <package>{$package->getId()}</package> repository.",
                 'Package pull aborted.',

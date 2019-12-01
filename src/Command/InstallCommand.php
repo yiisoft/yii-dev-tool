@@ -41,6 +41,9 @@ class InstallCommand extends PackageCommand
             $this->install($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->createSymbolicLinks();
         $this->showPackageErrors();
     }
@@ -48,8 +51,7 @@ class InstallCommand extends PackageCommand
     private function gitClone(Package $package): void
     {
         $io = $this->getIO();
-
-        $io->writeln("Cloning package <package>{$package->getId()}</package> repository...");
+        $io->important()->info("Cloning package repository...");
 
         if ($package->isGitRepositoryCloned()) {
             $io->warning([
@@ -60,18 +62,18 @@ class InstallCommand extends PackageCommand
             return;
         }
 
-        $io->writeln("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
+        $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
 
         $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
         $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
-            $io->write($process->getOutput() . $process->getErrorOutput());
+            $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->writeln($output);
+            $io->important()->info($output);
             $io->error([
                 "An error occurred during cloning package <package>{$package->getId()}</package> repository.",
                 'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
@@ -91,7 +93,7 @@ class InstallCommand extends PackageCommand
 
             if (!$gitWorkingCopy->hasRemote($remoteName)) {
                 $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
-                $io->writeln("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
+                $io->info("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
                 $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
                 $io->done();
             }
@@ -109,14 +111,14 @@ class InstallCommand extends PackageCommand
         $fs = new Filesystem();
         $io = $this->getIO();
 
-        $io->writeln('Removing old package symlinks...');
+        $io->important()->info('Removing old package symlinks...');
 
         /** @var SplFileInfo $fileInfo */
         foreach ($finder->directories()->in($vendorYiisoftDirectory) as $fileInfo) {
             $directoryPath = $fileInfo->getPathname();
 
             if (is_link($directoryPath)) {
-                $io->writeln("Removing symlink <file>$directoryPath</file>");
+                $io->info("Removing symlink <file>$directoryPath</file>");
                 $fs->remove($directoryPath);
             }
         }
@@ -130,7 +132,7 @@ class InstallCommand extends PackageCommand
 
         $composerCommandName = $this->updateMode ? 'update' : 'install';
 
-        $io->writeln("Running `composer $composerCommandName` in package <package>{$package->getId()}</package>...");
+        $io->important()->info("Running `composer $composerCommandName`...");
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
@@ -154,12 +156,12 @@ class InstallCommand extends PackageCommand
         $process->setTimeout(null)->run();
 
         if ($process->isSuccessful()) {
-            $io->write($process->getOutput() . $process->getErrorOutput());
+            $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->writeln($output);
+            $io->important()->info($output);
             $io->error([
                 "An error occurred during running `composer $composerCommandName`.",
                 'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
@@ -172,9 +174,7 @@ class InstallCommand extends PackageCommand
     private function install(Package $package): void
     {
         $io = $this->getIO();
-        $header = ($this->updateMode ? 'Updating' : 'Installing') . " package <package>{$package->getId()}</package>";
-
-        $io->header($header);
+        $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");
 
         $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
 
@@ -206,6 +206,10 @@ class InstallCommand extends PackageCommand
         }
 
         $this->composerInstall($package);
+
+        if (!$io->isVerbose()) {
+            $io->important()->newLine();
+        }
     }
 
     /**
@@ -232,11 +236,11 @@ class InstallCommand extends PackageCommand
     {
         $io = $this->getIO();
 
-        $io->header('Re-linking vendor directories');
+        $io->important()->info('Re-linking vendor directories...');
 
         $installedPackages = $this->getPackageList()->getInstalledPackages();
         foreach ($installedPackages as $package) {
-            $io->writeln("Package <package>{$package->getId()}</package> linking...");
+            $io->info("Package <package>{$package->getId()}</package> linking...");
             $this->linkPackages($package, $installedPackages);
         }
 
