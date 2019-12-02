@@ -3,7 +3,6 @@
 namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
@@ -11,15 +10,11 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class StatusCommand extends PackageCommand
 {
-    /** @var bool */
-    private $changesFound = false;
-
     protected function configure()
     {
         $this
             ->setName('git/status')
-            ->setDescription('Show git status of packages')
-            ->addOption('--verbose', '-v', InputOption::VALUE_NONE, 'Increase the verbosity of messages');
+            ->setDescription('Show git status of packages');
 
         $this->addPackageArgument();
     }
@@ -33,30 +28,26 @@ class StatusCommand extends PackageCommand
         }
 
         $io = $this->getIO();
-        if (!$io->isVerbose() && !$this->changesFound) {
-            $io->success('✔ nothing to commit, working trees clean');
+        $io->clearPreparedPackageHeader();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->success('✔ nothing to commit, working trees clean');
         }
     }
 
     private function showGitStatus(Package $package): void
     {
         $io = $this->getIO();
-
-        $header = ($io->isVerbose() ? 'Git status of package ' : '') . "<package>{$package->getId()}</package>";
+        $io->preparePackageHeader($package, 'Git status of {package}');
 
         $process = new Process(['git', 'status', '-s'], $package->getPath());
         $process->run();
         $output = $process->getOutput();
 
         if (empty($output)) {
-            if ($io->isVerbose()) {
-                $io->header($header);
-                $io->success('✔ nothing to commit, working tree clean');
-            }
+            $io->success('✔ nothing to commit, working tree clean');
         } else {
-            $this->changesFound = true;
-            $io->header($header);
-            $io->writeln($output);
+            $io->important()->info($output);
         }
     }
 }

@@ -41,7 +41,14 @@ class ReplicateFilesCommand extends PackageCommand
             $this->replicateToPackage($package);
         }
 
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
         $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->done();
+        }
     }
 
     private function checkReplicationSource(): void
@@ -80,11 +87,10 @@ class ReplicateFilesCommand extends PackageCommand
     {
         $replicationSource = $this->replicationSource;
         $io = $this->getIO();
-        $header = "Replication to package <package>{$package->getId()}</package>";
+        $io->preparePackageHeader($package, "Replication to package {package}");
 
         if ($package->getId() === $replicationSource->getPackageId()) {
             if ($this->areTargetPackagesSpecifiedExplicitly()) {
-                $io->header($header);
                 $io->warning([
                     'Cannot replicate into itself.',
                     "Package <package>{$package->getId()}</package> skipped.",
@@ -93,8 +99,6 @@ class ReplicateFilesCommand extends PackageCommand
 
             return;
         }
-
-        $io->header($header);
 
         $replicationSourcePackage = $this->getPackageList()->getPackage($replicationSource->getPackageId());
 
@@ -117,7 +121,6 @@ class ReplicateFilesCommand extends PackageCommand
                 return;
             }
         }
-
 
         $io->done();
     }

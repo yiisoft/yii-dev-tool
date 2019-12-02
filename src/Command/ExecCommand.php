@@ -40,22 +40,27 @@ DESCRIPTION
         foreach ($this->getTargetPackages() as $package) {
             $this->process($package);
         }
+
+        $io = $this->getIO();
+        $io->clearPreparedPackageHeader();
+
+        if ($io->nothingHasBeenOutput()) {
+            $io->important()->info('Nothing to output');
+        }
     }
 
     private function process(Package $package): void
     {
         $io = $this->getIO();
-
-        $header = "Executing command in package <package>{$package->getId()}</package>";
-        $io->header($header);
+        $io->preparePackageHeader($package, "Executing command in package {package}");
 
         $process = Process::fromShellCommandline($this->command, $package->getPath());
         $process->setTimeout(null)->run();
 
         $output = $process->getOutput() . $process->getErrorOutput();
 
-        if (!empty($output)) {
-            $io->writeln($output);
+        if (!empty(trim($output))) {
+            $io->important()->info($output);
         }
     }
 }
