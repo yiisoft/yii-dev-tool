@@ -2,8 +2,6 @@
 
 namespace Yiisoft\YiiDevTool\Command\Git;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
@@ -19,23 +17,12 @@ class StatusCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        parent::execute($input, $output);
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->showGitStatus($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->success('✔ nothing to commit, working trees clean');
-        }
+        return '<success>✔ nothing to commit, working trees clean</success>';
     }
 
-    private function showGitStatus(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Git status of {package}');

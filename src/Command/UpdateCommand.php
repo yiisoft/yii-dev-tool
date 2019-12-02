@@ -20,11 +20,10 @@ class UpdateCommand extends PackageCommand
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        parent::execute($input, $output);
-
         /** @var InstallCommand $installCommand */
         $installCommand = $this->getApplication()->find('install')->useUpdateMode();
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $installCommand->run(new ArrayInput([
             'packages' => $input->getArgument('packages'),
         ]), $output);

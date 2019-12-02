@@ -1,6 +1,6 @@
 <?php
 
-$packages = [
+return [
     // Install yiisoft 'di' package from GitHub using SSH:
     'di' => true, // use git@github.com:yiisoft/di.git
 
@@ -16,5 +16,3 @@ $packages = [
     // Do not install 'rbac' package at all:
     'rbac' => false,
 ];
-
-return $packages;

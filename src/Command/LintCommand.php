@@ -2,8 +2,6 @@
 
 namespace Yiisoft\YiiDevTool\Command;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
@@ -19,23 +17,12 @@ class LintCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        parent::execute($input, $output);
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->lint($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->success('✔ No problems found.');
-        }
+        return '<success>✔ No problems found</success>';
     }
 
-    private function lint(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Linting package {package}");

@@ -3,7 +3,6 @@
 namespace Yiisoft\YiiDevTool\Command\Replicate;
 
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Throwable;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
@@ -24,10 +23,8 @@ class ReplicateFilesCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function beforeProcessingPackages(InputInterface $input): void
     {
-        parent::execute($input, $output);
-
         $replicationConfig = require __DIR__ . '/../../../config/replicate/files.php';
 
         $this->replicationSource = new ReplicationSource(
@@ -36,19 +33,11 @@ class ReplicateFilesCommand extends PackageCommand
         );
 
         $this->checkReplicationSource();
+    }
 
-        foreach ($this->getTargetPackages() as $package) {
-            $this->replicateToPackage($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->done();
-        }
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
+    {
+        return '<success>✔ Done</success>';
     }
 
     private function checkReplicationSource(): void
@@ -83,7 +72,7 @@ class ReplicateFilesCommand extends PackageCommand
         }
     }
 
-    private function replicateToPackage(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $replicationSource = $this->replicationSource;
         $io = $this->getIO();

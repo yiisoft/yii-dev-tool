@@ -3,8 +3,6 @@
 namespace Yiisoft\YiiDevTool\Command\Git;
 
 use GitWrapper\GitException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
@@ -19,25 +17,12 @@ class PushCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        parent::execute($input, $output);
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->gitPush($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->done();
-        }
+        return '<success>✔ Done</success>';
     }
 
-    private function gitPush(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Pushing package {package}");
