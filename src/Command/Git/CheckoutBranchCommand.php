@@ -4,7 +4,6 @@ namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
@@ -23,27 +22,17 @@ class CheckoutBranchCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function beforeProcessingPackages(InputInterface $input): void
     {
-        parent::execute($input, $output);
-
         $this->branch = $input->getArgument('branch');
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->gitCheckoutBranch($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->done();
-        }
     }
 
-    private function gitCheckoutBranch(Package $package): void
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
+    {
+        return '<success>✔ Done</success>';
+    }
+
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Checkout branch <em>{$this->branch}</em> in {package} repository");

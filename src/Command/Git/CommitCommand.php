@@ -4,7 +4,6 @@ namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
@@ -24,27 +23,17 @@ class CommitCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function beforeProcessingPackages(InputInterface $input): void
     {
-        parent::execute($input, $output);
-
         $this->message = $input->getArgument('message');
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->gitCommit($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->warning('Nothing to commit');
-        }
     }
 
-    private function gitCommit(Package $package): void
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
+    {
+        return '<em>Nothing to commit</em>';
+    }
+
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Committing {package} repository");

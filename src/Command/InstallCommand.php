@@ -3,8 +3,6 @@
 namespace Yiisoft\YiiDevTool\Command;
 
 use GitWrapper\GitException;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -33,19 +31,9 @@ class InstallCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function afterProcessingPackages(): void
     {
-        parent::execute($input, $output);
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->install($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
         $this->createSymbolicLinks();
-        $this->showPackageErrors();
     }
 
     private function gitClone(Package $package): void
@@ -171,7 +159,7 @@ class InstallCommand extends PackageCommand
         }
     }
 
-    private function install(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");

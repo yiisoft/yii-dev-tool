@@ -25,6 +25,46 @@ class PackageCommand extends Command
     /** @var Package[]|null */
     private $targetPackages;
 
+    /**
+     * Override this method in a subclass if you want to do something before processing the packages.
+     * For example, check the input arguments.
+     *
+     * @param InputInterface $input
+     */
+    protected function beforeProcessingPackages(InputInterface $input): void
+    {
+    }
+
+    /**
+     * This method in a subclass should implement the processing logic of each package.
+     *
+     * @param Package $package
+     * @noinspection PhpUnusedParameterInspection
+     */
+    protected function processPackage(Package $package): void
+    {
+        throw new RuntimeException('Package processing logic is not implemented.');
+    }
+
+    /**
+     * Override this method in a subclass if you want to do something after processing the packages.
+     * For example, link the packages with each other.
+     */
+    protected function afterProcessingPackages(): void
+    {
+    }
+
+    /**
+     * Override this method in a subclass if you want to output something to the console
+     * in cases where a command did not output anything during its execution.
+     *
+     * @return string|null The message to be displayed. If null, then nothing will be output.
+     */
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
+    {
+        return null;
+    }
+
     protected function addPackageArgument(): void
     {
         $this->addArgument(
@@ -196,6 +236,25 @@ DESCRIPTION
         $this->initPackageList();
         $this->initTargetPackages($input);
         $this->checkCurrentInstallation();
+
+        $io = $this->getIO();
+
+        $this->beforeProcessingPackages($input);
+        foreach ($this->getTargetPackages() as $package) {
+            $this->processPackage($package);
+        }
+
+        $io->clearPreparedPackageHeader();
+        $this->afterProcessingPackages();
+
+        $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $message = $this->getMessageWhenNothingHasBeenOutput();
+            if ($message !== null) {
+                $io->important()->info($message);
+            }
+        }
     }
 
     protected function getPackageList(): PackageList
@@ -224,7 +283,7 @@ DESCRIPTION
         return $this->targetPackages;
     }
 
-    protected function showPackageErrors(): void
+    private function showPackageErrors(): void
     {
         $io = $this->getIO();
         $packagesWithError = $this->getPackageList()->getPackagesWithError();

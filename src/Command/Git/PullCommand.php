@@ -2,8 +2,6 @@
 
 namespace Yiisoft\YiiDevTool\Command\Git;
 
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
@@ -19,25 +17,12 @@ class PullCommand extends PackageCommand
         $this->addPackageArgument();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        parent::execute($input, $output);
-
-        foreach ($this->getTargetPackages() as $package) {
-            $this->gitPull($package);
-        }
-
-        $io = $this->getIO();
-        $io->clearPreparedPackageHeader();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $io->important()->warning('Nothing to pull');
-        }
+        return '<em>Nothing to pull</em>';
     }
 
-    private function gitPull(Package $package): void
+    protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Pulling package {package}");
