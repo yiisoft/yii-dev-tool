@@ -18,6 +18,7 @@ use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
+use Yiisoft\YiiDevTool\Command\Travis\TravisUpdateSlackConfigCommand;
 use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
 class YiiDevToolApplication extends Application
@@ -52,6 +53,7 @@ HEADER;
             new ReplicateFilesCommand(),
             new ReplicateComposerConfigCommand(),
             new StatusCommand(),
+            new TravisUpdateSlackConfigCommand(),
             new UpdateCommand(),
         ];
     }
