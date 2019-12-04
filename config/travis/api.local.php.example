@@ -1,0 +1,13 @@
+<?php
+
+/**
+ * This is just an example by which configuration file `api.local.php` should be created.
+ */
+return [
+    /**
+     * Travis API access tokens.
+     * See: https://developer.travis-ci.org/gettingstarted
+     */
+    'com-token' => '', // COM endpoint
+    'org-token' => '', // ORG endpoint
+];

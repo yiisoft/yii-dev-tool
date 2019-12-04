@@ -18,6 +18,7 @@ use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
+use Yiisoft\YiiDevTool\Command\Travis\TravisEnsureCronjobCommand;
 use Yiisoft\YiiDevTool\Command\Travis\TravisUpdateSlackConfigCommand;
 use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
@@ -53,6 +54,7 @@ HEADER;
             new ReplicateFilesCommand(),
             new ReplicateComposerConfigCommand(),
             new StatusCommand(),
+            new TravisEnsureCronjobCommand(),
             new TravisUpdateSlackConfigCommand(),
             new UpdateCommand(),
         ];
