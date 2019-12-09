@@ -27,7 +27,7 @@ Installation
    cp vagrant-local.example.yml vagrant-local.yml
    ```
    
-5. Place your GitHub personal API token to `vagrant-local.yml`
+5. Place your GitHub personal API token to `vagrant-local.yml`, also specify your name and email for git commits
 6. Change directory to project root:
 
    ```bash
@@ -54,7 +54,7 @@ That's all. You just need to wait for completion!
    * go into directory `yii-dev-tool-master/vagrant/config`
    * copy `vagrant-local.example.yml` to `vagrant-local.yml`
 
-6. Place your GitHub personal API token to `vagrant-local.yml`
+6. Place your GitHub personal API token to `vagrant-local.yml`, also specify your name and email for git commits
 7. Open terminal (`cmd.exe`), **change directory to project root** and run command:
 
    ```bash
