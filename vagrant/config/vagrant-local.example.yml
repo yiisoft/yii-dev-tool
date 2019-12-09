@@ -3,6 +3,10 @@ github_token: <your-personal-github-token>
 # Read more: https://github.com/blog/1509-personal-api-tokens
 # You can generate it here: https://github.com/settings/tokens
 
+# Full name and email address to be used for git commits
+git_name: Your Name
+git_email: your-email@example.com
+
 # Guest OS timezone
 timezone: Europe/London
 

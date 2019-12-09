@@ -22,6 +22,13 @@ if options['github_token'].nil? || options['github_token'].to_s.length != 40
   exit
 end
 
+# make sure that 'git_name' and 'git_email' are in the configuration
+if options['git_name'].nil? || options['git_email'].nil?
+  puts "Please add 'git_name' and 'git_email' to configuration /vagrant/config/vagrant-local.yml"
+  puts "See examples in /vagrant/config/vagrant-local.example.yml"
+  exit
+end
+
 # vagrant configurate
 Vagrant.configure(2) do |config|
   # select the box
@@ -65,4 +72,5 @@ Vagrant.configure(2) do |config|
   config.vm.provision 'shell', path: './vagrant/provision/once-as-root.sh', args: [options['timezone']]
   config.vm.provision 'shell', path: './vagrant/provision/once-as-vagrant.sh', args: [options['github_token']], privileged: false
   config.vm.provision 'shell', path: './vagrant/provision/always-as-root.sh', run: 'always'
+  config.vm.provision 'shell', path: './vagrant/provision/always-as-vagrant.sh', args: [options['git_name'], options['git_email']], run: 'always', privileged: false
 end
