@@ -29,6 +29,7 @@ $packages = [
     'cache-wincache' => true,
     'cache-file' => true,
     'cache-db' => true,
+    'cache-memcached' => true,
 
     // RBAC
     'rbac' => true,
