@@ -1,7 +1,7 @@
 version: '2.4'
 services:
   php:
-    image: yiisoftware/yii-php:7.3-apache
+    image: yiisoftware/yii-php:7.4-apache
     working_dir: /repo
     volumes:
       - .:/repo
