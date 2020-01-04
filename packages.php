@@ -22,6 +22,7 @@ $packages = [
     'serializer' => true,
     'network-utilities' => true,
     'auth' => true,
+    'http' => true,
 
     // cache
     'cache' => true,
