@@ -99,6 +99,7 @@ $packages = [
     'yii-web' => true,
     'view' => true,
     'widget' => true,
+    'yii-widgets' => true,
     'assets' => true,
     'yii-jquery' => true,
     'yii-masked-input' => true,
