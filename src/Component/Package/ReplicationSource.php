@@ -4,11 +4,8 @@ namespace Yiisoft\YiiDevTool\Component\Package;
 
 class ReplicationSource
 {
-    /** @var string */
-    private $packageId;
-
-    /** @var array */
-    private $sourceFiles;
+    private string $packageId;
+    private array $sourceFiles;
 
     public function __construct(string $packageId, array $sourceFiles)
     {

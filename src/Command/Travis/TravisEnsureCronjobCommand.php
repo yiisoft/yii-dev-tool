@@ -11,11 +11,8 @@ use Yiisoft\YiiDevTool\Component\Travis\API\TravisClient;
 
 class TravisEnsureCronjobCommand extends PackageCommand
 {
-    /** @var bool */
-    private $useOrg;
-
-    /** @var TravisClient */
-    private $travisClient;
+    private bool $useOrg;
+    private TravisClient $travisClient;
 
     protected function configure()
     {

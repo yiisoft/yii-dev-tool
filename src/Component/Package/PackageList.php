@@ -5,10 +5,10 @@ namespace Yiisoft\YiiDevTool\Component\Package;
 class PackageList
 {
     /** @var Package[] */
-    private $list = [];
+    private array $list = [];
 
     /** @var null|Package[] */
-    private $installedList;
+    private ?array $installedList;
 
     public function __construct(string $configFile)
     {

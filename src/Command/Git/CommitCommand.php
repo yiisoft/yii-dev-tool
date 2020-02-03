@@ -11,7 +11,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 class CommitCommand extends PackageCommand
 {
     /** @var string */
-    private $message;
+    private string $message;
 
     protected function configure()
     {

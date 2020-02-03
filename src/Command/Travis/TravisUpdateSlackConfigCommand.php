@@ -12,11 +12,8 @@ use Yiisoft\YiiDevTool\Component\Travis\TravisEncryptor;
 
 class TravisUpdateSlackConfigCommand extends PackageCommand
 {
-    /** @var string */
-    private $slackToken;
-
-    /** @var TravisClient */
-    private $travisClient;
+    private string $slackToken;
+    private TravisClient $travisClient;
 
     protected function configure()
     {

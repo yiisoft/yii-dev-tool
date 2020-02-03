@@ -14,11 +14,8 @@ class TravisClient
     private const POST = 'post';
     private const DELETE = 'delete';
 
-    /** @var string */
-    private $endpoint;
-
-    /** @var string */
-    private $token;
+    private string $endpoint;
+    private string $token;
 
     public function __construct(string $APIAccessToken, $useOrg = false)
     {

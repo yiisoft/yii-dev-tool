@@ -24,7 +24,7 @@ use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
 class YiiDevToolApplication extends Application
 {
-    private $header = <<<HEADER
+    private string $header = <<<HEADER
  <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
  <fg=cyan;options=bold>| | | |</><fg=red;options=bold>(_)</><fg=green;options=bold>(_)</>  <fg=yellow;options=bold>Development Tool</>
  <fg=cyan;options=bold>| |_| |</><fg=red;options=bold>| |</><fg=green;options=bold>| |</>

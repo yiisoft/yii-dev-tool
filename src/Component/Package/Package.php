@@ -9,26 +9,13 @@ use RuntimeException;
 
 class Package
 {
-    /** @var GitWrapper|null */
-    private static $gitWrapper;
-
-    /** @var string */
-    private $id;
-
-    /** @var string|null */
-    private $configuredRepositoryUrl;
-
-    /** @var string */
-    private $path;
-
-    /** @var string|null */
-    private $error;
-
-    /** @var string|null */
-    private $errorDuring;
-
-    /** @var GitWorkingCopy|null */
-    private $gitWorkingCopy;
+    private static ?GitWrapper $gitWrapper;
+    private string $id;
+    private ?string $configuredRepositoryUrl;
+    private string $path;
+    private ?string $error;
+    private ?string $errorDuring;
+    private ?GitWorkingCopy $gitWorkingCopy;
 
     private static function getGitWrapper(): GitWrapper
     {

@@ -12,8 +12,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class InstallCommand extends PackageCommand
 {
-    /** @var bool */
-    private $updateMode = false;
+    private bool $updateMode = false;
 
     public function useUpdateMode(): self
     {

@@ -11,17 +11,10 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
  */
 class OutputManager
 {
-    /** @var YiiDevToolStyle */
-    private $io;
-
-    /** @var null|string */
-    private $preparedPackageHeader;
-
-    /** @var bool */
-    private $nextMessageIsImportant = false;
-
-    /** @var bool bool */
-    private $outputDone = false;
+    private YiiDevToolStyle $io;
+    private ?string $preparedPackageHeader;
+    private bool $nextMessageIsImportant = false;
+    private bool $outputDone = false;
 
     public function __construct(YiiDevToolStyle $io)
     {

@@ -11,8 +11,7 @@ use Yiisoft\YiiDevTool\Component\Package\ReplicationSource;
 
 class ReplicateFilesCommand extends PackageCommand
 {
-    /** @var ReplicationSource */
-    private $replicationSource;
+    private ReplicationSource $replicationSource;
 
     protected function configure()
     {

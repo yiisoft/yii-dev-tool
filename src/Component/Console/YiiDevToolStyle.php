@@ -9,8 +9,7 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class YiiDevToolStyle extends SymfonyStyle
 {
-    /** @var bool */
-    private $hasColorSupport;
+    private bool $hasColorSupport;
 
     public function __construct(InputInterface $input, OutputInterface $output)
     {

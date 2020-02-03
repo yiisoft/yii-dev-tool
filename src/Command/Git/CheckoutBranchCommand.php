@@ -10,7 +10,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 class CheckoutBranchCommand extends PackageCommand
 {
     /** @var string */
-    private $branch;
+    private string $branch;
 
     protected function configure()
     {

@@ -6,8 +6,7 @@ use RuntimeException;
 
 class TravisEncryptor
 {
-    /** @var null|string */
-    private $publicKey;
+    private ?string $publicKey;
 
     public function setPublicKey(string $publicKey): void
     {

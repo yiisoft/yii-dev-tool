@@ -8,11 +8,8 @@ use Symfony\Component\Yaml\Yaml;
 
 class TravisConfig
 {
-    /** @var string */
-    private $path;
-
-    /** @var string */
-    private $content;
+    private string $path;
+    private string $content;
 
     public function __construct(string $path)
     {

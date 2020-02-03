@@ -13,17 +13,14 @@ use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
 class PackageCommand extends Command
 {
-    /** @var OutputManager|null */
-    private $io;
+    private const EXIT_SUCCESS = 0;
 
-    /** @var PackageList|null */
-    private $packageList;
-
-    /** @var bool|null */
-    private $targetPackagesSpecifiedExplicitly;
+    private ?OutputManager $io;
+    private ?PackageList $packageList;
+    private ?bool $targetPackagesSpecifiedExplicitly;
 
     /** @var Package[]|null */
-    private $targetPackages;
+    private ?array $targetPackages;
 
     /**
      * Override this method in a subclass if you want to do something before processing the packages.
@@ -255,6 +252,8 @@ DESCRIPTION
                 $io->important()->info($message);
             }
         }
+
+        return self::EXIT_SUCCESS;
     }
 
     protected function getPackageList(): PackageList

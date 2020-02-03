@@ -10,8 +10,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class ExecCommand extends PackageCommand
 {
-    /** @var string */
-    private $command;
+    private string $command;
 
     protected function configure()
     {
