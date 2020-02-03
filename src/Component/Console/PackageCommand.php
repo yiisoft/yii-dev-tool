@@ -13,7 +13,7 @@ use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
 class PackageCommand extends Command
 {
-    private const EXIT_SUCCESS = 0;
+    protected const EXIT_SUCCESS = 0;
 
     private ?OutputManager $io;
     private ?PackageList $packageList;
