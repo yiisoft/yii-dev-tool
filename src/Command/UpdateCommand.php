@@ -27,5 +27,7 @@ class UpdateCommand extends PackageCommand
         $installCommand->run(new ArrayInput([
             'packages' => $input->getArgument('packages'),
         ]), $output);
+
+        return self::EXIT_SUCCESS;
     }
 }

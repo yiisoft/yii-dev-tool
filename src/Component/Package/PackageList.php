@@ -8,7 +8,7 @@ class PackageList
     private array $list = [];
 
     /** @var null|Package[] */
-    private ?array $installedList;
+    private ?array $installedList = null;
 
     public function __construct(string $configFile)
     {
