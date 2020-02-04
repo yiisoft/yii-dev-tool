@@ -23,7 +23,7 @@
         "symfony/filesystem": "^5.0",
         "symfony/finder": "^5.0",
         "symfony/polyfill-php73": "^1.13",
-        "symfony/process": "^4.0",
+        "symfony/process": "^4.0 || ^5.0",
         "symfony/yaml": "^5.0"
     },
     "autoload": {
