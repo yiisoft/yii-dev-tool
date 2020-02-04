@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 class OutputManager
 {
     private YiiDevToolStyle $io;
-    private ?string $preparedPackageHeader;
+    private ?string $preparedPackageHeader = null;
     private bool $nextMessageIsImportant = false;
     private bool $outputDone = false;
 
