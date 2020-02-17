@@ -61,6 +61,7 @@ $packages = [
     'mutex-db-pgsql' => true,
     'mutex-db-oracle' => true,
     'mutex-db-mysql' => true,
+    // 'mutex-db-redis' => true,
 
     // mailer
     'mailer' => true,
@@ -88,9 +89,12 @@ $packages = [
     'db-mssql' => true,
     'db-oracle' => true,
     'db-mongodb' => true,
+    'db-mariadb' => true,
     'active-record' => true,
     //'migration' => true,
     'yii-cycle' => true,
+    // 'db-sphinx' => true,
+    // 'db-redis' => true,
 
     // router
     'router' => true,
@@ -117,7 +121,9 @@ $packages = [
     // project templates
     'yii-base-api' => true,
     'yii-base-web' => true,
+    // 'yii-base-cli' => true,
     'yii-project-template' => true,
+    // 'yii-web-template' => true,
 
     // demo
     'yii-demo' => true,
@@ -126,6 +132,8 @@ $packages = [
     'yii-docker' => true,
     'validator' => true,
     'friendly-exception' => true,
+    //'fixture' => true,
+    // 'filesystem-plugins' => true,
 
     // repository template
     'template' => true,
