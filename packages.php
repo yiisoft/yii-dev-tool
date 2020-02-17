@@ -106,6 +106,7 @@ $packages = [
     'yii-masked-input' => true,
     'yii-dataview' => true,
     'yii-debug' => true,
+    'yii-debug-viewer' => true,
     'yii-gii' => true,
     'yii-bootstrap4' => true,
 
