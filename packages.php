@@ -12,6 +12,7 @@ $packages = [
     // core packages
     'di' => true,
     'proxy' => true,
+    'container-proxy' => true,
     'injector' => true,
     'factory' => true,
     'access' => true,
