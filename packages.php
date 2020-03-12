@@ -120,7 +120,7 @@ $packages = [
 
     'yii-auth-client' => true,
 
-    'yii-file-system' => true,
+    'yii-filesystem' => true,
 
     // project templates
     'yii-base-api' => true,
