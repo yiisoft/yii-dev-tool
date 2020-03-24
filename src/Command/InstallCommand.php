@@ -2,7 +2,7 @@
 
 namespace Yiisoft\YiiDevTool\Command;
 
-use GitWrapper\GitException;
+use GitWrapper\Exception\GitException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;

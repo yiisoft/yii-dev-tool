@@ -2,7 +2,7 @@
 
 namespace Yiisoft\YiiDevTool\Command\Git;
 
-use GitWrapper\GitException;
+use GitWrapper\Exception\GitException;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
