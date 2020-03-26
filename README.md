@@ -81,6 +81,8 @@ If you want to run **yii-dev-tool** in a Docker container, run the following com
 docker-compose run --rm php bash
 ```
 
+Add [SSH keys](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) or [configure](packages.local.php.example) to use HTTPS.
+
 Afterwards you can run the above commands like `./yii-dev install`.
 
 
@@ -142,6 +144,8 @@ $packages = [
     'i18n' => 'samdark/i18n',
 ];
 ```
+
+See [example](packages.local.php.example). 
 
 ### Step 4: install packages
 
