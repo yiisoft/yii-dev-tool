@@ -173,16 +173,7 @@ class InstallCommand extends PackageCommand
             }
         }
 
-        try {
-            $this->setUpstream($package);
-        } catch (GitException $e) {
-            // Temporarily ignore git errors because
-            // there is some error in a third-party package in the Windows console.
-            //
-            // See https://github.com/yiisoft/yii-dev-tool/issues/42#issuecomment-556997426 for details.
-            //
-            // We will remove this hack when the third-party package is fixed.
-        }
+        $this->setUpstream($package);
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
             $this->removeSymbolicLinks($package);
