@@ -1,4 +1,5 @@
 <?php
+
 // replication config
 return [
     'sourcePackage' => 'template',
