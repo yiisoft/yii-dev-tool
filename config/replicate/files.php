@@ -14,5 +14,6 @@ return [
         '.editorconfig',
         '.scrutinizer.yml',
         '.styleci.yml',
+        '.gitattributes',
     ],
 ];
