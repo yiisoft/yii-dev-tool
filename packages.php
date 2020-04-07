@@ -9,6 +9,9 @@
 $packages = [
     'docs' => true,
 
+    // config plugin
+    'composer-config-plugin' => true,
+
     // core packages
     'di' => true,
     'proxy' => true,
@@ -125,7 +128,6 @@ $packages = [
     // project templates
     'yii-base-api' => true,
     'yii-base-web' => true,
-    // 'yii-base-cli' => true,
     'yii-project-template' => true,
     // 'yii-web-template' => true,
 
@@ -137,13 +139,16 @@ $packages = [
     'validator' => true,
     'friendly-exception' => true,
     //'fixture' => true,
-    // 'filesystem-plugins' => true,
 
     // repository template
     'template' => true,
 
     // requirements checker
     'requirements' => true,
+
+    // archived, likely to be deleted
+    // 'yii-base-cli' => true,
+    // 'filesystem-plugins' => true,
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
