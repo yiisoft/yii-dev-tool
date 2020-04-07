@@ -10,7 +10,7 @@ $packages = [
     'docs' => true,
 
     // config plugin
-    'composer-config-plugin' => true,
+    //'composer-config-plugin' => true,
 
     // core packages
     'di' => true,
