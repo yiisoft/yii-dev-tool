@@ -110,6 +110,7 @@ $packages = [
     'view' => true,
     'widget' => true,
     'yii-widgets' => true,
+    'yii-active-form' => true,
     'assets' => true,
     'yii-jquery' => true,
     'yii-masked-input' => true,
