@@ -125,6 +125,7 @@ $packages = [
     'yii-auth-client' => true,
 
     'yii-filesystem' => true,
+    'rate-limiter' => true,
 
     // project templates
     'yii-base-api' => true,
