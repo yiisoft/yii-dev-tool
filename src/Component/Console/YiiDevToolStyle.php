@@ -75,7 +75,7 @@ class YiiDevToolStyle extends SymfonyStyle
     public function header(string $message): void
     {
         $this->writeln([
-            '<header>▶ ' . $message . '</header>',
+            '<header>* ' . $message . '</header>',
         ]);
 
         $this->newLine();
