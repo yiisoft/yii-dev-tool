@@ -11,6 +11,8 @@ return [
         '.github/CODE_OF_CONDUCT.md',
         '.github/SECURITY.md',
 
+        '.phan/config.php',
+
         '.editorconfig',
         '.scrutinizer.yml',
         '.styleci.yml',
