@@ -10,6 +10,7 @@ return [
         '.github/CONTRIBUTING.md',
         '.github/CODE_OF_CONDUCT.md',
         '.github/SECURITY.md',
+        '.github/workflows/build.yml',
 
         '.phan/config.php',
 
