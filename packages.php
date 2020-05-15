@@ -119,6 +119,7 @@ $packages = [
     'yii-debug-viewer' => true,
     'yii-gii' => true,
     'yii-bootstrap4' => true,
+    'yii-twig' => true,
 
     'yii-captcha' => true,
 
