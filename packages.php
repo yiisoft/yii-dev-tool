@@ -110,7 +110,7 @@ $packages = [
     'view' => true,
     'widget' => true,
     'yii-widgets' => true,
-    'yii-form' => true,
+    'form' => true,
     'assets' => true,
     'yii-jquery' => true,
     'yii-masked-input' => true,
@@ -134,8 +134,9 @@ $packages = [
     'yii-project-template' => true,
     // 'yii-web-template' => true,
 
-    // demo
+    // demo and app
     'yii-demo' => true,
+    'app' => true,
 
     // other
     'yii-docker' => true,
