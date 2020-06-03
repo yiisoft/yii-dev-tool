@@ -182,10 +182,10 @@ And, finally, change package **yii-demo** in folder `yii-dev-tool/dev/yii-demo`.
 
 ### Step 7: run the tests
 
-Make sure the tests pass. For instance, package **yii-demo** tests can be run with the following command:
+Make sure the tests pass. For instance, package **view** tests can be run with the following command:
 
 ```bash
-cd yii-dev-tool/dev/yii-demo
+cd yii-dev-tool/dev/view
 ./vendor/bin/phpunit
 ```
 
