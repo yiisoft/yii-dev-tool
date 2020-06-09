@@ -58,6 +58,7 @@ $packages = [
 
     // queue
     'yii-queue' => true,
+    'yii-queue-synchronous' => true,
     'yii-queue-interop' => true,
 
     // mutex
@@ -127,12 +128,6 @@ $packages = [
 
     'yii-filesystem' => true,
     'rate-limiter' => true,
-
-    // project templates
-    'yii-base-api' => true,
-    'yii-base-web' => true,
-    'yii-project-template' => true,
-    // 'yii-web-template' => true,
 
     // demo and app
     'yii-demo' => true,
