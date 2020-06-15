@@ -58,7 +58,6 @@ $packages = [
 
     // queue
     'yii-queue' => true,
-    'yii-queue-synchronous' => true,
     'yii-queue-interop' => true,
 
     // mutex
