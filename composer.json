@@ -39,7 +39,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Yiisoft\\YiiDevTool\\Test": "tests"
+            "Yiisoft\\YiiDevTool\\Test\\": "tests"
         }
     }
 }
