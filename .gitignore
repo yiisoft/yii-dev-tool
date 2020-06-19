@@ -29,3 +29,6 @@ composer.phar
 # Vagrant runtime
 /.vagrant
 .phpunit.result.cache
+
+# local phpunit config
+phpunit.xml

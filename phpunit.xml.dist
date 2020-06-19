@@ -1,0 +1,7 @@
+<phpunit colors="true">
+    <testsuites>
+        <testsuite name="Yii Dev Tool Tests">
+            <directory>./tests</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
