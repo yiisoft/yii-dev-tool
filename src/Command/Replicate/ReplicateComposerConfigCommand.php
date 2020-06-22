@@ -2,7 +2,7 @@
 
 namespace Yiisoft\YiiDevTool\Command\Replicate;
 
-use Yiisoft\YiiDevTool\Component\Composer\ComposerJson;
+use Yiisoft\YiiDevTool\Component\Composer\ComposerConfig;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
@@ -37,9 +37,9 @@ class ReplicateComposerConfigCommand extends PackageCommand
             return;
         }
 
-        $replicationSourceConfig = ComposerJson::createByPath(__DIR__ . '/../../../config/replicate/composer.json');
+        $replicationSourceConfig = ComposerConfig::createByFilePath(__DIR__ . '/../../../config/replicate/composer.json');
 
-        ComposerJson::createByPath($targetPath)
+        ComposerConfig::createByFilePath($targetPath)
             ->merge($replicationSourceConfig)
             ->writeToFile($targetPath);
 

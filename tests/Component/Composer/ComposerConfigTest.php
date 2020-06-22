@@ -5,13 +5,31 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Test\Component\Composer;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\YiiDevTool\Component\Composer\ComposerJson;
+use Yiisoft\YiiDevTool\Component\Composer\ComposerConfig;
 
-final class ComposerJsonTest extends TestCase
+final class ComposerConfigTest extends TestCase
 {
     public function mergeProvider()
     {
         return [
+            /**
+             * This dataset covers the following test cases:
+             * ---------------------------------------------
+             * Simple merge:
+             * 1. Change PHP version to "^8.0"
+             * 2. Add new package "yiisoft/strings"
+             * 3. Add new section "require-dev"
+             * 4. Change boolean value of "sort-packages" from false to true
+             *
+             * Merge of arrays:
+             * 1. Add new tags
+             * 2. Add new author
+             *
+             * Merge of nested values:
+             * 1. Change value of "extra" > "branch-alias"
+             * 2. Change value of "extra" > "config-plugin" > "common"
+             * 3. Add value for "extra" > "config-plugin" > "tests"
+             */
             [
                 <<<'JSON'
 {
@@ -52,22 +70,6 @@ final class ComposerJsonTest extends TestCase
     }
 }
 JSON,
-                /**
-                 * Simple merge:
-                 * 1. Change PHP version to "^8.0"
-                 * 2. Add new package "yiisoft/strings"
-                 * 3. Add new section "require-dev"
-                 * 4. Change boolean value of "sort-packages" from false to true
-                 *
-                 * Merge of arrays:
-                 * 1. Add new tags
-                 * 2. Add new author
-                 *
-                 * Merge of nested values:
-                 * 6. Change value of "extra" > "branch-alias"
-                 * 7. Change value of "extra" > "config-plugin" > "common"
-                 * 8. Add value for "extra" > "config-plugin" > "tests"
-                 */
                 <<<'JSON'
 {
     "keywords": [
@@ -162,16 +164,16 @@ JSON,
     }
 
     /**
-     * @param $originalContent
-     * @param $additionalContent
-     * @param $resultContent
+     * @param $originalJson
+     * @param $additionalJson
+     * @param $resultJson
      * @dataProvider mergeProvider
      */
-    public function testMerge(string $originalContent, string $additionalContent, string $resultContent)
+    public function testMerge(string $originalJson, string $additionalJson, string $resultJson)
     {
-        $additionalJson = ComposerJson::createByContent($additionalContent);
-        $originalJson = ComposerJson::createByContent($originalContent)->merge($additionalJson);
+        $originalConfig = ComposerConfig::createByJson($originalJson);
+        $additionalConfig = ComposerConfig::createByJson($additionalJson);
 
-        $this->assertSame($resultContent, $originalJson->getContent());
+        $this->assertSame($resultJson, $originalConfig->merge($additionalConfig)->getAsPrettyJson());
     }
 }

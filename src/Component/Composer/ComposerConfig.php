@@ -1,30 +1,37 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Component\Composer;
 
 use RuntimeException;
 
-class ComposerJson
+class ComposerConfig
 {
-    private array $config;
+    private array $data;
 
-    public function __construct(array $config)
+    private function __construct(array $data)
     {
-        $this->config = $config;
+        $this->data = $data;
     }
 
-    public static function createByContent(string $content): self
+    public static function createByArray(array $config): self
     {
-        $config = json_decode($content, true);
+        return new self($config);
+    }
+
+    public static function createByJson(string $json): self
+    {
+        $config = json_decode($json, true);
 
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new RuntimeException('Failed to decode JSON.');
         }
 
-        return new self($config);
+        return static::createByArray($config);
     }
 
-    public static function createByPath(string $path): self
+    public static function createByFilePath(string $path): self
     {
         $content = file_get_contents($path);
 
@@ -32,17 +39,17 @@ class ComposerJson
             throw new RuntimeException('Failed to read file ' . $path);
         }
 
-        return static::createByContent($content);
+        return static::createByJson($content);
     }
 
-    public function getConfig(): array
+    public function getAsArray(): array
     {
-        return $this->config;
+        return $this->data;
     }
 
-    public function getContent(): string
+    public function getAsPrettyJson(): string
     {
-        $content = json_encode($this->config, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
+        $content = json_encode($this->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
         if ($content === false) {
             throw new RuntimeException('Failed to encode JSON.');
@@ -51,16 +58,16 @@ class ComposerJson
         return $content;
     }
 
-    public function merge(ComposerJson $anotherComposerJson): self
+    public function merge(ComposerConfig $anotherComposerConfig): self
     {
-        $this->config = $this->internalMerge($this->config, $anotherComposerJson->getConfig());
+        $this->data = $this->internalMerge($this->data, $anotherComposerConfig->getAsArray());
 
         return $this;
     }
 
     public function writeToFile(string $targetPath): self
     {
-        $result = file_put_contents($targetPath, $this->getContent());
+        $result = file_put_contents($targetPath, $this->getAsPrettyJson());
 
         if ($result === false) {
             throw new RuntimeException('Failed to write file ' . $targetPath);
