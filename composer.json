@@ -33,5 +33,13 @@
     },
     "config": {
         "sort-packages": true
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^9@stable"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Yiisoft\\YiiDevTool\\Test\\": "tests"
+        }
     }
 }
