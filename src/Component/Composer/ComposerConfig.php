@@ -42,12 +42,12 @@ class ComposerConfig
         return static::createByJson($content);
     }
 
-    public function getAsArray(): array
+    public function asArray(): array
     {
         return $this->data;
     }
 
-    public function getAsPrettyJson(): string
+    public function asPrettyJson(): string
     {
         $content = json_encode($this->data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
 
@@ -60,14 +60,14 @@ class ComposerConfig
 
     public function merge(ComposerConfig $anotherComposerConfig): self
     {
-        $this->data = $this->internalMerge($this->data, $anotherComposerConfig->getAsArray());
+        $this->data = $this->internalMerge($this->data, $anotherComposerConfig->asArray());
 
         return $this;
     }
 
     public function writeToFile(string $targetPath): self
     {
-        $result = file_put_contents($targetPath, $this->getAsPrettyJson());
+        $result = file_put_contents($targetPath, $this->asPrettyJson());
 
         if ($result === false) {
             throw new RuntimeException('Failed to write file ' . $targetPath);

@@ -174,6 +174,6 @@ JSON,
         $originalConfig = ComposerConfig::createByJson($originalJson);
         $additionalConfig = ComposerConfig::createByJson($additionalJson);
 
-        $this->assertSame($resultJson, $originalConfig->merge($additionalConfig)->getAsPrettyJson());
+        $this->assertSame($resultJson, $originalConfig->merge($additionalConfig)->asPrettyJson());
     }
 }
