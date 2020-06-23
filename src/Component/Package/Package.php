@@ -58,6 +58,11 @@ class Package
         return $this->id;
     }
 
+    public function getName(): string
+    {
+        return "yiisoft/{$this->id}";
+    }
+
     public function getConfiguredRepositoryUrl(): string
     {
         if ($this->configuredRepositoryUrl === null) {
