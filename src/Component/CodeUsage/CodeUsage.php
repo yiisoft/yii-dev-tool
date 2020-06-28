@@ -19,7 +19,7 @@ class CodeUsage
      * @param string $identifier Unique identifier of code usage: namespace, package name, etc.
      * @param string[] $environments Environment in which the code is used.
      */
-    public function __construct(string $identifier, array $environments)
+    public function __construct(string $identifier, array $environments = [])
     {
         foreach ($environments as $environment) {
             if (!is_string($environment)) {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Composer;
 
+use RuntimeException;
+
 class ComposerPackage
 {
     private string $name;
@@ -26,18 +28,22 @@ class ComposerPackage
         return $this->path;
     }
 
-    public function installed(): bool
-    {
-        return file_exists("{$this->path}/composer.lock");
-    }
-
     public function getComposerConfigPath(): string
     {
         return "{$this->path}/composer.json";
     }
 
+    public function composerConfigFileExists(): bool
+    {
+        return file_exists($this->getComposerConfigPath());
+    }
+
     public function getComposerConfig(): ComposerConfig
     {
+        if (!$this->composerConfigFileExists()) {
+            throw new RuntimeException('Failed to get ComposerConfig because composer.json does not exist.');
+        }
+
         if ($this->config === null) {
             $this->config = ComposerConfig::createByFilePath($this->getComposerConfigPath());
         }
@@ -46,7 +52,7 @@ class ComposerPackage
     }
 
     /**
-     * @param string $specificVendor
+     * @param string|null $specificVendor
      * @return static[]
      */
     public function getDependencyPackages(?string $specificVendor = null): array
@@ -64,5 +70,17 @@ class ComposerPackage
     public function getNamespaces(): array
     {
         return $this->getComposerConfig()->getPSRNamespaces();
+    }
+
+    public function getProvidedPackagesAsArray(): array
+    {
+        $provideSectionData = $this->getComposerConfig()->getSection(ComposerConfig::SECTION_PROVIDE);
+
+        return $provideSectionData ?? [];
+    }
+
+    public function doesProvidePackage(string $packageName): bool
+    {
+        return array_key_exists($packageName, $this->getProvidedPackagesAsArray());
     }
 }

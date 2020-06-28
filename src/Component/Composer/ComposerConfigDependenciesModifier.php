@@ -20,27 +20,13 @@ class ComposerConfigDependenciesModifier
 
     public function removeDependencies(array $packages): self
     {
-        $packageNamesForRemove = $this->getPackageNames($packages);
-
-        $config = $this->config;
-
         $sections = [
             ComposerConfig::SECTION_REQUIRE,
             ComposerConfig::SECTION_REQUIRE_DEV,
         ];
 
         foreach ($sections as $section) {
-            if ($config->hasSection($section)) {
-                $packages = $config->getSection($section);
-
-                foreach ($packages as $packageName => $packageVersion) {
-                    if (in_array($packageName, $packageNamesForRemove, true)) {
-                        unset($packages[$packageName]);
-                    }
-                }
-
-                $config->setSection($section, $packages);
-            }
+            $this->removeDependenciesFromConfig($section, $this->getPackageNames($packages));
         }
 
         return $this;
@@ -58,33 +44,29 @@ class ComposerConfigDependenciesModifier
             ComposerConfig::SECTION_REQUIRE;
 
         $packageNamesForTargetSection = $this->getPackageNames($packages);
-
         $config = $this->config;
+        $originalDependencies = $config->getDependencies();
 
-        if ($config->hasSection($sectionForCleaning)) {
-            $packages = $config->getSection($sectionForCleaning);
-
-            foreach ($packages as $packageName => $packageVersion) {
-                if (in_array($packageName, $packageNamesForTargetSection, true)) {
-                    unset($packages[$packageName]);
-                }
-            }
-
-            $config->setSection($sectionForCleaning, $packages);
-        }
+        $this->removeDependenciesFromConfig($sectionForCleaning, $packageNamesForTargetSection);
 
         $targetSectionPackages =
             $config->hasSection($targetSection) ?
                 $config->getSection($targetSection) : [];
 
+        $originalTargetSectionPackages = $targetSectionPackages;
+
         foreach ($packageNamesForTargetSection as $packageNameForTargetSection) {
             if (!array_key_exists($packageNameForTargetSection, $targetSectionPackages)) {
-                // TODO: Can we use something instead of 'dev-master'?
-                $targetSectionPackages[$packageNameForTargetSection] = 'dev-master';
+                $targetSectionPackages[$packageNameForTargetSection] =
+                    $originalDependencies[$packageNameForTargetSection] ?? 'dev-master';
             }
         }
 
-        if (count($targetSectionPackages) > 0) {
+        if (!$this->dependencyListsAreEqual($originalTargetSectionPackages, $targetSectionPackages)) {
+            if ($config->sortPackagesEnabled()) {
+                $targetSectionPackages = $this->sortDependencyListForComposerConfig($targetSectionPackages);
+            }
+
             $config->setSection($targetSection, $targetSectionPackages);
         }
 
@@ -100,5 +82,76 @@ class ComposerConfigDependenciesModifier
         }
 
         return $packageNames;
+    }
+
+    private function removeDependenciesFromConfig(string $section, array $packageNamesToBeDeleted): void
+    {
+        $config = $this->config;
+
+        if (!$config->hasSection($section)) {
+            return;
+        }
+
+        $packages = $config->getSection($section);
+
+        foreach ($packages as $packageName => $packageVersion) {
+            if (in_array($packageName, $packageNamesToBeDeleted, true)) {
+                unset($packages[$packageName]);
+            }
+        }
+
+        if (count($packages) > 0) {
+            $config->setSection($section, $packages);
+        } else {
+            $config->removeSection($section);
+        }
+    }
+
+    private function dependencyListsAreEqual(array $firstDependencyList, array $secondDependencyList): bool
+    {
+        ksort($firstDependencyList);
+        ksort($secondDependencyList);
+
+        return $firstDependencyList === $secondDependencyList;
+    }
+
+    /**
+     * The real sorting algorithm is more complicated:
+     * https://github.com/composer/composer/blob/ec9ca9e7398229d6162c0d5e8b64990175476335/src/Composer/Json/JsonManipulator.php#L110-L146
+     *
+     * We use here a simplified version of the sorting algorithm.
+     *
+     * @param array $dependencies Unsorted list of composer dependencies.
+     * @return array Sorted list.
+     */
+    private function sortDependencyListForComposerConfig(array $dependencies): array
+    {
+        $extensions = [];
+        $sorted = [];
+
+        // 'php' must be the first
+        foreach ($dependencies as $name => $version) {
+            if ($name === 'php') {
+                $sorted[$name] = $version;
+                unset($dependencies[$name]);
+                break;
+            }
+        }
+
+        // Looking for php extensions
+        foreach ($dependencies as $name => $version) {
+            if (strpos($name, 'ext-') === 0) {
+                $extensions[$name] = $version;
+                unset($dependencies[$name]);
+            }
+        }
+
+        ksort($extensions);
+        ksort($dependencies);
+
+        $sorted += $extensions;
+        $sorted += $dependencies;
+
+        return $sorted;
     }
 }

@@ -7,6 +7,7 @@ namespace Yiisoft\YiiDevTool\Command;
 use Yiisoft\YiiDevTool\Component\CodeUsage\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Component\Composer\ComposerConfig;
 use Yiisoft\YiiDevTool\Component\Composer\ComposerConfigDependenciesModifier;
+use Yiisoft\YiiDevTool\Component\Composer\ComposerInstallation;
 use Yiisoft\YiiDevTool\Component\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Component\CodeUsage\CodeUsageEnvironment;
 use Yiisoft\YiiDevTool\Component\CodeUsage\NamespaceUsageFinder;
@@ -36,26 +37,35 @@ class FixDependenciesCommand extends PackageCommand
 
         $package = new ComposerPackage($package->getName(), $package->getPath());
 
-        if (!$package->installed()) {
+        if (!$package->composerConfigFileExists()) {
             $io->warning([
-                "Package <package>{$package->getName()}</package> is not installed.",
+                "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
                 "Dependencies fixing skipped.",
             ]);
 
             return;
         }
 
-        $dependencyPackages = $package->getDependencyPackages('yiisoft');
-        foreach ($dependencyPackages as $dependencyPackage) {
-            if (!$dependencyPackage->installed()) {
-                $io->warning([
-                    "Dependency <package>{$dependencyPackage->getName()}</package> is not installed.",
-                    "Dependencies fixing skipped.",
-                ]);
+        $composerInstallation = new ComposerInstallation($package);
 
-                return;
+        if ($composerInstallation->hasNotInstalledDependencies()) {
+            $notInstalledDependencyPackages = $composerInstallation->getNotInstalledDependencies();
+
+            $message = count($notInstalledDependencyPackages) === 1 ? 'Dependency' : 'Dependencies';
+            foreach ($notInstalledDependencyPackages as $notInstalledDependencyPackage) {
+                $message .= " <package>{$notInstalledDependencyPackage->getName()}</package>";
             }
+            $message .= " is not installed.";
+
+            $io->warning([
+                $message,
+                "Dependencies fixing skipped.",
+            ]);
+
+            return;
         }
+
+        $dependencyPackages = $composerInstallation->getNonVirtualInstalledDependencies();
 
         $namespaceUsages =
             (new NamespaceUsageFinder())
