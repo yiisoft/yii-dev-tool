@@ -118,8 +118,10 @@ $packages = [
     'yii-debug' => true,
     'yii-debug-viewer' => true,
     'yii-gii' => true,
+    'yii-gii-frontend' => true,
     'yii-bootstrap4' => true,
     'yii-bootstrap5' => true,
+    'yii-bulma' => true,
     'yii-twig' => true,
 
     'yii-captcha' => true,
