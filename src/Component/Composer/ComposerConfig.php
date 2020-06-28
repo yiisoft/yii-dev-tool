@@ -101,13 +101,13 @@ class ComposerConfig
         if ($specificVendor !== null) {
             $dependencies = array_filter(
                 $dependencies,
-                fn($key) => strpos($key, "$specificVendor/") === 0,
+                fn ($key) => strpos($key, "$specificVendor/") === 0,
                 ARRAY_FILTER_USE_KEY
             );
         } elseif ($skipVirtual === true) {
             $dependencies = array_filter(
                 $dependencies,
-                fn($key) => strpos($key, '/') !== false,
+                fn ($key) => strpos($key, '/') !== false,
                 ARRAY_FILTER_USE_KEY
             );
         }
