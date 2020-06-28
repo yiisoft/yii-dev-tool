@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\Command\ExecCommand;
+use Yiisoft\YiiDevTool\Command\FixDependenciesCommand;
 use Yiisoft\YiiDevTool\Command\Git\CheckoutBranchCommand;
 use Yiisoft\YiiDevTool\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\Command\Git\PullCommand;
@@ -47,6 +48,7 @@ HEADER;
             new CheckoutBranchCommand(),
             new CommitCommand(),
             new ExecCommand(),
+            new FixDependenciesCommand(),
             new InstallCommand(),
             new LintCommand(),
             new PullCommand(),
