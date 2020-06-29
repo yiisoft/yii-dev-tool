@@ -27,7 +27,7 @@ class FixDependenciesCommand extends PackageCommand
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        return '<success>✔ Nothing to fix</success>';
+        return '<success>✔ Done</success>';
     }
 
     protected function processPackage(Package $package): void
