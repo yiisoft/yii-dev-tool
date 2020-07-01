@@ -8,6 +8,7 @@ use RuntimeException;
 
 class ComposerConfig
 {
+    public const SECTION_PROVIDE = 'provide';
     public const SECTION_REQUIRE = 'require';
     public const SECTION_REQUIRE_DEV = 'require-dev';
 
@@ -138,6 +139,11 @@ class ComposerConfig
         return $namespaces;
     }
 
+    public function sortPackagesEnabled(): bool
+    {
+        return isset($this->data['config']['sort-packages']) && $this->data['config']['sort-packages'] === true;
+    }
+
     public function hasSection(string $section): bool
     {
         return array_key_exists($section, $this->data);
@@ -151,6 +157,13 @@ class ComposerConfig
     public function setSection(string $section, $data): void
     {
         $this->data[$section] = $data;
+    }
+
+    public function removeSection($section): void
+    {
+        if ($this->hasSection($section)) {
+            unset($this->data[$section]);
+        }
     }
 
     private function internalMerge(array $a, array $b): array
