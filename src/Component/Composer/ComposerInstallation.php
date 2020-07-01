@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Composer;
 
+use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
+
 class ComposerInstallation
 {
     private ComposerPackage $rootPackage;
@@ -16,7 +18,7 @@ class ComposerInstallation
         $this->analyzeDependencies();
     }
 
-    public function hasNotInstalledDependencies(): bool
+    public function hasNotInstalledDependencyPackages(): bool
     {
         return count($this->notInstalledDependencies) > 0;
     }
@@ -24,7 +26,7 @@ class ComposerInstallation
     /**
      * @return ComposerPackage[]
      */
-    public function getNotInstalledDependencies(): array
+    public function getNotInstalledDependencyPackages(): array
     {
         return $this->notInstalledDependencies;
     }
@@ -32,16 +34,47 @@ class ComposerInstallation
     /**
      * @return ComposerPackage[]
      */
-    public function getNonVirtualInstalledDependencies(): array
+    public function getInstalledDependencyPackages(): array
     {
         return $this->installedDependencies;
     }
 
+    /**
+     * @param string $section
+     * @return ComposerPackage[]
+     */
+    public function getDependencyPackages(string $section): array
+    {
+        ComposerConfig::validateDependencySection($section);
+
+        $rootPackage = $this->rootPackage;
+        $dependencies = $this->rootPackage->getComposerConfig()->getDependencyList($section)->getDependencies();
+
+        $packages = [];
+        foreach ($dependencies as $dependency) {
+            if ($dependency->isPlatformRequirement()) {
+                // Skip platform requirements
+                continue;
+            }
+
+            $packageName = $dependency->getPackageName();
+            $packages[] = new ComposerPackage($packageName, "{$rootPackage->getPath()}/vendor/{$packageName}");
+        }
+
+        return $packages;
+    }
+
     private function analyzeDependencies(): void
     {
-        $dependencies = $this->rootPackage->getDependencyPackages();
+        $dependencies = array_merge(
+            $this->getDependencyPackages(ComposerConfig::SECTION_REQUIRE),
+            $this->getDependencyPackages(ComposerConfig::SECTION_REQUIRE_DEV),
+        );
 
+        /** @var ComposerPackage[] $installed */
         $installed = [];
+
+        /** @var ComposerPackage[] $notInstalled */
         $notInstalled = [];
 
         foreach ($dependencies as $dependency) {

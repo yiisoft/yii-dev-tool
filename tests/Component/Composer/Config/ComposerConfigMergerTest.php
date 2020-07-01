@@ -2,12 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Test\Component\Composer;
+namespace Yiisoft\YiiDevTool\Test\Component\Composer\Config;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\YiiDevTool\Component\Composer\ComposerConfig;
+use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
+use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfigMerger;
 
-final class ComposerConfigTest extends TestCase
+final class ComposerConfigMergerTest extends TestCase
 {
     public function mergeProvider()
     {
@@ -166,14 +167,17 @@ JSON,
     /**
      * @param $originalJson
      * @param $additionalJson
-     * @param $resultJson
+     * @param $expectedMergedJson
      * @dataProvider mergeProvider
      */
-    public function testMerge(string $originalJson, string $additionalJson, string $resultJson)
+    public function testMerge(string $originalJson, string $additionalJson, string $expectedMergedJson)
     {
+        $merger = new ComposerConfigMerger();
+
         $originalConfig = ComposerConfig::createByJson($originalJson);
         $additionalConfig = ComposerConfig::createByJson($additionalJson);
+        $mergedConfig = $merger->merge($originalConfig, $additionalConfig);
 
-        $this->assertSame($resultJson, $originalConfig->merge($additionalConfig)->asPrettyJson());
+        $this->assertSame($expectedMergedJson, $mergedConfig->asPrettyJson());
     }
 }

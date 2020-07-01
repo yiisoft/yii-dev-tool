@@ -74,9 +74,11 @@ class NamespaceUsageFinder
                 continue;
             }
 
-            // TODO: Check extension
             if (is_file($absolutePath)) {
-                $files[] = $absolutePath;
+                if (pathinfo($absolutePath, PATHINFO_EXTENSION) === 'php') {
+                    $files[] = $absolutePath;
+                }
+
                 continue;
             }
 
