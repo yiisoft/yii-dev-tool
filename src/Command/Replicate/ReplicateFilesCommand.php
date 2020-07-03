@@ -57,12 +57,13 @@ class ReplicateFilesCommand extends PackageCommand
 
         $replicationSourcePackage = $packageList->getPackage($replicationSourcePackageId);
         if (!$replicationSourcePackage->isGitRepositoryCloned()) {
+            $ds = DIRECTORY_SEPARATOR;
             $io->error([
                 "Package <package>$replicationSourcePackageId</package> is configured as replication source.",
                 'But such a package is not installed.',
                 'To fix, run the following command:',
                 '',
-                "  <cmd>./yii-dev install $replicationSourcePackageId</cmd>",
+                "  <cmd>.{$ds}yii-dev install $replicationSourcePackageId</cmd>",
                 '',
                 'Replication aborted.',
             ]);
