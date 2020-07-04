@@ -46,6 +46,9 @@ class NamespaceUsageFinder
         return $this;
     }
 
+    /**
+     * @return CodeUsage[]
+     */
     public function getUsages(): array
     {
         if ($this->usages === null) {
