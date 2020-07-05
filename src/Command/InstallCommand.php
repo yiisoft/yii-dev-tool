@@ -2,7 +2,8 @@
 
 namespace Yiisoft\YiiDevTool\Command;
 
-use GitWrapper\Exception\GitException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -13,6 +14,7 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 class InstallCommand extends PackageCommand
 {
     private bool $updateMode = false;
+    private array $additionalComposerInstallOptions = [];
 
     public function useUpdateMode(): self
     {
@@ -25,9 +27,22 @@ class InstallCommand extends PackageCommand
     {
         $this
             ->setName('install')
-            ->setDescription('Install packages');
+            ->setDescription('Install packages')
+            ->addOption(
+                'no-plugins',
+                null,
+                InputOption::VALUE_NONE,
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
+            );
 
         $this->addPackageArgument();
+    }
+
+    protected function beforeProcessingPackages(InputInterface $input): void
+    {
+        if ($input->getOption('no-plugins') !== false) {
+            $this->additionalComposerInstallOptions[] = '--no-plugins';
+        }
     }
 
     protected function afterProcessingPackages(): void
@@ -135,6 +150,7 @@ class InstallCommand extends PackageCommand
             $composerCommandName,
             '--prefer-dist',
             '--no-progress',
+            ...$this->additionalComposerInstallOptions,
             '--working-dir',
             $package->getPath(),
             $io->hasColorSupport() ? '--ansi' : '--no-ansi',
