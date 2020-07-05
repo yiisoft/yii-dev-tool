@@ -46,6 +46,9 @@ class NamespaceUsageFinder
         return $this;
     }
 
+    /**
+     * @return CodeUsage[]
+     */
     public function getUsages(): array
     {
         if ($this->usages === null) {
@@ -74,9 +77,11 @@ class NamespaceUsageFinder
                 continue;
             }
 
-            // TODO: Check extension
             if (is_file($absolutePath)) {
-                $files[] = $absolutePath;
+                if (pathinfo($absolutePath, PATHINFO_EXTENSION) === 'php') {
+                    $files[] = $absolutePath;
+                }
+
                 continue;
             }
 

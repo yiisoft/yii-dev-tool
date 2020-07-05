@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Component\Composer;
 
 use RuntimeException;
+use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
 
 class ComposerPackage
 {
@@ -49,22 +50,6 @@ class ComposerPackage
         }
 
         return $this->config;
-    }
-
-    /**
-     * @param string|null $specificVendor
-     * @return static[]
-     */
-    public function getDependencyPackages(?string $specificVendor = null): array
-    {
-        $packages = [];
-        $nonVirtualDependencies = $this->getComposerConfig()->getDependencies($specificVendor, true);
-
-        foreach ($nonVirtualDependencies as $packageName => $packageVersion) {
-            $packages[] = new static($packageName, "{$this->path}/vendor/{$packageName}");
-        }
-
-        return $packages;
     }
 
     public function getNamespaces(): array

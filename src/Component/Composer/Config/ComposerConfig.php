@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Composer;
+namespace Yiisoft\YiiDevTool\Component\Composer\Config;
 
+use InvalidArgumentException;
 use RuntimeException;
+use Yiisoft\YiiDevTool\Component\Composer\Config\Dependency\ComposerConfigDependencyList;
 
 class ComposerConfig
 {
@@ -17,6 +19,21 @@ class ComposerConfig
     private function __construct(array $data)
     {
         $this->data = $data;
+    }
+
+    public static function getAllDependencySections(): array
+    {
+        return [
+            self::SECTION_REQUIRE,
+            self::SECTION_REQUIRE_DEV,
+        ];
+    }
+
+    public static function validateDependencySection(string $section): void
+    {
+        if (!in_array($section, self::getAllDependencySections(), true)) {
+            throw new InvalidArgumentException("Invalid section.");
+        }
     }
 
     public static function createByArray(array $config): self
@@ -62,18 +79,6 @@ class ComposerConfig
         return $content;
     }
 
-    /**
-     * TODO: Move merge logic to a separate class
-     * @param ComposerConfig $anotherComposerConfig
-     * @return $this
-     */
-    public function merge(ComposerConfig $anotherComposerConfig): self
-    {
-        $this->data = $this->internalMerge($this->data, $anotherComposerConfig->asArray());
-
-        return $this;
-    }
-
     public function writeToFile(string $targetPath): self
     {
         $result = file_put_contents($targetPath, $this->asPrettyJson() . "\n");
@@ -83,37 +88,6 @@ class ComposerConfig
         }
 
         return $this;
-    }
-
-    public function getDependencies(?string $specificVendor = null, $skipVirtual = false): array
-    {
-        $config = $this->asArray();
-
-        $dependencies = [];
-
-        if (array_key_exists('require', $config)) {
-            $dependencies = array_merge($dependencies, $config['require']);
-        }
-
-        if (array_key_exists('require-dev', $config)) {
-            $dependencies = array_merge($dependencies, $config['require-dev']);
-        }
-
-        if ($specificVendor !== null) {
-            $dependencies = array_filter(
-                $dependencies,
-                fn ($key) => strpos($key, "$specificVendor/") === 0,
-                ARRAY_FILTER_USE_KEY
-            );
-        } elseif ($skipVirtual === true) {
-            $dependencies = array_filter(
-                $dependencies,
-                fn ($key) => strpos($key, '/') !== false,
-                ARRAY_FILTER_USE_KEY
-            );
-        }
-
-        return $dependencies;
     }
 
     public function getPSRNamespaces(): array
@@ -166,26 +140,19 @@ class ComposerConfig
         }
     }
 
-    private function internalMerge(array $a, array $b): array
+    public function getDependencyList(string $section): ComposerConfigDependencyList
     {
-        foreach ($b as $key => $value) {
-            if (is_string($key)) {
-                if (array_key_exists($key, $a) && is_array($value)) {
-                    $a[$key] = $this->internalMerge($a[$key], $value);
-                } else {
-                    $a[$key] = $value;
-                }
-            } else {
-                $index = array_search($value, $a, true);
+        self::validateDependencySection($section);
 
-                if ($index === false) {
-                    $a[] = $value;
-                } else {
-                    $a[$index] = $value;
-                }
-            }
-        }
+        return new ComposerConfigDependencyList($this->getSection($section));
+    }
 
-        return $a;
+    public function setDependencyList(string $section, ComposerConfigDependencyList $dependencyList): self
+    {
+        self::validateDependencySection($section);
+
+        $this->setSection($section, $dependencyList->asArray());
+
+        return $this;
     }
 }

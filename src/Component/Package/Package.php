@@ -114,6 +114,16 @@ class Package
         return file_exists($this->path);
     }
 
+    public function getComposerConfigPath(): string
+    {
+        return "{$this->path}/composer.json";
+    }
+
+    public function composerConfigFileExists(): bool
+    {
+        return file_exists($this->getComposerConfigPath());
+    }
+
     public function isGitRepositoryCloned(): bool
     {
         return file_exists("{$this->path}/.git");

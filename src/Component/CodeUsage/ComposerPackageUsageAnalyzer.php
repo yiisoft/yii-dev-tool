@@ -64,39 +64,50 @@ class ComposerPackageUsageAnalyzer
         }
     }
 
-    public function getPackagesUsedInSpecifiedEnvironment(string $environment): array
+    /**
+     * @param string $environment
+     * @return string[] array of package names.
+     */
+    public function getNamesOfPackagesUsedInSpecifiedEnvironment(string $environment): array
     {
         $result = [];
 
         foreach ($this->packageUsages as $packageUsage) {
             if ($packageUsage->usedInEnvironment($environment)) {
-                $result[] = $this->packages[$packageUsage->getIdentifier()];
+                $result[] = $this->packages[$packageUsage->getIdentifier()]->getName();
             }
         }
 
         return $result;
     }
 
-    public function getPackagesUsedOnlyInSpecifiedEnvironment(string $environment): array
+    /**
+     * @param string $environment
+     * @return string[] array of package names.
+     */
+    public function getNamesOfPackagesUsedOnlyInSpecifiedEnvironment(string $environment): array
     {
         $result = [];
 
         foreach ($this->packageUsages as $packageUsage) {
             if ($packageUsage->usedOnlyInSpecifiedEnvironment($environment)) {
-                $result[] = $this->packages[$packageUsage->getIdentifier()];
+                $result[] = $this->packages[$packageUsage->getIdentifier()]->getName();
             }
         }
 
         return $result;
     }
 
-    public function getUnusedPackages(): array
+    /**
+     * @return string[] array of package names.
+     */
+    public function getUnusedPackageNames(): array
     {
         $result = [];
 
         foreach ($this->packageUsages as $packageUsage) {
             if (!$packageUsage->used()) {
-                $result[] = $this->packages[$packageUsage->getIdentifier()];
+                $result[] = $this->packages[$packageUsage->getIdentifier()]->getName();
             }
         }
 
