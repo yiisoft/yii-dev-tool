@@ -8,5 +8,4 @@ namespace Production\NonPSRNamespace;
 
 class Config
 {
-
 }

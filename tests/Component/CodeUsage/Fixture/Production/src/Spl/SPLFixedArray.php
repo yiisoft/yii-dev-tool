@@ -8,5 +8,4 @@ namespace Production\Spl;
 
 class SplFixedArray extends \SplFixedArray
 {
-
 }
