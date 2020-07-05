@@ -82,6 +82,23 @@ For example:
 ./yii-dev install di,rbac,yii-cycle,view
 ```
 
+Problems with composer plugins
+------------------------------
+
+Sometimes some composer plugins [do not work](https://github.com/Ocramius/PackageVersions/issues/107) during virtualization.
+
+In this case use flag `--no-plugins` when installing and updating packages. For example:
+
+```bash
+./yii-dev install --no-plugins di,rbac,yii-cycle,view
+```
+
+Update example:
+
+```bash
+./yii-dev update --no-plugins injector,cache,log,proxy
+```
+
 
 SSH keys
 --------
