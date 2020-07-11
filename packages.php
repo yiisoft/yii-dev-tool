@@ -59,6 +59,7 @@ $packages = [
     // queue
     'yii-queue' => true,
     'yii-queue-interop' => true,
+    'yii-queue-amqp' => true,
 
     // mutex
     'mutex' => true,
@@ -115,10 +116,14 @@ $packages = [
     'yii-jquery' => true,
     'yii-masked-input' => true,
     'yii-dataview' => true,
+
     'yii-debug' => true,
-    'yii-debug-viewer' => true,
+    'yii-debug-api' => true,
+    'yii-debug-frontend' => true,
+
     'yii-gii' => true,
     'yii-gii-frontend' => true,
+
     'yii-bootstrap4' => true,
     'yii-bootstrap5' => true,
     'yii-bulma' => true,
