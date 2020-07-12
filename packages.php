@@ -136,6 +136,8 @@ $packages = [
     'yii-filesystem' => true,
     'rate-limiter' => true,
 
+    'request-body-parser' => true,
+
     // demo and app
     'yii-demo' => true,
     'app' => true,
