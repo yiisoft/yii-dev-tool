@@ -20,6 +20,7 @@ $packages = [
     'factory' => true,
     'access' => true,
     'event-dispatcher' => true,
+    'yii-event' => true,
     'security' => true,
     'data' => true,
     'profiler' => true,
