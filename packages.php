@@ -28,6 +28,7 @@ $packages = [
     'network-utilities' => true,
     'auth' => true,
     'http' => true,
+    'data-response' => true,
 
     // cache
     'cache' => true,
