@@ -111,6 +111,7 @@ $packages = [
     // web
     'yii-web' => true,
     'view' => true,
+    'yii-view' => true,
     'widget' => true,
     'yii-widgets' => true,
     'form' => true,
