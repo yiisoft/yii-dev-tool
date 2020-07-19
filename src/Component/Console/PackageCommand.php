@@ -165,7 +165,7 @@ DESCRIPTION
                 "Package <package>{$package->getId()}</package> repository is not cloned.",
                 'To fix, run the command:',
                 '',
-                "  <cmd>./yii-dev install {$package->getId()}</cmd>",
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
             ]);
 
             if (!$this->areTargetPackagesSpecifiedExplicitly()) {
@@ -185,7 +185,7 @@ DESCRIPTION
                 "Package <package>{$package->getId()}</package> repository is cloned from <file>{$remoteOriginUrl}</file>, but url <file>{$package->getConfiguredRepositoryUrl()}</file> is configured.",
                 'To fix, delete the existing working copy of the repository and run the command:',
                 '',
-                "  <cmd>./yii-dev install {$package->getId()}</cmd>",
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
                 '',
                 'Before deleting, make sure that you do not have local changes, branches and tags that are not sent to remote repository.',
                 'You can also reconfigure the package repository url in <file>packages.local.php</file>',
@@ -203,7 +203,7 @@ DESCRIPTION
                         "Package <package>{$package->getId()}</package> repository is personal and has no remote 'upstream'.",
                         'To fix, run the command:',
                         '',
-                        "  <cmd>./yii-dev install {$package->getId()}</cmd>",
+                        "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
                     ]);
 
                     return false;
@@ -301,5 +301,14 @@ DESCRIPTION
                 $io->important()->info($package->getError());
             }
         }
+    }
+
+    /**
+     * @return string Console command prefix that works in current environment.
+     */
+    protected function getExampleCommandPrefix(): string
+    {
+        $isBash = stripos(getenv('SHELL'), 'bash') !== false;
+        return $isBash ? './' : '';
     }
 }

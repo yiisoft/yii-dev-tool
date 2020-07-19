@@ -62,7 +62,7 @@ class ReplicateFilesCommand extends PackageCommand
                 'But such a package is not installed.',
                 'To fix, run the following command:',
                 '',
-                "  <cmd>./yii-dev install $replicationSourcePackageId</cmd>",
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install $replicationSourcePackageId</cmd>",
                 '',
                 'Replication aborted.',
             ]);
