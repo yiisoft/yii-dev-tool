@@ -43,6 +43,7 @@ $packages = [
     'rbac' => true,
     'rbac-db' => true,
     'rbac-php' => true,
+    'rbac-spiral-db' => true,
 
     // log
     'log' => true,
@@ -156,10 +157,6 @@ $packages = [
 
     // requirements checker
     'requirements' => true,
-
-    // archived, likely to be deleted
-    // 'yii-base-cli' => true,
-    // 'filesystem-plugins' => true,
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
