@@ -6,7 +6,7 @@
     },
     "require-dev": {
         "phan/phan": "^3.0",
-        "phpunit/phpunit": "^9.0"
+        "phpunit/phpunit": "^9.3"
     },
     "config": {
         "sort-packages": true
