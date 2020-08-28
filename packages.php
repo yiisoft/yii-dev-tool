@@ -138,8 +138,10 @@ $packages = [
     'yii-auth-client' => true,
 
     'yii-filesystem' => true,
-    'rate-limiter' => true,
 
+    // middleware
+    'rate-limiter' => true,
+    'csrf' => true,
     'request-body-parser' => true,
 
     // demo and app
