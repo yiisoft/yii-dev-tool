@@ -110,6 +110,8 @@ $packages = [
     'router-fastroute' => true,
 
     // web
+    'session' => true,
+    'cookies' => true,
     'yii-web' => true,
     'view' => true,
     'yii-view' => true,
