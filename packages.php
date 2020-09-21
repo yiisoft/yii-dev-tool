@@ -88,7 +88,7 @@ $packages = [
     'yii-console' => true,
 
     // api
-    'yii-rest' => true,
+    'yii-api' => true,
 
     // db
     'db' => true,
