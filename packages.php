@@ -54,7 +54,7 @@ $packages = [
 
     // i18n
     'i18n' => true,
-    'i18n-translator' => true,
+    'translator' => true,
     'i18n-message-php' => true,
     'i18n-message-gettext' => true,
     'i18n-formatter-intl' => true,
@@ -153,6 +153,7 @@ $packages = [
     'validator' => true,
     'friendly-exception' => true,
     //'fixture' => true,
+    'test-support' => true,
 
     // repository template
     'template' => true,
