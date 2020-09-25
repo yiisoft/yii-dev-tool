@@ -89,6 +89,7 @@ $packages = [
 
     // api
     'yii-api' => true,
+    'yii-swagger' => true,
 
     // db
     'db' => true,
