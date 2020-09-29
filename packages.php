@@ -27,9 +27,12 @@ $packages = [
     'aliases' => true,
     'serializer' => true,
     'network-utilities' => true,
-    'auth' => true,
     'http' => true,
     'data-response' => true,
+
+    // auth
+    'auth' => true,
+    'auth-jwt' => true,
 
     // cache
     'cache' => true,
