@@ -23,9 +23,9 @@ class ExecCommand extends PackageCommand
                 'console-command',
                 InputArgument::REQUIRED,
                 <<<DESCRIPTION
-Console command to be executed. Complex console commands should be enclosed in quotes.
-For example: <fg=green;options=bold>'git commit --message="Feature X" --amend'</>
-DESCRIPTION
+                Console command to be executed. Complex console commands should be enclosed in quotes.
+                For example: <fg=green;options=bold>'git commit --message="Feature X" --amend'</>
+                DESCRIPTION
             );
 
         $this->addPackageArgument();

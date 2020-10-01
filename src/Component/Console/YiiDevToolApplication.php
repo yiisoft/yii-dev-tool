@@ -28,14 +28,14 @@ use Yiisoft\YiiDevTool\Command\UpdateCommand;
 class YiiDevToolApplication extends Application
 {
     private string $header = <<<HEADER
- <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
- <fg=cyan;options=bold>| | | |</><fg=red;options=bold>(_)</><fg=green;options=bold>(_)</>  <fg=yellow;options=bold>Development Tool</>
- <fg=cyan;options=bold>| |_| |</><fg=red;options=bold>| |</><fg=green;options=bold>| |</>
- <fg=cyan;options=bold> \__, |</><fg=red;options=bold>|_|</><fg=green;options=bold>|_|</>  <fg=yellow;options=bold>for Yii 3.0</>
- <fg=cyan;options=bold> |___/ </>
-
-This tool helps with setting up a development environment for Yii 3 packages.
-HEADER;
+    <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
+    <fg=cyan;options=bold>| | | |</><fg=red;options=bold>(_)</><fg=green;options=bold>(_)</>  <fg=yellow;options=bold>Development Tool</>
+    <fg=cyan;options=bold>| |_| |</><fg=red;options=bold>| |</><fg=green;options=bold>| |</>
+    <fg=cyan;options=bold> \__, |</><fg=red;options=bold>|_|</><fg=green;options=bold>|_|</>  <fg=yellow;options=bold>for Yii 3.0</>
+    <fg=cyan;options=bold> |___/ </>
+    
+    This tool helps with setting up a development environment for Yii 3 packages.
+    HEADER;
 
     public function __construct()
     {
