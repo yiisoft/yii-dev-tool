@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;

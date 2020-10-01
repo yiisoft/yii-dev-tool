@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Component\Console;
 
 use InvalidArgumentException;
@@ -308,7 +310,8 @@ DESCRIPTION
      */
     protected function getExampleCommandPrefix(): string
     {
-        $isBash = stripos(getenv('SHELL'), 'bash') !== false;
+        $shell = getenv('SHELL');
+        $isBash = ($shell && stripos($shell, 'bash')) !== false;
         return $isBash ? './' : '';
     }
 }
