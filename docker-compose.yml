@@ -1,7 +1,7 @@
 version: '3.4'
 services:
   php:
-    image: yiisoftware/yii-php:7.4-apache
+    build: docker/
     working_dir: /app
     volumes:
       - .:/app

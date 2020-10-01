@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Command\Replicate;
 
 use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;

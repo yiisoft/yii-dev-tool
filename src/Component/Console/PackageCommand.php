@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Component\Console;
 
 use InvalidArgumentException;
@@ -68,10 +70,10 @@ class PackageCommand extends Command
             'packages',
             InputArgument::OPTIONAL,
             <<<DESCRIPTION
-Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,yii-demo,db-mysql</>
-Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
-If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
-DESCRIPTION
+            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,yii-demo,db-mysql</>
+            Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
+            If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
+            DESCRIPTION
         );
     }
 
@@ -308,7 +310,8 @@ DESCRIPTION
      */
     protected function getExampleCommandPrefix(): string
     {
-        $isBash = stripos(getenv('SHELL'), 'bash') !== false;
+        $shell = getenv('SHELL');
+        $isBash = ($shell && stripos($shell, 'bash')) !== false;
         return $isBash ? './' : '';
     }
 }
