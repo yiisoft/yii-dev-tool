@@ -212,6 +212,8 @@ Go to the pages of the original repositories and create a PR in each:
 * [yiisoft/view](https://github.com/yiisoft/view)
 * [yiisoft/i18n](https://github.com/yiisoft/i18n)
 
+> Note: Don't create PR from master directly, instead create a new branch.
+
 ### Final notes
 
 That's all. We developed new functionality and submitted it for review 🙂 Of course, the steps will be 
