@@ -58,9 +58,10 @@ $packages = [
     // i18n
     'i18n' => true,
     'translator' => true,
-    'i18n-message-php' => true,
-    'i18n-message-gettext' => true,
-    'i18n-formatter-intl' => true,
+    'translator-message-php' => true,
+    'translator-message-gettext' => true,
+    'translator-formatter-intl' => true,
+    'translator-formatter-simple' => true,
 
     // queue
     'yii-queue' => true,
