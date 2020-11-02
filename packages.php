@@ -153,9 +153,12 @@ $packages = [
     'csrf' => true,
     'request-body-parser' => true,
 
-    // demo and app
+    // demo
     'yii-demo' => true,
+
+    // application templates
     'app' => true,
+    'app-api' => true,
 
     // other
     'yii-docker' => true,
