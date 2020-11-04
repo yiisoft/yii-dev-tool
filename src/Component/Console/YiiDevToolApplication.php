@@ -19,6 +19,7 @@ use Yiisoft\YiiDevTool\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\Command\Git\StatusCommand;
 use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
+use Yiisoft\YiiDevTool\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\Command\Travis\TravisEnsureCronjobCommand;
@@ -33,7 +34,7 @@ class YiiDevToolApplication extends Application
     <fg=cyan;options=bold>| |_| |</><fg=red;options=bold>| |</><fg=green;options=bold>| |</>
     <fg=cyan;options=bold> \__, |</><fg=red;options=bold>|_|</><fg=green;options=bold>|_|</>  <fg=yellow;options=bold>for Yii 3.0</>
     <fg=cyan;options=bold> |___/ </>
-    
+
     This tool helps with setting up a development environment for Yii 3 packages.
     HEADER;
 
@@ -61,6 +62,7 @@ class YiiDevToolApplication extends Application
             new TravisEnsureCronjobCommand(),
             new TravisUpdateSlackConfigCommand(),
             new UpdateCommand(),
+            new MakeCommand(),
         ];
     }
 

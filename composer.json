@@ -25,7 +25,8 @@
         "symfony/finder": "^5.0",
         "symfony/polyfill-php73": "^1.13",
         "symfony/process": "^5.0",
-        "symfony/yaml": "^5.0"
+        "symfony/yaml": "^5.0",
+        "yiisoft/arrays": "3.0.x-dev"
     },
     "autoload": {
         "psr-4": {
