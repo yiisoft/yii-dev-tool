@@ -1,6 +1,5 @@
 <?php
 
-
 namespace Yiisoft\YiiDevTool\Command\Release;
 
 use GitWrapper\GitWorkingCopy;
