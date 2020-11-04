@@ -12,6 +12,9 @@ $packages = [
     // config plugin
     'composer-config-plugin' => true,
 
+    // error handler
+    'error-handler' => true,
+
     // core packages
     'di' => true,
     'proxy' => true,
