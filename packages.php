@@ -114,6 +114,9 @@ $packages = [
     'router' => true,
     'router-fastroute' => true,
 
+    // user
+    'user' => true,
+
     // web
     'request-model' => true,
     'middleware-dispatcher' => true,
