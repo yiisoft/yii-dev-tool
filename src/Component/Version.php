@@ -1,8 +1,6 @@
 <?php
 
-
 namespace Yiisoft\YiiDevTool\Component;
-
 
 final class Version
 {

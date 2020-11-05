@@ -143,7 +143,6 @@ class MakeCommand extends PackageCommand
             $io->info("- Close the $currentVersion <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $versionToRelease.");
             //$io->info("- Create a release on GitHub.");
             $io->info('- Release news and announcement.');
-
         }
     }
 
