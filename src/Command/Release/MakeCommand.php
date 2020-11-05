@@ -12,6 +12,7 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\YiiDevTool\Component\Changelog;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
+use Yiisoft\YiiDevTool\Component\Version;
 
 class MakeCommand extends PackageCommand
 {
@@ -21,12 +22,6 @@ class MakeCommand extends PackageCommand
     private ?string $tag;
 
     private const MAIN_BRANCHES = ['master', 'main'];
-
-    private const VERSION_MAJOR = 'major';
-    private const VERSION_MINOR = 'minor';
-    private const VERSION_PATCH = 'patch';
-
-    private const VERSIONS = [self::VERSION_PATCH, self::VERSION_MINOR, self::VERSION_MAJOR];
 
     protected function configure()
     {
@@ -70,12 +65,8 @@ class MakeCommand extends PackageCommand
         $currentVersion = $this->getCurrentVersion($git);
         $io->info("Current version is $currentVersion.");
 
-        $nextVersion = $this->tag;
-        if ($nextVersion === null) {
-            $versionType = $this->choose('What release is it?', '%s is not a valid release type.', self::VERSIONS);
-            $nextVersion = $this->getNextVersion($currentVersion, $versionType);
-        }
-        $io->info("Going to release $nextVersion.");
+        $versionToRelease = $this->getVersionToRelease($currentVersion);
+        $io->info("Going to release $versionToRelease.");
 
         if ($git->hasChanges()) {
             $changes = $git->getStatus();
@@ -84,6 +75,7 @@ class MakeCommand extends PackageCommand
                 $git->clean('-d', '-f');
             } else {
                 $io->error('Can not continue with uncommitted changes.');
+                return;
             }
         }
 
@@ -105,49 +97,54 @@ class MakeCommand extends PackageCommand
                 $git->pull();
             } else {
                 $io->error('Can not continue with outdated repository.');
+                return;
             }
         }
 
         $changelogPath = $package->getPath() . '/CHANGELOG.md';
         $changelog = new Changelog($changelogPath);
-        $io->info("Sorting $changelogPath.");
-        $changelog->resort($nextVersion);
 
-        $io->info("Closing $changelogPath.");
-        $changelog->close($currentVersion);
+        $io->info("Sorting $changelogPath for $versionToRelease.");
+        $changelog->resort($versionToRelease);
 
-        $io->info("Committing changes.");
+        $io->info("Closing $changelogPath for $versionToRelease.");
+        $changelog->close($versionToRelease);
+
+        $io->info("Committing changes for $versionToRelease.");
         $git->commit([
             'S' => true,
             'a' => true,
-            'm' => "Release version $nextVersion"
+            'm' => "Release version $versionToRelease"
         ]);
 
-        $io->info('Adding a tag.');
+        $io->info("Adding a tag for $versionToRelease.");
         $git->tag([
-            's' => $nextVersion,
-            'm' => $nextVersion
+            's' => $versionToRelease,
+            'm' => $versionToRelease
         ]);
 
-        $io->info("Opening $changelogPath.");
-        $changelog->open($this->getNextVersion($nextVersion, self::VERSION_PATCH));
+        $nextVersion = $versionToRelease->getNext(Version::TYPE_PATCH);
+        $io->info("Opening $changelogPath for $nextVersion.");
+        $changelog->open($nextVersion);
 
-        $io->info("Committing changes.");
+        $io->info('Committing changes.');
         $git->commit([
             'a' => true,
-            'm' => "Prepare for next release"
+            'm' => 'Prepare for next release'
         ]);
 
         if ($this->confirm('Push commits and tags?')) {
             $git->push();
             $git->pushTags();
-        }
 
-        $io->info('The following steps are left to do manually:');
-        $io->info("- Close the $currentVersion <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
-        //$io->info("- Create a release on GitHub.");
-        $io->info("- Release news and announcement.");
-        $io->done();
+            $io->done();
+
+            $io->info('The following steps are left to do manually:');
+            $io->info("- Close the $currentVersion <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $versionToRelease.");
+            //$io->info("- Create a release on GitHub.");
+            $io->info('- Release news and announcement.');
+
+        }
     }
 
     private function confirm(string $message): bool
@@ -183,32 +180,21 @@ class MakeCommand extends PackageCommand
         return null;
     }
 
-    private function getCurrentVersion(GitWorkingCopy $git): string
+    private function getCurrentVersion(GitWorkingCopy $git): Version
     {
         $tags = $git->tags()->all();
         rsort($tags, SORT_NATURAL); // TODO this can not deal with alpha/beta/rc...
-        return reset($tags);
+        return new Version(reset($tags));
     }
 
-    private function getNextVersion(string $currentVersion, string $type): string
+    private function getVersionToRelease(Version $currentVersion): Version
     {
-        $parts = explode('.', $currentVersion);
-        switch ($type) {
-            case self::VERSION_MAJOR:
-                $parts[0]++;
-                $parts[1] = 0;
-                $parts[2] = 0;
-                break;
-            case self::VERSION_MINOR:
-                $parts[1]++;
-                $parts[2] = 0;
-                break;
-            case self::VERSION_PATCH:
-                $parts[2]++;
-                break;
-            default:
-                throw new \RuntimeException('Unknown version type.');
+        if ($this->tag === null) {
+            $versionType = $this->choose('What release is it?', '%s is not a valid release type.', Version::TYPES);
+            $nextVersion = $currentVersion->getNext($versionType);
+        } else {
+            $nextVersion = new Version($this->tag);
         }
-        return implode('.', $parts);
+        return $nextVersion;
     }
 }

@@ -18,7 +18,6 @@ final class Changelog
         // split the file into relevant parts
         [$start, $changelog, $end] = $this->splitChangelog($version);
 
-
         // cleanup whitespace
         foreach ($changelog as $i => $line) {
             $changelog[$i] = rtrim($line);
@@ -60,11 +59,9 @@ final class Changelog
 
     public function close(string $version): void
     {
-        $version = str_replace('\\-', '[\\- ]', preg_quote($version, '/'));
-        $headline = $version . ' ' . date('F d, Y');
         $this->replaceInFile(
-            '/' . $version . ' under development\R(-+?)\R/',
-            $headline . "\n" . str_repeat('-', \strlen($headline)) . "\n",
+            '/' . preg_quote($version, '/') . ' under development/',
+            $version . ' ' . date('F d, Y'),
             $this->path
         );
     }
@@ -84,13 +81,12 @@ final class Changelog
         $end = [];
 
         $state = 'start';
-        foreach ($lines as $l => $line) {
+        foreach ($lines as $lineNumber => $line) {
             // starting from the changelogs headline
-            if (isset($lines[$l - 2]) && strpos($lines[$l - 2], $version) !== false &&
-                isset($lines[$l - 1]) && strncmp($lines[$l - 1], '---', 3) === 0) {
+            if (isset($lines[$lineNumber - 2]) && strpos($lines[$lineNumber - 2], $version) !== false && strpos($lines[$lineNumber - 2], '## ') === 0) {
                 $state = 'changelog';
             }
-            if ($state === 'changelog' && isset($lines[$l + 1]) && strncmp($lines[$l + 1], '---', 3) === 0) {
+            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && strncmp($lines[$lineNumber + 1], '## ', 3) === 0) {
                 $state = 'end';
             }
             // add continued lines to the last item to keep them together
