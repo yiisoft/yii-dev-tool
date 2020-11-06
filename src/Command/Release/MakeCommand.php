@@ -92,14 +92,8 @@ class MakeCommand extends PackageCommand
             }
         }
 
-        if (!$git->isUpToDate()) {
-            if ($this->confirm('Repository is not up to date. Update?')) {
-                $git->pull();
-            } else {
-                $io->error('Can not continue with outdated repository.');
-                return;
-            }
-        }
+        $io->info('Pulling latest changes.');
+        $git->pull();
 
         $changelogPath = $package->getPath() . '/CHANGELOG.md';
         $changelog = new Changelog($changelogPath);
