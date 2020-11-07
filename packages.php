@@ -174,11 +174,11 @@ $packages = [
     //'fixture' => true,
     'test-support' => true,
 
-    // repository template
-    'template' => true,
-
     // requirements checker
     'requirements' => true,
+
+    // package template
+    'package-template' => true,
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
