@@ -60,7 +60,7 @@ final class Changelog
     public function close(string $version): void
     {
         $this->replaceInFile(
-            '/' . preg_quote($version, '/') . ' under development/',
+            '/\d+\.\d+\.\d+ under development/',
             $version . ' ' . date('F d, Y'),
             $this->path
         );
