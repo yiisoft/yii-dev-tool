@@ -11,13 +11,13 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class ReplicateComposerConfigCommand extends PackageCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('replicate/composer-config')
-            ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package');
-
-        $this->addPackageArgument();
+            ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
+            ->addPackageArgument()
+        ;
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
@@ -42,10 +42,18 @@ class ReplicateComposerConfigCommand extends PackageCommand
 
         $merger = new ComposerConfigMerger();
 
-        $mergedConfig = $merger->merge(
-            ComposerConfig::createByFilePath($targetPath),
-            ComposerConfig::createByFilePath(__DIR__ . '/../../../config/replicate/composer.json'),
-        );
+        try {
+            $mergedConfig = $merger->merge(
+                ComposerConfig::createByFilePath($targetPath),
+                ComposerConfig::createByFilePath(__DIR__ . '/../../../config/replicate/composer.json'),
+            );
+        } catch (\Throwable $e) {
+            $io->error([
+                "An error occurred while working on package \"{$package->getId()}\"",
+                $e->getMessage(),
+            ]);
+            throw $e;
+        }
 
         $mergedConfig->writeToFile($targetPath);
 
