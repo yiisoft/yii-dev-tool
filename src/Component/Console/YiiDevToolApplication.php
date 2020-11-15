@@ -16,6 +16,7 @@ use Yiisoft\YiiDevTool\Command\Git\CheckoutBranchCommand;
 use Yiisoft\YiiDevTool\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\Command\Git\PushCommand;
+use Yiisoft\YiiDevTool\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\Command\Git\StatusCommand;
 use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
@@ -50,6 +51,7 @@ class YiiDevToolApplication extends Application
             (new ListCommand())->setHidden(true),
             new CheckoutBranchCommand(),
             new CommitCommand(),
+            new RequestPullCommand(),
             new ExecCommand(),
             new FixDependenciesCommand(),
             new InstallCommand(),
