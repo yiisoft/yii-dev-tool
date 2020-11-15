@@ -52,7 +52,7 @@ class Package
             $this->configuredRepositoryUrl = $config;
         }
 
-        $this->path = realpath(__DIR__ . '/../../../') . '/dev/' . $id;
+        $this->path = dirname(__DIR__, 3) . '/dev/' . $id;
     }
 
     public function getId(): string
