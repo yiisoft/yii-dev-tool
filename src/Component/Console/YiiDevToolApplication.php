@@ -23,6 +23,7 @@ use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
+use Yiisoft\YiiDevTool\Command\TestCommand;
 use Yiisoft\YiiDevTool\Command\Travis\TravisEnsureCronjobCommand;
 use Yiisoft\YiiDevTool\Command\Travis\TravisUpdateSlackConfigCommand;
 use Yiisoft\YiiDevTool\Command\UpdateCommand;
@@ -51,6 +52,7 @@ class YiiDevToolApplication extends Application
             (new ListCommand())->setHidden(true),
             new CheckoutBranchCommand(),
             new CommitCommand(),
+            new TestCommand(),
             new RequestPullCommand(),
             new ExecCommand(),
             new FixDependenciesCommand(),
