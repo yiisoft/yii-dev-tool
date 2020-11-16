@@ -2,7 +2,7 @@
 
 // replication config
 return [
-    'sourcePackage' => 'template',
+    'sourcePackage' => 'package-template',
     'sourceFiles' => [
         '.github/ISSUE_TEMPLATE.md',
         '.github/PULL_REQUEST_TEMPLATE.md',
