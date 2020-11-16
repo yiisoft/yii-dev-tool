@@ -4,19 +4,30 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Command;
 
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
 final class TestCommand extends PackageCommand
 {
+    private ?string $filter;
+
     protected function configure(): void
     {
         $this
             ->setName('test')
             ->setDescription('Test packages')
+            ->addOption('filter', null, InputOption::VALUE_REQUIRED, 'Filter test cases by the word.')
             ->addPackageArgument()
         ;
+    }
+
+    protected function beforeProcessingPackages(InputInterface $input): void
+    {
+        $filter = $input->getOption('filter');
+        $this->filter = $filter === null ? null : (string) $filter;
     }
 
     protected function processPackage(Package $package): void
@@ -32,11 +43,18 @@ final class TestCommand extends PackageCommand
         $process->run();
 
         if (!$process->isSuccessful() && $this->isComposerTestNotImplemented($process)) {
-            $process = new Process([
+            $command = [
                 './vendor/bin/phpunit',
                 '--colors',
                 '--no-interaction',
-            ], $package->getPath());
+            ];
+
+            if ($this->filter !== null) {
+                $command[] = '--filter';
+                $command[] = $this->filter;
+            }
+
+            $process = new Process($command, $package->getPath());
             $process->setTimeout(20);
             $process->run();
         }
