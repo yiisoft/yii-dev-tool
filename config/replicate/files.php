@@ -40,6 +40,7 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
+                'requirements'
             ],
         ],
         'files' => [
@@ -103,7 +104,7 @@ return [
             ],
         ],
         'files' => [
-            '.github/workflows/bc.yml',
+            '.github/workflows/bc.yml_',
         ],
     ],
     'build' => [
