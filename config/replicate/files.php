@@ -26,6 +26,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
             ],
         ],
         'files' => [
@@ -38,6 +39,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
             ],
         ],
         'files' => [
@@ -50,6 +52,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
                 'access',
                 // apps (they have to report coverage from Codeception)
                 'app',
@@ -67,6 +70,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
                 'requirements'
             ],
         ],
@@ -80,6 +84,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
                 'access',
                 'aliases',
                 'http',
@@ -107,6 +112,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
             ],
         ],
         'files' => [
@@ -119,6 +125,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
 
                 // apps
                 'app',
@@ -137,6 +144,7 @@ return [
             'include' => ['*'],
             'exclude' => [
                 'docs',
+                'yii-docker',
             ],
         ],
         'files' => [
