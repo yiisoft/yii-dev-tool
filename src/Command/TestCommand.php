@@ -65,6 +65,12 @@ final class TestCommand extends PackageCommand
             return;
         }
 
+        if ($process->getExitCode() === 127) {
+            $io->info('No testing engine found.');
+
+            return;
+        }
+
         $output = $process->getErrorOutput();
         $package->setError($output, 'testing package');
         $io->important()->info($process->getOutput() . $output);
