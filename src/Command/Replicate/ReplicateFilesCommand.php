@@ -130,9 +130,14 @@ class ReplicateFilesCommand extends PackageCommand
             $fs = new Filesystem();
             foreach ($replicationSet->getFiles() as $sourceFile) {
                 try {
+                    $sourceFilePath = $sourcePackage->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
+                    $targetFilePath = $package->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
+
+                    $io->info("Copying $sourceFilePath to $targetFilePath.");
                     $fs->copy(
-                        $sourcePackage->getPath() . DIRECTORY_SEPARATOR . $sourceFile,
-                        $package->getPath() . DIRECTORY_SEPARATOR . $sourceFile
+                        $sourceFilePath,
+                        $targetFilePath,
+                        true
                     );
                 } catch (Throwable $e) {
                     $io->error([
