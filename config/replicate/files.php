@@ -72,7 +72,9 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
-                'requirements'
+                'requirements',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
             ],
         ],
         'files' => [
