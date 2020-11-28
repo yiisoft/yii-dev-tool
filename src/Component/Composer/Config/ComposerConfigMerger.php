@@ -9,6 +9,7 @@ class ComposerConfigMerger
     public function merge(ComposerConfig $firstConfig, ComposerConfig $secondConfig): ComposerConfig
     {
         $resultData = $this->internalMerge($firstConfig->asArray(), $secondConfig->asArray());
+        $resultData = $this->sortDependencies($resultData);
 
         return ComposerConfig::createByArray($resultData);
     }
@@ -34,5 +35,21 @@ class ComposerConfigMerger
         }
 
         return $a;
+    }
+
+    private function sortDependencies(array $config): array
+    {
+        if (!(bool) ($config['config']['sort-packages'] ?? false)) {
+            return $config;
+        }
+
+        if (array_key_exists('require', $config)) {
+            uksort($config['require'], 'strnatcmp');
+        }
+        if (array_key_exists('require-dev', $config)) {
+            uksort($config['require-dev'], 'strnatcmp');
+        }
+
+        return $config;
     }
 }
