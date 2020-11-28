@@ -27,6 +27,8 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
+                'app',
+                'app-api',
             ],
         ],
         'files' => [
