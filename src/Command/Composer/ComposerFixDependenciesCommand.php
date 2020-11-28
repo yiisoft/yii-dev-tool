@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Command;
+namespace Yiisoft\YiiDevTool\Command\Composer;
 
 use Yiisoft\YiiDevTool\Component\CodeUsage\CodeUsageEnvironment;
 use Yiisoft\YiiDevTool\Component\CodeUsage\ComposerPackageUsageAnalyzer;
@@ -14,12 +14,12 @@ use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfigDependenciesModif
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
 
-class FixDependenciesCommand extends PackageCommand
+class ComposerFixDependenciesCommand extends PackageCommand
 {
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('fix-dependencies')
+            ->setName('composer/fix-dependencies')
             ->setDescription('Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes');
 
         $this->addPackageArgument();

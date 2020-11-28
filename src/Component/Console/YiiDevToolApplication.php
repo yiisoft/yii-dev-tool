@@ -10,8 +10,8 @@ use Symfony\Component\Console\Command\ListCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+use Yiisoft\YiiDevTool\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\Command\ExecCommand;
-use Yiisoft\YiiDevTool\Command\FixDependenciesCommand;
 use Yiisoft\YiiDevTool\Command\Git\CheckoutBranchCommand;
 use Yiisoft\YiiDevTool\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\Command\Git\PullCommand;
@@ -55,7 +55,7 @@ class YiiDevToolApplication extends Application
             new TestCommand(),
             new RequestPullCommand(),
             new ExecCommand(),
-            new FixDependenciesCommand(),
+            new ComposerFixDependenciesCommand(),
             new InstallCommand(),
             new LintCommand(),
             new PullCommand(),
@@ -70,7 +70,7 @@ class YiiDevToolApplication extends Application
         ];
     }
 
-    protected function getDefaultInputDefinition()
+    protected function getDefaultInputDefinition(): InputDefinition
     {
         return new InputDefinition([
             new InputArgument('command', InputArgument::REQUIRED, 'The command to execute'),
