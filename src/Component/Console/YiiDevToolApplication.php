@@ -22,6 +22,7 @@ use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateComposerConfigCommand;
+use Yiisoft\YiiDevTool\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\Command\TestCommand;
 use Yiisoft\YiiDevTool\Command\Travis\TravisEnsureCronjobCommand;
@@ -62,6 +63,7 @@ class YiiDevToolApplication extends Application
             new PushCommand(),
             new ReplicateFilesCommand(),
             new ReplicateComposerConfigCommand(),
+            new ReplicateCopyFileCommand(),
             new StatusCommand(),
             new TravisEnsureCronjobCommand(),
             new TravisUpdateSlackConfigCommand(),
