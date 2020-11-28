@@ -9,6 +9,7 @@ class ComposerConfigMerger
     public function merge(ComposerConfig $firstConfig, ComposerConfig $secondConfig): ComposerConfig
     {
         $resultData = $this->internalMerge($firstConfig->asArray(), $secondConfig->asArray());
+        $resultData = $this->sortDependencies($resultData);
 
         return ComposerConfig::createByArray($resultData);
     }
@@ -34,5 +35,43 @@ class ComposerConfigMerger
         }
 
         return $a;
+    }
+
+    private function sortDependencies(array $config): array
+    {
+        if (!(bool) ($config['config']['sort-packages'] ?? false)) {
+            return $config;
+        }
+
+        if (array_key_exists('require', $config)) {
+            $config['require'] = $this->sortInternal($config['require']);
+        }
+        if (array_key_exists('require-dev', $config)) {
+            $config['require-dev'] = $this->sortInternal($config['require-dev']);
+        }
+
+        return $config;
+    }
+
+    private function sortInternal(array $packages): array
+    {
+        uksort($packages, 'strnatcmp');
+
+        $extensions = [];
+        foreach ($packages as $package => $version) {
+            if (preg_match('/^ext-[a-z-]+$/', $package)) {
+                unset($packages[$package]);
+                $extensions[$package] = $version;
+            }
+        }
+        $packages = array_merge($extensions, $packages);
+
+        if (array_key_exists('php', $packages)) {
+            $php = $packages['php'];
+            unset($packages['php']);
+            $packages = array_merge(['php' => $php], $packages);
+        }
+
+        return $packages;
     }
 }
