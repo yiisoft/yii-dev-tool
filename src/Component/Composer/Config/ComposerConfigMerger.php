@@ -44,12 +44,34 @@ class ComposerConfigMerger
         }
 
         if (array_key_exists('require', $config)) {
-            uksort($config['require'], 'strnatcmp');
+            $config['require'] = $this->sortInternal($config['require']);
         }
         if (array_key_exists('require-dev', $config)) {
-            uksort($config['require-dev'], 'strnatcmp');
+            $config['require-dev'] = $this->sortInternal($config['require-dev']);
         }
 
         return $config;
+    }
+
+    private function sortInternal(array $packages): array
+    {
+        uksort($packages, 'strnatcmp');
+
+        $extensions = [];
+        foreach ($packages as $package => $version) {
+            if (preg_match('/^ext-[a-z-]+$/', $package)) {
+                unset($packages[$package]);
+                $extensions[$package] = $version;
+            }
+        }
+        $packages = array_merge($extensions, $packages);
+
+        if (array_key_exists('php', $packages)) {
+            $php = $packages['php'];
+            unset($packages['php']);
+            $packages = array_merge(['php' => $php], $packages);
+        }
+
+        return $packages;
     }
 }
