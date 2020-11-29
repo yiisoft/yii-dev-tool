@@ -118,6 +118,8 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
             ],
         ],
         'files' => [
@@ -131,6 +133,8 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
 
                 // apps
                 'app',
@@ -150,6 +154,8 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
             ],
         ],
         'files' => [
