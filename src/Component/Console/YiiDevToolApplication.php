@@ -18,6 +18,7 @@ use Yiisoft\YiiDevTool\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\Command\Git\StatusCommand;
+use Yiisoft\YiiDevTool\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\Command\InstallCommand;
 use Yiisoft\YiiDevTool\Command\LintCommand;
 use Yiisoft\YiiDevTool\Command\Release\MakeCommand;
@@ -69,6 +70,7 @@ class YiiDevToolApplication extends Application
             new TravisUpdateSlackConfigCommand(),
             new UpdateCommand(),
             new MakeCommand(),
+            new SettingsCommand(),
         ];
     }
 
