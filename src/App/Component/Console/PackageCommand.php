@@ -13,6 +13,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 /**
  * @method YiiDevToolApplication getApplication()

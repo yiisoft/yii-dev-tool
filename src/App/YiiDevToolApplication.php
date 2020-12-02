@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Component\Console;
+namespace Yiisoft\YiiDevTool\App;
 
 use RuntimeException;
 use Symfony\Component\Console\Application;
