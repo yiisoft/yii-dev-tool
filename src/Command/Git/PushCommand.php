@@ -48,7 +48,7 @@ class PushCommand extends PackageCommand
                 'Package push aborted.',
             ]);
 
-            $package->setError($e->getMessage(), 'pushing package repository');
+            $this->registerPackageError($package, $e->getMessage(), 'pushing package repository');
         }
     }
 }

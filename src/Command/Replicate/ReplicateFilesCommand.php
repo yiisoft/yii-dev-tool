@@ -146,7 +146,7 @@ class ReplicateFilesCommand extends PackageCommand
                         'Package replication aborted.',
                     ]);
 
-                    $package->setError($e->getMessage(), 'replication');
+                    $this->registerPackageError($package, $e->getMessage(), 'replication');
 
                     return;
                 }
