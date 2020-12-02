@@ -70,7 +70,7 @@ class CommitCommand extends PackageCommand
                 'Package committing aborted.',
             ]);
 
-            $package->setError($output, 'committing package repository');
+            $this->registerPackageError($package, $output, 'committing package repository');
         }
     }
 }

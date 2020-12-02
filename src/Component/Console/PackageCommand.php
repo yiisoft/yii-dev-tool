@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\Component\Package\Package;
+use Yiisoft\YiiDevTool\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
 /**
@@ -22,6 +23,7 @@ class PackageCommand extends Command
 
     private ?OutputManager $io;
     private ?PackageList $packageList;
+    private ?PackageErrorList $errorList;
     private ?bool $targetPackagesSpecifiedExplicitly;
 
     /** @var Package[]|null */
@@ -116,6 +118,8 @@ class PackageCommand extends Command
                 $this->getAppRootDir() . 'packages.php',
                 $this->getAppRootDir() . 'dev',
             );
+
+            $this->errorList = new PackageErrorList();
         } catch (InvalidArgumentException $e) {
             $io->error([
                 'Invalid local package configuration <file>packages.local.php</file>',
@@ -303,12 +307,21 @@ class PackageCommand extends Command
         return $this->targetPackages;
     }
 
+    protected function registerPackageError(Package $package, string $message, string $during): void
+    {
+        $this->errorList->set($package, $message, $during);
+    }
+
+    protected function doesPackageContainErrors(Package $package): bool
+    {
+        return $this->errorList->has($package);
+    }
+
     private function showPackageErrors(): void
     {
         $io = $this->getIO();
-        $packagesWithError = $this->getPackageList()->getPackagesWithError();
 
-        if (count($packagesWithError)) {
+        if (count($this->errorList) > 0) {
             $io->important()->info([
                 '<em>',
                 '=======================================================================',
@@ -317,9 +330,13 @@ class PackageCommand extends Command
                 '</em>',
             ]);
 
-            foreach ($packagesWithError as $package) {
-                $io->preparePackageHeader($package, "Package {package} error occurred during <em>{$package->getErrorDuring()}</em>:");
-                $io->important()->info($package->getError());
+            foreach ($this->errorList as $packageError) {
+                $io->preparePackageHeader(
+                    $packageError->getPackage(),
+                    "Package {package} error occurred during <em>{$packageError->getDuring()}</em>:"
+                );
+
+                $io->important()->info($packageError->getMessage());
             }
         }
     }

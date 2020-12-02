@@ -72,7 +72,7 @@ final class TestCommand extends PackageCommand
         }
 
         $output = $process->getErrorOutput();
-        $package->setError($output, 'testing package');
+        $this->registerPackageError($package, $output, 'testing package');
         $io->important()->info($process->getOutput() . $output);
     }
 
