@@ -49,12 +49,13 @@ class SettingsCommand extends PackageCommand
 
     private function getSettings(): array
     {
-        return require dirname(__DIR__, 3) . '/config/settings.php';
+        /** @noinspection PhpIncludeInspection */
+        return require $this->getAppRootDir() . 'config/settings.php';
     }
 
     private function getToken(): string
     {
-        $tokenFile = dirname(__DIR__, 3) . '/config/github.token';
+        $tokenFile = $this->getAppRootDir() . 'config/github.token';
         if (!file_exists($tokenFile)) {
             throw new \RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there.");
         }

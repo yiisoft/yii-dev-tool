@@ -45,7 +45,7 @@ class ReplicateComposerConfigCommand extends PackageCommand
         try {
             $mergedConfig = $merger->merge(
                 ComposerConfig::createByFilePath($targetPath),
-                ComposerConfig::createByFilePath(__DIR__ . '/../../../config/replicate/composer.json'),
+                ComposerConfig::createByFilePath($this->getAppRootDir() . 'config/replicate/composer.json'),
             );
         } catch (\Throwable $e) {
             $io->error([

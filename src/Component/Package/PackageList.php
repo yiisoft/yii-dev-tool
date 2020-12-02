@@ -12,13 +12,13 @@ class PackageList
     /** @var null|Package[] */
     private ?array $installedList = null;
 
-    public function __construct(string $configFile)
+    public function __construct(string $configFile, string $packagesRootDir)
     {
         /** @noinspection PhpIncludeInspection */
         $config = require $configFile;
 
         foreach ($config as $packageId => $packageConfig) {
-            $this->list[$packageId] = new Package($packageId, $packageConfig);
+            $this->list[$packageId] = new Package($packageId, $packageConfig, $packagesRootDir);
         }
     }
 

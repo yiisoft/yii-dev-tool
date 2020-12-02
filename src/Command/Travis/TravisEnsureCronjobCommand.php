@@ -35,7 +35,7 @@ class TravisEnsureCronjobCommand extends PackageCommand
     {
         $io = $this->getIO();
 
-        $apiConfigPath = __DIR__ . '/../../../config/travis/api.local.php';
+        $apiConfigPath = $this->getAppRootDir() . 'config/travis/api.local.php';
         if (!file_exists($apiConfigPath)) {
             $io->error([
                 "Configuration <file>config/travis/api.local.php</file> not found.",

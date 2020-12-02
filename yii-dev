@@ -5,4 +5,6 @@ use Yiisoft\YiiDevTool\Component\Console\YiiDevToolApplication;
 
 require __DIR__ . '/vendor/autoload.php';
 
-(new YiiDevToolApplication())->run();
+(new YiiDevToolApplication())
+    ->setRootDir(__DIR__)
+    ->run();
