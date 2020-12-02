@@ -52,7 +52,7 @@ class PullCommand extends PackageCommand
                 'Package pull aborted.',
             ]);
 
-            $package->setError($output, 'pulling package repository');
+            $this->registerPackageError($package, $output, 'pulling package repository');
         }
     }
 }

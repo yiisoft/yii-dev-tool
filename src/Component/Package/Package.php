@@ -15,8 +15,6 @@ class Package
     private string $id;
     private ?string $configuredRepositoryUrl;
     private string $path;
-    private ?string $error = null;
-    private ?string $errorDuring;
     private ?GitWorkingCopy $gitWorkingCopy = null;
 
     private static function getGitWrapper(): GitWrapper
@@ -143,26 +141,5 @@ class Package
         }
 
         return $this->gitWorkingCopy;
-    }
-
-    public function setError(string $error, string $during): void
-    {
-        $this->error = $error;
-        $this->errorDuring = $during;
-    }
-
-    public function hasError(): bool
-    {
-        return $this->error !== null;
-    }
-
-    public function getError(): ?string
-    {
-        return $this->error;
-    }
-
-    public function getErrorDuring(): ?string
-    {
-        return $this->errorDuring;
     }
 }

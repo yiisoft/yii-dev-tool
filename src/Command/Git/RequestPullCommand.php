@@ -93,6 +93,6 @@ final class RequestPullCommand extends PackageCommand
             'Creating PR aborted.',
         ]);
 
-        $package->setError($output, 'creating PR');
+        $this->registerPackageError($package, $output, 'creating PR');
     }
 }

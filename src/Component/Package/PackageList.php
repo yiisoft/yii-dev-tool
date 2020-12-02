@@ -61,22 +61,6 @@ class PackageList
     /**
      * @return Package[]
      */
-    public function getPackagesWithError(): array
-    {
-        $packages = [];
-
-        foreach ($this->list as $id => $package) {
-            if ($package->hasError()) {
-                $packages[$id] = $package;
-            }
-        }
-
-        return $packages;
-    }
-
-    /**
-     * @return Package[]
-     */
     public function getEnabledPackages(): array
     {
         $packages = [];

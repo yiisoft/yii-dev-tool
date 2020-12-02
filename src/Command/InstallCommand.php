@@ -83,7 +83,7 @@ class InstallCommand extends PackageCommand
                 'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
             ]);
 
-            $package->setError($output, 'cloning package repository');
+            $this->registerPackageError($package, $output, 'cloning package repository');
         }
     }
 
@@ -172,7 +172,7 @@ class InstallCommand extends PackageCommand
                 'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
             ]);
 
-            $package->setError($output, "running `composer $composerCommandName`");
+            $this->registerPackageError($package, $output, "running `composer $composerCommandName`");
         }
     }
 
@@ -186,7 +186,7 @@ class InstallCommand extends PackageCommand
         if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
             $this->gitClone($package);
 
-            if ($package->hasError()) {
+            if ($this->doesPackageContainErrors($package)) {
                 return;
             }
         }
@@ -196,7 +196,7 @@ class InstallCommand extends PackageCommand
         if ($hasGitRepositoryAlreadyBeenCloned) {
             $this->removeSymbolicLinks($package);
 
-            if ($package->hasError()) {
+            if ($this->doesPackageContainErrors($package)) {
                 return;
             }
         }
