@@ -7,10 +7,10 @@ namespace Yiisoft\YiiDevTool\App\Command\Composer;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsageEnvironment;
-use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\NamespaceUsageFinder;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerInstallation;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependenciesModifier;
 
