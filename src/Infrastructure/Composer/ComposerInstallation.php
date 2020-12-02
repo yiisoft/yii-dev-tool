@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Composer;
+namespace Yiisoft\YiiDevTool\Infrastructure\Composer;
 
-use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
 class ComposerInstallation
 {

@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Test\Component\Composer\Config;
+namespace Yiisoft\YiiDevTool\Test\Infrastructure\Composer\Config;
 
 use PHPUnit\Framework\TestCase;
-use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
-use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfigMerger;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigMerger;
 
 final class ComposerConfigMergerTest extends TestCase
 {

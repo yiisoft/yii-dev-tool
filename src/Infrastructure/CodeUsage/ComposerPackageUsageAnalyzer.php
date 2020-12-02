@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Infrastructure\CodeUsage;
 
 use InvalidArgumentException;
-use Yiisoft\YiiDevTool\Component\Composer\ComposerPackage;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 
 class ComposerPackageUsageAnalyzer
 {

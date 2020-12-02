@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Composer\Config\Dependency;
+namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency;
 
 class ComposerConfigDependency
 {

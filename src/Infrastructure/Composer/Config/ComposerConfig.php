@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Composer\Config;
+namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Yiisoft\YiiDevTool\Component\Composer\Config\Dependency\ComposerConfigDependencyList;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency\ComposerConfigDependencyList;
 
 class ComposerConfig
 {

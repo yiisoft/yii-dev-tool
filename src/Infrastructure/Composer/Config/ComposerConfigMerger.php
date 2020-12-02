@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Composer\Config;
+namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config;
 
 class ComposerConfigMerger
 {
