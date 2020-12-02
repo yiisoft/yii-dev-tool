@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Package;
 
+use Github\Api\Repo;
 use GitWrapper\GitWorkingCopy;
 use GitWrapper\GitWrapper;
 use InvalidArgumentException;
@@ -62,7 +63,12 @@ class Package
 
     public function getName(): string
     {
-        return "yiisoft/{$this->id}";
+        return "{$this->getVendor()}/{$this->getId()}";
+    }
+
+    public function getVendor(): string
+    {
+        return 'yiisoft';
     }
 
     public function getConfiguredRepositoryUrl(): string
