@@ -4,15 +4,15 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Command\Composer;
 
-use Yiisoft\YiiDevTool\Component\CodeUsage\CodeUsageEnvironment;
-use Yiisoft\YiiDevTool\Component\CodeUsage\ComposerPackageUsageAnalyzer;
-use Yiisoft\YiiDevTool\Component\CodeUsage\NamespaceUsageFinder;
 use Yiisoft\YiiDevTool\Component\Composer\ComposerInstallation;
 use Yiisoft\YiiDevTool\Component\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Component\Composer\Config\ComposerConfigDependenciesModifier;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
+use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsageEnvironment;
+use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\ComposerPackageUsageAnalyzer;
+use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\NamespaceUsageFinder;
 
 class ComposerFixDependenciesCommand extends PackageCommand
 {

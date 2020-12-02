@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Test\Component\CodeUsage;
+namespace Yiisoft\YiiDevTool\Test\Infrastructure\CodeUsage;
 
-use Yiisoft\YiiDevTool\Component\CodeUsage\CodeUsageEnvironment;
-use Yiisoft\YiiDevTool\Component\CodeUsage\NamespaceUsageFinder;
 use PHPUnit\Framework\TestCase;
+use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsageEnvironment;
+use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\NamespaceUsageFinder;
 
 final class NamespaceUsageFinderTest extends TestCase
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\CodeUsage;
+namespace Yiisoft\YiiDevTool\Infrastructure\CodeUsage;
 
 use PhpParser\ErrorHandler;
 use PhpParser\Node;
