@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Command\Git;
+namespace Yiisoft\YiiDevTool\App\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;

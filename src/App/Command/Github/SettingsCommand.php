@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command\Github;
+namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
 use Github\Client;

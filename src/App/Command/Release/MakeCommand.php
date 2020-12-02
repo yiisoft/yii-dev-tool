@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Command\Release;
+namespace Yiisoft\YiiDevTool\App\Command\Release;
 
 use GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;

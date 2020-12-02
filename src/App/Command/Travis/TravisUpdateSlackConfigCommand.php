@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Command\Travis;
+namespace Yiisoft\YiiDevTool\App\Command\Travis;
 
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
