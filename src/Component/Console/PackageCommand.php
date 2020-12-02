@@ -14,6 +14,9 @@ use Yiisoft\YiiDevTool\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\Component\Package\PackageList;
 
+/**
+ * @method YiiDevToolApplication getApplication()
+ */
 class PackageCommand extends Command
 {
     protected const EXIT_SUCCESS = 0;
@@ -66,6 +69,19 @@ class PackageCommand extends Command
         return null;
     }
 
+    /**
+     * Use this method to get a root directory of the tool.
+     *
+     * Commands and components can be moved as a result of refactoring,
+     * so you should not rely on their location in the file system.
+     *
+     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
+     */
+    protected function getAppRootDir(): string
+    {
+        return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    }
+
     protected function addPackageArgument(): void
     {
         $this->addArgument(
@@ -98,7 +114,11 @@ class PackageCommand extends Command
         $io = $this->getIO();
 
         try {
-            $this->packageList = new PackageList(__DIR__ . '/../../../packages.php');
+            $this->packageList = new PackageList(
+                $this->getAppRootDir() . 'packages.php',
+                $this->getAppRootDir() . 'dev',
+            );
+
             $this->errorList = new PackageErrorList();
         } catch (InvalidArgumentException $e) {
             $io->error([

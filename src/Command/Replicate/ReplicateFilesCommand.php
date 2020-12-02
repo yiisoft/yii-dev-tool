@@ -30,7 +30,8 @@ class ReplicateFilesCommand extends PackageCommand
     private function getReplicationSet(string $name): ?ReplicationSet
     {
         if ($this->replicationConfig === null) {
-            $this->replicationConfig = require __DIR__ . '/../../../config/replicate/files.php';
+            /** @noinspection PhpIncludeInspection */
+            $this->replicationConfig = require $this->getAppRootDir() . 'config/replicate/files.php';
         }
 
         if (!array_key_exists($name, $this->replicationConfig)) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Console;
 
+use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\HelpCommand;
 use Symfony\Component\Console\Command\ListCommand;
@@ -32,6 +33,8 @@ use Yiisoft\YiiDevTool\Command\UpdateCommand;
 
 class YiiDevToolApplication extends Application
 {
+    private ?string $rootDir = null;
+
     private string $header = <<<HEADER
     <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
     <fg=cyan;options=bold>| | | |</><fg=red;options=bold>(_)</><fg=green;options=bold>(_)</>  <fg=yellow;options=bold>Development Tool</>
@@ -45,6 +48,22 @@ class YiiDevToolApplication extends Application
     public function __construct()
     {
         parent::__construct($this->header);
+    }
+
+    public function setRootDir(string $path): self
+    {
+        $this->rootDir = $path;
+
+        return $this;
+    }
+
+    public function getRootDir(): string
+    {
+        if ($this->rootDir === null) {
+            throw new RuntimeException('The root directory is not configured.');
+        }
+
+        return $this->rootDir;
     }
 
     protected function getDefaultCommands()

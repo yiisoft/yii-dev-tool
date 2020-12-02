@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Package;
 
-use Github\Api\Repo;
 use GitWrapper\GitWorkingCopy;
 use GitWrapper\GitWrapper;
 use InvalidArgumentException;
@@ -27,7 +26,7 @@ class Package
         return static::$gitWrapper;
     }
 
-    public function __construct(string $id, $config)
+    public function __construct(string $id, $config, string $packagesRootDir)
     {
         if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
             throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
@@ -51,7 +50,7 @@ class Package
             $this->configuredRepositoryUrl = $config;
         }
 
-        $this->path = dirname(__DIR__, 3) . '/dev/' . $id;
+        $this->path = rtrim($packagesRootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $id;
     }
 
     public function getId(): string
