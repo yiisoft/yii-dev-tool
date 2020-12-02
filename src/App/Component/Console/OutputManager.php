@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Console;
+namespace Yiisoft\YiiDevTool\App\Component\Console;
 
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 

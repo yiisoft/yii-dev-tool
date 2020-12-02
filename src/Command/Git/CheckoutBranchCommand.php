@@ -6,8 +6,8 @@ namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 
 class CheckoutBranchCommand extends PackageCommand
 {

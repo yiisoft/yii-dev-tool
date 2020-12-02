@@ -7,8 +7,8 @@ namespace Yiisoft\YiiDevTool\Command\Travis;
 use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Infrastructure\Travis\API\TravisClient;
 
 class TravisEnsureCronjobCommand extends PackageCommand

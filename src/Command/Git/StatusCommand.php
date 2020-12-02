@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Command\Git;
 
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 
 class StatusCommand extends PackageCommand
 {

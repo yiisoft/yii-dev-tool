@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
 class UpdateCommand extends PackageCommand
 {

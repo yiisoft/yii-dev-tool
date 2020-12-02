@@ -6,8 +6,8 @@ use Github\Api\Repo;
 use Github\Client;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 
 class SettingsCommand extends PackageCommand
 {
