@@ -6,8 +6,8 @@ namespace Yiisoft\YiiDevTool\Command\Replicate;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class ReplicateCopyFileCommand extends PackageCommand
 {

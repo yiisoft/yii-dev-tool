@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Command\Replicate;
 
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigMerger;
 

@@ -10,8 +10,8 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class InstallCommand extends PackageCommand
 {

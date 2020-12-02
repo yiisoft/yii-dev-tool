@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Package;
+namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use GitWrapper\GitWorkingCopy;
 use GitWrapper\GitWrapper;

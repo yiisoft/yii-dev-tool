@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Command;
 
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class LintCommand extends PackageCommand
 {

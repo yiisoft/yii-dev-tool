@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Component\Console;
 
-use Yiisoft\YiiDevTool\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 /**
  * Determines whether to output messages in the current environment.

@@ -5,8 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Command\Git;
 
 use GitWrapper\Exception\GitException;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 
 class PushCommand extends PackageCommand
 {

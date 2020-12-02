@@ -10,9 +10,9 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Package\PackageErrorList;
-use Yiisoft\YiiDevTool\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
+use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
 /**
  * @method YiiDevToolApplication getApplication()

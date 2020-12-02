@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Command\Composer;
 
+use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
-use Yiisoft\YiiDevTool\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsageEnvironment;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\NamespaceUsageFinder;
