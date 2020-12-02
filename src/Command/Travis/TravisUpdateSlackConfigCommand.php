@@ -8,9 +8,9 @@ use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
-use Yiisoft\YiiDevTool\Component\Travis\API\TravisClient;
-use Yiisoft\YiiDevTool\Component\Travis\TravisConfig;
-use Yiisoft\YiiDevTool\Component\Travis\TravisEncryptor;
+use Yiisoft\YiiDevTool\Infrastructure\Travis\API\TravisClient;
+use Yiisoft\YiiDevTool\Infrastructure\Travis\TravisConfig;
+use Yiisoft\YiiDevTool\Infrastructure\Travis\TravisEncryptor;
 
 class TravisUpdateSlackConfigCommand extends PackageCommand
 {

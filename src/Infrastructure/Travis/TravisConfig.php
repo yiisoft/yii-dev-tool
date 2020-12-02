@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\Component\Travis;
+namespace Yiisoft\YiiDevTool\Infrastructure\Travis;
 
 use InvalidArgumentException;
 use RuntimeException;
