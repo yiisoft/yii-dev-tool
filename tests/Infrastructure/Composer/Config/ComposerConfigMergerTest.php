@@ -155,8 +155,8 @@ JSON,
         }
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.0",
-        "phan/phan": "^3.0"
+        "phan/phan": "^3.0",
+        "phpunit/phpunit": "^9.0"
     }
 }
 JSON,
