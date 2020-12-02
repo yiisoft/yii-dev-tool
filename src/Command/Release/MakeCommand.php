@@ -8,9 +8,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
 use Symfony\Component\Console\Question\ConfirmationQuestion;
-use Yiisoft\YiiDevTool\Component\Changelog;
 use Yiisoft\YiiDevTool\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\Component\Package\Package;
+use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 class MakeCommand extends PackageCommand

@@ -1,6 +1,6 @@
 <?php
 
-namespace Yiisoft\YiiDevTool\Component;
+namespace Yiisoft\YiiDevTool\Infrastructure;
 
 use Yiisoft\Arrays\ArrayHelper;
 
