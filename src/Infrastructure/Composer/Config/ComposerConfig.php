@@ -113,6 +113,14 @@ class ComposerConfig
         return $namespaces;
     }
 
+    public function usesNonPSRAutoload(): bool
+    {
+        return isset($this->data["autoload"]["classmap"])
+            || isset($this->data["autoload"]["files"])
+            || isset($this->data["autoload-dev"]["classmap"])
+            || isset($this->data["autoload-dev"]["files"]);
+    }
+
     public function sortPackagesEnabled(): bool
     {
         return isset($this->data['config']['sort-packages']) && $this->data['config']['sort-packages'] === true;

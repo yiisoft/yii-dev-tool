@@ -52,9 +52,24 @@ class ComposerPackage
         return $this->config;
     }
 
-    public function getNamespaces(): array
+    public function isComposerPlugin(): bool
+    {
+        return $this->getComposerConfig()->getSection('type') === 'composer-plugin';
+    }
+
+    public function getPSRNamespaces(): array
     {
         return $this->getComposerConfig()->getPSRNamespaces();
+    }
+
+    public function usesNonPSRAutoload(): bool
+    {
+        return $this->getComposerConfig()->usesNonPSRAutoload();
+    }
+
+    public function providesBinaries(): bool
+    {
+        return $this->getComposerConfig()->hasSection('bin');
     }
 
     public function getProvidedPackagesAsArray(): array

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Infrastructure\Composer;
 
 use InvalidArgumentException;
+use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsage;
 
 class ComposerPackageUsageAnalyzer
@@ -54,7 +55,7 @@ class ComposerPackageUsageAnalyzer
     public function analyze(): void
     {
         foreach ($this->packages as $package) {
-            foreach ($package->getNamespaces() as $packageNamespace) {
+            foreach ($package->getPSRNamespaces() as $packageNamespace) {
                 foreach ($this->namespaceUsages as $namespaceUsage) {
                     if (strpos($namespaceUsage->getIdentifier(), "\\$packageNamespace") === 0) {
                         $this->registerPackageUsage($package->getName(), $namespaceUsage->getEnvironments());
@@ -105,10 +106,47 @@ class ComposerPackageUsageAnalyzer
     {
         $result = [];
 
-        foreach ($this->packageUsages as $packageUsage) {
-            if (!$packageUsage->used()) {
-                $result[] = $this->packages[$packageUsage->getIdentifier()]->getName();
+        foreach ($this->packages as $package) {
+            /**
+             * TODO: Implement support of packages that uses non-PSR autoload.
+             * It's difficult, but possible.
+             *
+             * For now, just skip them, because we don't know exactly
+             * if their dependencies are being used or not.
+             */
+            if ($package->usesNonPSRAutoload()) {
+                continue;
             }
+
+            /**
+             * TODO: Implement notices about packages that provide binaries.
+             *
+             * Such packages can be used as hand tools, so they cannot be removed automatically.
+             * They should be checked by a human.
+             */
+            if ($package->providesBinaries()) {
+                continue;
+            }
+
+            /**
+             * TODO: Implement notices about plugins.
+             * They should be checked by a human.
+             */
+            if ($package->isComposerPlugin()) {
+                continue;
+            }
+
+            $packageName = $package->getName();
+
+            if ($this->hasPackageUsage($packageName)) {
+                $packageUsage = $this->getPackageUsage($packageName);
+
+                if ($packageUsage->used()) {
+                    continue;
+                }
+            }
+
+            $result[] = $package->getName();
         }
 
         return $result;
@@ -125,5 +163,19 @@ class ComposerPackageUsageAnalyzer
         } else {
             $this->packageUsages[$packageName]->registerUsageInEnvironments($environments);
         }
+    }
+
+    private function hasPackageUsage(string $packageName): bool
+    {
+        return array_key_exists($packageName, $this->packageUsages);
+    }
+
+    private function getPackageUsage(string $packageName): CodeUsage
+    {
+        if (!$this->hasPackageUsage($packageName)) {
+            throw new RuntimeException('There is no such package usage.');
+        }
+
+        return $this->packageUsages[$packageName];
     }
 }
