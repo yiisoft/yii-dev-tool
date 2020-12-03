@@ -16,6 +16,8 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependencies
 
 class ComposerFixDependenciesCommand extends PackageCommand
 {
+    private array $skippedPackageIds = [];
+
     protected function configure(): void
     {
         $this
@@ -27,7 +29,22 @@ class ComposerFixDependenciesCommand extends PackageCommand
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
-        return 'Nothing to fix.';
+        $message = 'Nothing to fix.';
+
+        $skippedCount = count($this->skippedPackageIds);
+
+        if ($skippedCount > 0) {
+            $justOne = ($skippedCount === 1);
+
+            $message .= sprintf(
+                "\n\nPackage%s %s %s skipped.\nPlease use verbose mode to see details.",
+                $justOne ? '' : 's',
+                implode(',', $this->skippedPackageIds),
+                $justOne ? 'is' : 'are',
+            );
+        }
+
+        return $message;
     }
 
     protected function processPackage(Package $package): void
@@ -44,8 +61,8 @@ class ComposerFixDependenciesCommand extends PackageCommand
             return;
         }
 
-        $package = new ComposerPackage($package->getName(), $package->getPath());
-        $composerInstallation = new ComposerInstallation($package);
+        $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
+        $composerInstallation = new ComposerInstallation($composerPackage);
 
         if ($composerInstallation->hasNotInstalledDependencyPackages()) {
             $notInstalledDependencyPackages = $composerInstallation->getNotInstalledDependencyPackages();
@@ -55,6 +72,8 @@ class ComposerFixDependenciesCommand extends PackageCommand
                 $message .= " <package>{$notInstalledDependencyPackage->getName()}</package>";
             }
             $message .= " is not installed.";
+
+            $this->skippedPackageIds[] = $package->getId();
 
             $io->warning([
                 $message,
@@ -72,17 +91,17 @@ class ComposerFixDependenciesCommand extends PackageCommand
                 'config/common.php',
                 'config/web.php',
                 'src',
-            ], $package->getPath())
+            ], $composerPackage->getPath())
             ->addTargetPaths(CodeUsageEnvironment::DEV, [
                 'config/tests.php',
                 'tests',
-            ], $package->getPath())
+            ], $composerPackage->getPath())
             ->getUsages();
 
         $analyzer = new ComposerPackageUsageAnalyzer($dependencyPackages, $namespaceUsages);
         $analyzer->analyze();
 
-        $composerConfig = $package->getComposerConfig();
+        $composerConfig = $composerPackage->getComposerConfig();
 
         $originalDependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
         $originalDevDependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE_DEV);
@@ -107,7 +126,7 @@ class ComposerFixDependenciesCommand extends PackageCommand
             return;
         }
 
-        $composerConfig->writeToFile($package->getComposerConfigPath());
+        $composerConfig->writeToFile($composerPackage->getComposerConfigPath());
         $io->important()->success("✔ Composer config fixed.");
     }
 }
