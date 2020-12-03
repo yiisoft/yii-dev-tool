@@ -128,6 +128,14 @@ class ComposerPackageUsageAnalyzer
                 continue;
             }
 
+            /**
+             * TODO: Implement notices about plugins.
+             * They should be checked by a human.
+             */
+            if ($package->isComposerPlugin()) {
+                continue;
+            }
+
             $packageName = $package->getName();
 
             if ($this->hasPackageUsage($packageName)) {

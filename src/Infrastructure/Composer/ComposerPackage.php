@@ -52,6 +52,11 @@ class ComposerPackage
         return $this->config;
     }
 
+    public function isComposerPlugin(): bool
+    {
+        return $this->getComposerConfig()->getSection('type') === 'composer-plugin';
+    }
+
     public function getPSRNamespaces(): array
     {
         return $this->getComposerConfig()->getPSRNamespaces();
@@ -64,7 +69,7 @@ class ComposerPackage
 
     public function providesBinaries(): bool
     {
-        return $this->getComposerConfig()->binSectionDefined();
+        return $this->getComposerConfig()->hasSection('bin');
     }
 
     public function getProvidedPackagesAsArray(): array
