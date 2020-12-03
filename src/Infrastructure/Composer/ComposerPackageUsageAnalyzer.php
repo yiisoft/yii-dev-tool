@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\Infrastructure\Composer;
 
 use InvalidArgumentException;
+use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsage;
 
 class ComposerPackageUsageAnalyzer
@@ -105,10 +106,18 @@ class ComposerPackageUsageAnalyzer
     {
         $result = [];
 
-        foreach ($this->packageUsages as $packageUsage) {
-            if (!$packageUsage->used()) {
-                $result[] = $this->packages[$packageUsage->getIdentifier()]->getName();
+        foreach ($this->packages as $package) {
+            $packageName = $package->getName();
+
+            if ($this->hasPackageUsage($packageName)) {
+                $packageUsage = $this->getPackageUsage($packageName);
+
+                if ($packageUsage->used()) {
+                    continue;
+                }
             }
+
+            $result[] = $package->getName();
         }
 
         return $result;
@@ -125,5 +134,19 @@ class ComposerPackageUsageAnalyzer
         } else {
             $this->packageUsages[$packageName]->registerUsageInEnvironments($environments);
         }
+    }
+
+    private function hasPackageUsage(string $packageName): bool
+    {
+        return array_key_exists($packageName, $this->packageUsages);
+    }
+
+    private function getPackageUsage(string $packageName): CodeUsage
+    {
+        if (!$this->hasPackageUsage($packageName)) {
+            throw new RuntimeException('There is no such package usage.');
+        }
+
+        return $this->packageUsages[$packageName];
     }
 }
