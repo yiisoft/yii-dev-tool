@@ -62,6 +62,11 @@ class ComposerPackage
         return $this->getComposerConfig()->usesNonPSRAutoload();
     }
 
+    public function providesBinaries(): bool
+    {
+        return $this->getComposerConfig()->binSectionDefined();
+    }
+
     public function getProvidedPackagesAsArray(): array
     {
         $provideSectionData = $this->getComposerConfig()->getSection(ComposerConfig::SECTION_PROVIDE);

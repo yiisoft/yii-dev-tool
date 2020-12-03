@@ -118,6 +118,16 @@ class ComposerPackageUsageAnalyzer
                 continue;
             }
 
+            /**
+             * TODO: Implement notices about packages that provide binaries.
+             *
+             * Such packages can be used as hand tools, so they cannot be removed automatically.
+             * They should be checked by a human.
+             */
+            if ($package->providesBinaries()) {
+                continue;
+            }
+
             $packageName = $package->getName();
 
             if ($this->hasPackageUsage($packageName)) {

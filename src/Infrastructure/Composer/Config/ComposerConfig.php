@@ -121,6 +121,11 @@ class ComposerConfig
             || isset($this->data["autoload-dev"]["files"]);
     }
 
+    public function binSectionDefined(): bool
+    {
+        return isset($this->data["bin"]);
+    }
+
     public function sortPackagesEnabled(): bool
     {
         return isset($this->data['config']['sort-packages']) && $this->data['config']['sort-packages'] === true;
