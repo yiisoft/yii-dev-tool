@@ -98,6 +98,10 @@ class ComposerFixDependenciesCommand extends PackageCommand
             ], $composerPackage->getPath())
             ->getUsages();
 
+        /**
+         * TODO: Ignore autoload-dev namespaces of dependencies during analysis.
+         * Section "autoload-dev" is significant only for the root package.
+         */
         $analyzer = new ComposerPackageUsageAnalyzer($dependencyPackages, $namespaceUsages);
         $analyzer->analyze();
 
