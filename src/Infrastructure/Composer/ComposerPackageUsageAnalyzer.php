@@ -55,7 +55,7 @@ class ComposerPackageUsageAnalyzer
     public function analyze(): void
     {
         foreach ($this->packages as $package) {
-            foreach ($package->getNamespaces() as $packageNamespace) {
+            foreach ($package->getPSRNamespaces() as $packageNamespace) {
                 foreach ($this->namespaceUsages as $namespaceUsage) {
                     if (strpos($namespaceUsage->getIdentifier(), "\\$packageNamespace") === 0) {
                         $this->registerPackageUsage($package->getName(), $namespaceUsage->getEnvironments());
@@ -107,6 +107,17 @@ class ComposerPackageUsageAnalyzer
         $result = [];
 
         foreach ($this->packages as $package) {
+            /**
+             * TODO: Implement support of packages that uses non-PSR autoload.
+             * It's difficult, but possible.
+             *
+             * For now, just skip them, because we don't know exactly
+             * if their dependencies are being used or not.
+             */
+            if ($package->usesNonPSRAutoload()) {
+                continue;
+            }
+
             $packageName = $package->getName();
 
             if ($this->hasPackageUsage($packageName)) {

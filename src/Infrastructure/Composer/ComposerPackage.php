@@ -52,9 +52,14 @@ class ComposerPackage
         return $this->config;
     }
 
-    public function getNamespaces(): array
+    public function getPSRNamespaces(): array
     {
         return $this->getComposerConfig()->getPSRNamespaces();
+    }
+
+    public function usesNonPSRAutoload(): bool
+    {
+        return $this->getComposerConfig()->usesNonPSRAutoload();
     }
 
     public function getProvidedPackagesAsArray(): array
