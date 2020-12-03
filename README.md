@@ -44,9 +44,6 @@ You may select packages by providing a second argument:
 ```bash
 ./yii-dev install di,rbac,yii-cycle,view
 ```
-    
-> Tip: You can speed up Composer significantly by installing [prestissimo](https://github.com/hirak/prestissimo) plugin
-> globally.
 
 > Note: In case you are using PhpStorm you have to add `yiisoft` exclusion pattern in "Settings → Directories → Exclude Files".
 > Else it would go into infinite indexing cycle.

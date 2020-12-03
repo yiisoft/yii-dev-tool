@@ -6,7 +6,7 @@ Stack
  
 * Ubuntu 18.04 
 * PHP 7.4
-* Composer with [prestissimo plugin](https://github.com/hirak/prestissimo)
+* Composer 2
 * xDebug
 * htop
 * mc (Midnight Commander)

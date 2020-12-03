@@ -15,7 +15,6 @@ ssh-keyscan github.com > /home/vagrant/.ssh/known_hosts
 
 info "Configuring composer"
 composer config --global github-oauth.github.com ${github_token}
-composer global require hirak/prestissimo
 
 info "Installing yii-dev-tool"
 cd /yii-dev-tool
