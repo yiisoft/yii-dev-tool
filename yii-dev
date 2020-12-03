@@ -1,7 +1,7 @@
 #!/usr/bin/env php
 <?php
 
-use Yiisoft\YiiDevTool\Component\Console\YiiDevToolApplication;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 require __DIR__ . '/vendor/autoload.php';
 
