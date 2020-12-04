@@ -73,15 +73,31 @@ class MakeCommand extends PackageCommand
         $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
         $composerConfig = $composerPackage->getComposerConfig();
 
+        $unstableFlags = ['dev', 'alpha', 'beta', 'RC'];
+
         $minimumStability = $composerConfig->getSection(ComposerConfig::SECTION_MINIMUM_STABILITY);
-        if (in_array($minimumStability, ['dev', 'alpha', 'beta'], true)) {
+        if (in_array($minimumStability, $unstableFlags, true)) {
             $io->warning([
-                "Minimum-stability of package <package>{$package->getName()}</package> set to <em>$minimumStability</em>.",
-                "<em>Release is only possible for stable packages</em>.",
+                "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
+                "Release is only possible for stable packages.",
                 "Releasing skipped.",
             ]);
 
             return;
+        }
+
+        $dependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
+        foreach ($dependencyList->getDependencies() as $dependency) {
+            if ($dependency->constraintContainsAnyOfStabilityFlags($unstableFlags)) {
+                $io->warning([
+                    "Constraint of dependency <em>{$dependency->getPackageName()}</em> contains an unstable flag.",
+                    "The constraint is <em>{$dependency->getConstraint()}</em>.",
+                    "Release is only possible for packages with stable dependencies.",
+                    "Releasing skipped.",
+                ]);
+
+                return;
+            }
         }
 
         $io->info("Hurray, another release is coming!\n");

@@ -31,6 +31,21 @@ class ComposerConfigDependency
     }
 
     /**
+     * @param string[] $flags
+     * @return bool
+     */
+    public function constraintContainsAnyOfStabilityFlags(array $flags): bool
+    {
+        foreach ($flags as $flag) {
+            if (strpos($this->constraint, $flag) !== false) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * The real prioritization algorithm is more complicated:
      * https://github.com/composer/composer/blob/ec9ca9e7398229d6162c0d5e8b64990175476335/src/Composer/Json/JsonManipulator.php#L110-L146
      *
