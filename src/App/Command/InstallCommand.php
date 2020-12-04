@@ -45,6 +45,17 @@ class InstallCommand extends PackageCommand
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerInstallOptions[] = '--no-plugins';
         }
+
+        $io = $this->getIO();
+        $io->important()->info('Removing old package symlinks...');
+
+        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        foreach ($installedPackages as $package) {
+            $io->info("Package <package>{$package->getId()}</package> cleaning...");
+            $this->removeSymbolicLinks($package);
+        }
+
+        $io->done();
     }
 
     protected function afterProcessingPackages(): void
@@ -114,8 +125,6 @@ class InstallCommand extends PackageCommand
         $finder = new Finder();
         $fs = new Filesystem();
         $io = $this->getIO();
-
-        $io->important()->info('Removing old package symlinks...');
 
         /** @var SplFileInfo $fileInfo */
         foreach ($finder->directories()->in($vendorYiisoftDirectory) as $fileInfo) {
@@ -194,8 +203,6 @@ class InstallCommand extends PackageCommand
         $this->setUpstream($package);
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
-            $this->removeSymbolicLinks($package);
-
             if ($this->doesPackageContainErrors($package)) {
                 return;
             }
