@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependenciesModifier;
 
-class ComposerFixDependenciesCommand extends PackageCommand
+final class ComposerFixDependenciesCommand extends PackageCommand
 {
     private array $skippedPackageIds = [];
 

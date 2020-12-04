@@ -13,7 +13,7 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class InstallCommand extends PackageCommand
+final class InstallCommand extends PackageCommand
 {
     private bool $updateMode = false;
     private array $additionalComposerInstallOptions = [];

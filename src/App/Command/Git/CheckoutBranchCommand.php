@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class CheckoutBranchCommand extends PackageCommand
+final class CheckoutBranchCommand extends PackageCommand
 {
     /** @var string */
     private string $branch;

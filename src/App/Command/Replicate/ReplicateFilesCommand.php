@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\ReplicationSet;
 
-class ReplicateFilesCommand extends PackageCommand
+final class ReplicateFilesCommand extends PackageCommand
 {
     private array $sets = [];
     private ?array $replicationConfig = null;

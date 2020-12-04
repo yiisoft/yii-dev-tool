@@ -8,7 +8,7 @@ use GitWrapper\Exception\GitException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class PushCommand extends PackageCommand
+final class PushCommand extends PackageCommand
 {
     protected function configure()
     {

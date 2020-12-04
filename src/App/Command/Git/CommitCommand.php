@@ -10,7 +10,7 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class CommitCommand extends PackageCommand
+final class CommitCommand extends PackageCommand
 {
     /** @var string */
     private string $message;

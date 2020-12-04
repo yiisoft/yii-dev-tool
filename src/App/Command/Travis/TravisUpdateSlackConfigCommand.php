@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Travis\API\TravisClient;
 use Yiisoft\YiiDevTool\Infrastructure\Travis\TravisConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Travis\TravisEncryptor;
 
-class TravisUpdateSlackConfigCommand extends PackageCommand
+final class TravisUpdateSlackConfigCommand extends PackageCommand
 {
     private string $slackToken;
     private TravisClient $travisClient;

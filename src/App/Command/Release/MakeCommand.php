@@ -15,7 +15,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
-class MakeCommand extends PackageCommand
+final class MakeCommand extends PackageCommand
 {
     private InputInterface $input;
     private OutputInterface $output;

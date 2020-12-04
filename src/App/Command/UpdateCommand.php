@@ -10,7 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
-class UpdateCommand extends PackageCommand
+final class UpdateCommand extends PackageCommand
 {
     protected function configure()
     {

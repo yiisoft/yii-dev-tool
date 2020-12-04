@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class SettingsCommand extends PackageCommand
+final class SettingsCommand extends PackageCommand
 {
     private InputInterface $input;
     private OutputInterface $output;

@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class ReplicateCopyFileCommand extends PackageCommand
+final class ReplicateCopyFileCommand extends PackageCommand
 {
     private string $source;
 

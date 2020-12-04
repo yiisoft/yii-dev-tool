@@ -9,7 +9,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigMerger;
 
-class ReplicateComposerConfigCommand extends PackageCommand
+final class ReplicateComposerConfigCommand extends PackageCommand
 {
     protected function configure(): void
     {
