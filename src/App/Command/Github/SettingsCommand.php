@@ -4,16 +4,11 @@ namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
 use Github\Client;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class SettingsCommand extends PackageCommand
 {
-    private InputInterface $input;
-    private OutputInterface $output;
-
     protected function configure()
     {
         $this
@@ -21,13 +16,6 @@ final class SettingsCommand extends PackageCommand
             ->setDescription('Apply settings to GitHub repositories');
 
         parent::configure();
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->input = $input;
-        $this->output = $output;
-        parent::initialize($input, $output);
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
