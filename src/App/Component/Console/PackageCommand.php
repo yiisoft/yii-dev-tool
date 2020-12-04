@@ -4,12 +4,17 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Console;
 
+use Graze\ParallelProcess\Display\Table;
+use Graze\ParallelProcess\GeneratorPool;
+use Graze\ParallelProcess\PriorityPool;
+use Graze\ParallelProcess\ProcessRun;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
@@ -263,8 +268,30 @@ class PackageCommand extends Command
         $io = $this->getIO();
 
         $this->beforeProcessingPackages($input);
-        foreach ($this->getTargetPackages() as $package) {
-            $this->processPackage($package);
+
+        $packages = $this->getTargetPackages();
+
+        if (count($packages) > 1) {
+            $pool = new PriorityPool();
+            $pool->setMaxSimultaneous(8);
+
+            $generator = (function () use ($packages) {
+                foreach ($packages as $package) {
+                    yield new ProcessRun(new Process(
+                        [
+                            __DIR__ . '/../../../../yii-dev',
+                            $this->getName(),
+                            $package->getId(),
+                        ]
+                    ));
+                }
+            })();
+
+            $generatorPool = new GeneratorPool($pool, $generator);
+            $table = new Table($output, $generatorPool);
+            $table->run();
+        } else {
+            $this->processPackage(current($packages));
         }
 
         $io->clearPreparedPackageHeader();
