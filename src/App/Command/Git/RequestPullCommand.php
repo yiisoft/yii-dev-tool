@@ -29,7 +29,7 @@ final class RequestPullCommand extends PackageCommand
             ->setDescription('Add and commit changes into each package repository')
         ;
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

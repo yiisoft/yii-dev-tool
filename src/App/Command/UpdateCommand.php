@@ -25,8 +25,7 @@ final class UpdateCommand extends PackageCommand
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
             );
 
-
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

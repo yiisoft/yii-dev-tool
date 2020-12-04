@@ -20,7 +20,7 @@ final class SettingsCommand extends PackageCommand
             ->setName('github/settings')
             ->setDescription('Apply settings to GitHub repositories');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)

@@ -16,8 +16,9 @@ final class ReplicateComposerConfigCommand extends PackageCommand
         $this
             ->setName('replicate/composer-config')
             ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
-            ->addPackageArgument()
         ;
+
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

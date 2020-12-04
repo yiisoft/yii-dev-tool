@@ -28,7 +28,7 @@ final class ExecCommand extends PackageCommand
                 DESCRIPTION
             );
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

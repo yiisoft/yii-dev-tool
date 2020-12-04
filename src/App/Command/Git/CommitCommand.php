@@ -22,7 +22,7 @@ final class CommitCommand extends PackageCommand
             ->addArgument('message', InputArgument::REQUIRED, 'Commit message')
             ->setDescription('Add and commit changes into each package repository');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

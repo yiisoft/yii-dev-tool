@@ -23,7 +23,7 @@ final class TravisUpdateSlackConfigCommand extends PackageCommand
             ->setName('travis/update-slack-config')
             ->setDescription('Generate Slack notification settings and update <fg=blue;options=bold>.travis.yml</> file of each package');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

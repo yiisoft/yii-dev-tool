@@ -16,7 +16,7 @@ final class LintCommand extends PackageCommand
             ->setName('lint')
             ->setDescription('Check packages according to PSR12 standard');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

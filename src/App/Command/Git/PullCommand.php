@@ -16,7 +16,7 @@ final class PullCommand extends PackageCommand
             ->setName('git/pull')
             ->setDescription('Pull changes from package repositories');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

@@ -81,7 +81,7 @@ class PackageCommand extends Command
         return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-    protected function addPackageArgument(): void
+    protected function configure()
     {
         $this->addArgument(
             'packages',

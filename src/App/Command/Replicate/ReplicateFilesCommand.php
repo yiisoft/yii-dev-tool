@@ -24,7 +24,7 @@ final class ReplicateFilesCommand extends PackageCommand
             ->addOption('sets', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Sets to replicate')
             ->setDescription('Copy files specified in <fg=blue;options=bold>config/replicate/files.php</> into each package');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     private function getReplicationSet(string $name): ?ReplicationSet

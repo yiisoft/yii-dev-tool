@@ -37,7 +37,7 @@ final class InstallCommand extends PackageCommand
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
             );
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

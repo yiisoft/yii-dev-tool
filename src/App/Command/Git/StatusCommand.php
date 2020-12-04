@@ -16,7 +16,7 @@ final class StatusCommand extends PackageCommand
             ->setName('git/status')
             ->setDescription('Show git status of packages');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

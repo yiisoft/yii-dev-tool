@@ -22,8 +22,9 @@ final class ReplicateCopyFileCommand extends PackageCommand
             ->setDescription('Copy file into each package')
             ->addArgument('source', InputArgument::REQUIRED, 'Source file path')
             ->addArgument('destination', InputArgument::REQUIRED, 'Destination file path')
-            ->addPackageArgument()
         ;
+
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

@@ -21,7 +21,7 @@ final class CheckoutBranchCommand extends PackageCommand
             ->addArgument('branch', InputArgument::REQUIRED, 'Branch name')
             ->setDescription('Creates, if not exists, and checkout a git branch');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

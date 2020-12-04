@@ -16,7 +16,7 @@ final class PushCommand extends PackageCommand
             ->setName('git/push')
             ->setDescription('Push changes into package repositories');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

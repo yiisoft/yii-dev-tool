@@ -31,7 +31,7 @@ final class MakeCommand extends PackageCommand
             ->setDescription('Make a package release')
             ->addOption('tag', null, InputArgument::OPTIONAL, 'Version to tag');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function initialize(InputInterface $input, OutputInterface $output)

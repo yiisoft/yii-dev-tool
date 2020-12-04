@@ -20,8 +20,9 @@ final class TestCommand extends PackageCommand
             ->setName('test')
             ->setDescription('Test packages')
             ->addOption('filter', null, InputOption::VALUE_REQUIRED, 'Filter test cases by the word.')
-            ->addPackageArgument()
         ;
+
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
