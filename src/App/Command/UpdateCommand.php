@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -39,6 +40,6 @@ final class UpdateCommand extends PackageCommand
             '--no-plugins' => $input->getOption('no-plugins'),
         ]), $output);
 
-        return self::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }
