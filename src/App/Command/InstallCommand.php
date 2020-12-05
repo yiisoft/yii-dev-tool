@@ -104,7 +104,7 @@ final class InstallCommand extends PackageCommand
 
             $io->important()->info($output);
             $io->error([
-                "An error occurred during cloning package <package>{$package->getId()}</package> repository.",
+                "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
                 'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
             ]);
 
@@ -163,7 +163,7 @@ final class InstallCommand extends PackageCommand
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
-                "No <file>composer.json</file> in package {$package->getId()}.",
+                "No <file>composer.json</file> in package {$package->getName()}.",
                 "Running `composer $composerCommandName` skipped.",
             ]);
 
@@ -212,7 +212,7 @@ final class InstallCommand extends PackageCommand
 
         $installedPackages = $this->getPackageList()->getInstalledPackages();
         foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
+            $io->info("Package <package>{$package->getName()}</package> linking...");
             $this->linkPackages($package, $installedPackages);
         }
 
