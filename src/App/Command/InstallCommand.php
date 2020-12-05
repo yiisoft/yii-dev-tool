@@ -49,8 +49,8 @@ class InstallCommand extends PackageCommand
         $io = $this->getIO();
         $io->important()->info('Removing old package symlinks...');
 
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
-        foreach ($installedPackages as $package) {
+        $targetPackages = $this->getTargetPackages();
+        foreach ($targetPackages as $package) {
             $io->info("Package <package>{$package->getId()}</package> cleaning...");
             $this->removeSymbolicLinks($package);
         }
