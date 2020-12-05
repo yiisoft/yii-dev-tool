@@ -7,8 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
@@ -134,22 +132,21 @@ final class InstallCommand extends PackageCommand
     private function removeSymbolicLinks(Package $package): void
     {
         $vendorDirectory = "{$package->getPath()}/vendor";
-        if (!file_exists($vendorDirectory)) {
+        if (!is_dir($vendorDirectory)) {
             return;
         }
 
-        $finder = new Finder();
-        $fs = new Filesystem();
         $io = $this->getIO();
 
         $io->important()->info('Removing old package symlinks...');
 
-        /** @var SplFileInfo $dependentPackage */
-        $dependentPackages = $finder->directories()->in($vendorDirectory)->depth(1);
-        foreach ($dependentPackages as $dependentPackage) {
-            if ($dependentPackage->isLink()) {
-                $io->info("Removing symlink <file>{$dependentPackage->getPathname()}</file>");
-                $fs->remove($dependentPackage);
+        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        foreach ($installedPackages as $installedPackage) {
+            $packagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+
+            if (is_dir($packagePath) && is_link($packagePath)) {
+                $io->info("Removing symlink <file>{$packagePath}</file>");
+                unlink($packagePath);
             }
         }
 
@@ -228,14 +225,19 @@ final class InstallCommand extends PackageCommand
      */
     private function linkPackages(Package $package, array $installedPackages): void
     {
+        $vendorDirectory = "{$package->getPath()}/vendor";
+        if (!is_dir($vendorDirectory)) {
+            return;
+        }
+
         $fs = new Filesystem();
         foreach ($installedPackages as $installedPackage) {
-            if ($package->getId() === $installedPackage->getId()) {
+            if ($package->getName() === $installedPackage->getName()) {
                 continue;
             }
 
-            $installedPackagePath = "{$package->getPath()}/vendor/{$installedPackage->getName()}";
-            if (file_exists($installedPackagePath)) {
+            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+            if (is_dir($installedPackagePath)) {
                 $fs->remove($installedPackagePath);
                 $fs->symlink($installedPackage->getPath(), $installedPackagePath);
             }
