@@ -20,8 +20,6 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
  */
 class PackageCommand extends Command
 {
-    protected const EXIT_SUCCESS = 0;
-
     private ?OutputManager $io;
     private ?PackageList $packageList;
     private ?PackageErrorList $errorList;
@@ -83,7 +81,7 @@ class PackageCommand extends Command
         return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-    protected function addPackageArgument(): void
+    protected function configure()
     {
         $this->addArgument(
             'packages',
@@ -279,7 +277,7 @@ class PackageCommand extends Command
             }
         }
 
-        return self::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 
     protected function getPackageList(): PackageList

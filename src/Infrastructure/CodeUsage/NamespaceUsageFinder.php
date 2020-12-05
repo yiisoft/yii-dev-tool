@@ -117,7 +117,7 @@ class NamespaceUsageFinder
     public function registerNamespaceUsage(string $namespace, string $environment): void
     {
         if (!array_key_exists($namespace, $this->usages)) {
-            $this->usages[$namespace] = new CodeUsage($namespace, [$environment]);
+            $this->usages[$namespace] = new CodeUsage($namespace, $environment);
         } else {
             $this->usages[$namespace]->registerUsageInEnvironment($environment);
         }

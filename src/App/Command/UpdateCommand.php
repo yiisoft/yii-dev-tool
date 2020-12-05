@@ -4,13 +4,14 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
-class UpdateCommand extends PackageCommand
+final class UpdateCommand extends PackageCommand
 {
     protected function configure()
     {
@@ -24,8 +25,7 @@ class UpdateCommand extends PackageCommand
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
             );
 
-
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -39,6 +39,6 @@ class UpdateCommand extends PackageCommand
             '--no-plugins' => $input->getOption('no-plugins'),
         ]), $output);
 
-        return self::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 }

@@ -13,7 +13,7 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class InstallCommand extends PackageCommand
+final class InstallCommand extends PackageCommand
 {
     private bool $updateMode = false;
     private array $additionalComposerInstallOptions = [];
@@ -37,7 +37,7 @@ class InstallCommand extends PackageCommand
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
             );
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

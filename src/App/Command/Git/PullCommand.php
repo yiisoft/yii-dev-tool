@@ -8,7 +8,7 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class PullCommand extends PackageCommand
+final class PullCommand extends PackageCommand
 {
     protected function configure()
     {
@@ -16,7 +16,7 @@ class PullCommand extends PackageCommand
             ->setName('git/pull')
             ->setDescription('Pull changes from package repositories');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

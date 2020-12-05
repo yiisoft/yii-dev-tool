@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependenciesModifier;
 
-class ComposerFixDependenciesCommand extends PackageCommand
+final class ComposerFixDependenciesCommand extends PackageCommand
 {
     private array $skippedPackageIds = [];
 
@@ -24,7 +24,7 @@ class ComposerFixDependenciesCommand extends PackageCommand
             ->setName('composer/fix-dependencies')
             ->setDescription('Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

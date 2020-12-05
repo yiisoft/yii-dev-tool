@@ -11,7 +11,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Travis\API\TravisClient;
 
-class TravisEnsureCronjobCommand extends PackageCommand
+final class TravisEnsureCronjobCommand extends PackageCommand
 {
     private bool $useOrg;
     private TravisClient $travisClient;
@@ -28,7 +28,7 @@ class TravisEnsureCronjobCommand extends PackageCommand
                 'Use <fg=yellow;options=bold>travis-ci.org</> instead of <fg=yellow;options=bold>travis-ci.com</>'
             );
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

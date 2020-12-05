@@ -10,7 +10,7 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class ExecCommand extends PackageCommand
+final class ExecCommand extends PackageCommand
 {
     private string $command;
 
@@ -28,7 +28,7 @@ class ExecCommand extends PackageCommand
                 DESCRIPTION
             );
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
