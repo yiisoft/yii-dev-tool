@@ -11,6 +11,8 @@ use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 class MakeCommand extends PackageCommand
@@ -58,6 +60,45 @@ class MakeCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, "Releasing {package}");
         $git = $package->getGitWorkingCopy();
+
+        if (!$package->composerConfigFileExists()) {
+            $io->warning([
+                "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
+                "Releasing skipped.",
+            ]);
+
+            return;
+        }
+
+        $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
+        $composerConfig = $composerPackage->getComposerConfig();
+
+        $unstableFlags = ['dev', 'alpha', 'beta', 'RC'];
+
+        $minimumStability = $composerConfig->getSection(ComposerConfig::SECTION_MINIMUM_STABILITY);
+        if (in_array($minimumStability, $unstableFlags, true)) {
+            $io->warning([
+                "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
+                "Release is only possible for stable packages.",
+                "Releasing skipped.",
+            ]);
+
+            return;
+        }
+
+        $dependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
+        foreach ($dependencyList->getDependencies() as $dependency) {
+            if ($dependency->constraintContainsAnyOfStabilityFlags($unstableFlags)) {
+                $io->warning([
+                    "Constraint of dependency <em>{$dependency->getPackageName()}</em> contains an unstable flag.",
+                    "The constraint is <em>{$dependency->getConstraint()}</em>.",
+                    "Release is only possible for packages with stable dependencies.",
+                    "Releasing skipped.",
+                ]);
+
+                return;
+            }
+        }
 
         $io->info("Hurray, another release is coming!\n");
 

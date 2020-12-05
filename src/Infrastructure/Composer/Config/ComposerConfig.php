@@ -10,6 +10,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency\ComposerConfigD
 
 class ComposerConfig
 {
+    public const SECTION_MINIMUM_STABILITY = 'minimum-stability';
     public const SECTION_PROVIDE = 'provide';
     public const SECTION_REQUIRE = 'require';
     public const SECTION_REQUIRE_DEV = 'require-dev';
