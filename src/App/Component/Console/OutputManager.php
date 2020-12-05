@@ -81,21 +81,21 @@ class OutputManager
 
     public function newLine($count = 1): self
     {
-        $this->delegateOutputToIO('newLine', $count);
+        $this->delegateOutputToIO('newLine', [$count]);
 
         return $this;
     }
 
     public function info($message): self
     {
-        $this->delegateOutputToIO('writeln', $message);
+        $this->delegateOutputToIO('writeln', [$message]);
 
         return $this;
     }
 
     public function warning($message): self
     {
-        $this->delegateOutputToIO('warning', $message);
+        $this->delegateOutputToIO('warning', [$message]);
 
         return $this;
     }
@@ -109,14 +109,14 @@ class OutputManager
      */
     public function error($message): self
     {
-        $this->delegateOutputToIO('error', $message, true);
+        $this->delegateOutputToIO('error', [$message], true);
 
         return $this;
     }
 
     public function success($message): self
     {
-        $this->delegateOutputToIO('success', $message);
+        $this->delegateOutputToIO('success', [$message]);
 
         return $this;
     }
@@ -142,16 +142,12 @@ class OutputManager
         }
     }
 
-    private function delegateOutputToIO(string $method, $arg = null, bool $forceOutput = false): void
+    private function delegateOutputToIO(string $method, $args = [], bool $forceOutput = false): void
     {
         if ($forceOutput || $this->io->isVerbose() || $this->nextMessageIsImportant) {
             $this->outputHeaderIfPrepared();
 
-            if ($arg === null) {
-                $this->io->$method();
-            } else {
-                $this->io->$method($arg);
-            }
+            call_user_func_array([$this->io, $method], $args);
 
             $this->outputDone = true;
             $this->nextMessageIsImportant = false;
