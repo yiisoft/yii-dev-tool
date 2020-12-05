@@ -47,9 +47,36 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    protected function afterProcessingPackages(): void
+    protected function processPackage(Package $package): void
     {
-        $this->createSymbolicLinks();
+        $io = $this->getIO();
+        $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");
+
+        $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
+
+        if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
+            $this->gitClone($package);
+
+            if ($this->doesPackageContainErrors($package)) {
+                return;
+            }
+        }
+
+        $this->setUpstream($package);
+
+        if ($hasGitRepositoryAlreadyBeenCloned) {
+            $this->removeSymbolicLinks($package);
+
+            if ($this->doesPackageContainErrors($package)) {
+                return;
+            }
+        }
+
+        $this->composerInstall($package);
+
+        if (!$io->isVerbose()) {
+            $io->important()->newLine();
+        }
     }
 
     private function gitClone(Package $package): void
@@ -175,36 +202,24 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    protected function processPackage(Package $package): void
+    protected function afterProcessingPackages(): void
+    {
+        $this->createSymbolicLinks();
+    }
+
+    private function createSymbolicLinks(): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");
 
-        $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
+        $io->important()->info('Re-linking vendor directories...');
 
-        if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
-            $this->gitClone($package);
-
-            if ($this->doesPackageContainErrors($package)) {
-                return;
-            }
+        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        foreach ($installedPackages as $package) {
+            $io->info("Package <package>{$package->getId()}</package> linking...");
+            $this->linkPackages($package, $installedPackages);
         }
 
-        $this->setUpstream($package);
-
-        if ($hasGitRepositoryAlreadyBeenCloned) {
-            $this->removeSymbolicLinks($package);
-
-            if ($this->doesPackageContainErrors($package)) {
-                return;
-            }
-        }
-
-        $this->composerInstall($package);
-
-        if (!$io->isVerbose()) {
-            $io->important()->newLine();
-        }
+        $io->done();
     }
 
     /**
@@ -225,20 +240,5 @@ final class InstallCommand extends PackageCommand
                 $fs->symlink($installedPackage->getPath(), $installedPackagePath);
             }
         }
-    }
-
-    private function createSymbolicLinks(): void
-    {
-        $io = $this->getIO();
-
-        $io->important()->info('Re-linking vendor directories...');
-
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
-        foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
-            $this->linkPackages($package, $installedPackages);
-        }
-
-        $io->done();
     }
 }
