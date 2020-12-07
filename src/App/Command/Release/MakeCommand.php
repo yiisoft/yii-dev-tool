@@ -6,7 +6,6 @@ use GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
@@ -16,7 +15,6 @@ use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 final class MakeCommand extends PackageCommand
 {
-    private InputInterface $input;
     private OutputInterface $output;
 
     private ?string $tag;
@@ -35,7 +33,6 @@ final class MakeCommand extends PackageCommand
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
-        $this->input = $input;
         $this->output = $output;
         parent::initialize($input, $output);
     }
@@ -184,18 +181,6 @@ final class MakeCommand extends PackageCommand
         return $this->getIO()->confirm($message, false);
     }
 
-    private function choose(string $message, string $error, array $variants): string
-    {
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            $message,
-            $variants,
-            0
-        );
-        $question->setErrorMessage($error);
-        return $helper->ask($this->input, $this->output, $question);
-    }
-
     private function getCurrentBranch(GitWorkingCopy $git): string
     {
         return trim($git->branch(['show-current' => true]));
@@ -221,7 +206,7 @@ final class MakeCommand extends PackageCommand
     private function getVersionToRelease(Version $currentVersion): Version
     {
         if ($this->tag === null) {
-            $versionType = $this->choose('What release is it?', '%s is not a valid release type.', Version::TYPES);
+            $versionType = $this->getIO()->choice('What release is it?', Version::TYPES);
             $nextVersion = $currentVersion->getNext($versionType);
         } else {
             $nextVersion = new Version($this->tag);

@@ -133,6 +133,11 @@ class OutputManager
         return $this->delegateOutputToIO('confirm', [$question, $default], true);
     }
 
+    public function choice(string $question, array $choices, $default = null)
+    {
+        return $this->delegateOutputToIO('choice', [$question, $choices, $default], true);
+    }
+
     public function nothingHasBeenOutput(): bool
     {
         return !$this->outputDone;
