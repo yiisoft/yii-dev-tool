@@ -7,7 +7,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
@@ -182,8 +181,7 @@ final class MakeCommand extends PackageCommand
 
     private function confirm(string $message): bool
     {
-        $question = new ConfirmationQuestion($message, false);
-        return $this->getHelper('question')->ask($this->input, $this->output, $question);
+        return $this->getIO()->confirm($message, false);
     }
 
     private function choose(string $message, string $error, array $variants): string
