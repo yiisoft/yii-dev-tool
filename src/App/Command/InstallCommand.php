@@ -223,7 +223,9 @@ final class InstallCommand extends PackageCommand
             if (file_exists($installedPackagePath)) {
                 $fs = new Filesystem();
                 $fs->remove($installedPackagePath);
-                $fs->symlink($installedPackage->getPath(), $installedPackagePath);
+
+                $relativePath = "../../../{$installedPackage->getId()}";
+                $fs->symlink($relativePath, $installedPackagePath);
             }
         }
     }
