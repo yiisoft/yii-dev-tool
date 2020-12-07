@@ -86,6 +86,13 @@ class OutputManager
         return $this;
     }
 
+    public function write($message): self
+    {
+        $this->delegateOutputToIO('write', [$message]);
+
+        return $this;
+    }
+
     public function info($message): self
     {
         $this->delegateOutputToIO('writeln', $message);
