@@ -15,8 +15,6 @@ use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 final class MakeCommand extends PackageCommand
 {
-    private OutputInterface $output;
-
     private ?string $tag;
 
     private const MAIN_BRANCHES = ['master', 'main'];
@@ -31,18 +29,14 @@ final class MakeCommand extends PackageCommand
         parent::configure();
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->output = $output;
-        parent::initialize($input, $output);
-    }
-
     protected function beforeProcessingPackages(InputInterface $input): void
     {
+        $io = $this->getIO();
+
         $this->tag = $input->getOption('tag');
 
-        if ($this->output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
-            $this->output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        if ($io->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+            $io->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
     }
 

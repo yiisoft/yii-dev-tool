@@ -33,6 +33,16 @@ class OutputManager
         return $this->io->isVerbose();
     }
 
+    public function getVerbosity(): int
+    {
+        return $this->io->getVerbosity();
+    }
+
+    public function setVerbosity(int $level): void
+    {
+        $this->io->setVerbosity($level);
+    }
+
     /**
      * It only prepares a package header for output, but does not output it.
      * The header will be automatically displayed later before the first message that will require output.
