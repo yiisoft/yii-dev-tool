@@ -62,7 +62,7 @@ final class ExecCommand extends PackageCommand
              * We want to receive the output of the program in real time,
              * so we pass a callback that will read the data as it comes in.
              */
-            ->run(function($type, $data) use ($io) {
+            ->run(function ($type, $data) use ($io) {
                 /**
                  * We do not split data into output streams by data type,
                  * because many programs write non-error messages to the error stream.
