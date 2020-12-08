@@ -23,10 +23,10 @@ final class RequestPullCommand extends PackageCommand
     {
         $this
             ->setName('git/pr/create')
-            ->addArgument('title', InputArgument::REQUIRED, 'Title of pull request.')
-            ->addOption('body', 'b', InputOption::VALUE_REQUIRED, 'Description of pull request.')
-            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make PR available to processing.')
-            ->setDescription('Add and commit changes into each package repository')
+            ->addArgument('title', InputArgument::REQUIRED, 'Title of a pull request.')
+            ->addOption('body', 'b', InputOption::VALUE_REQUIRED, 'Description of a pull request.')
+            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make a non-draft pull request.')
+            ->setDescription('Create a GitHub pull request')
         ;
 
         parent::configure();

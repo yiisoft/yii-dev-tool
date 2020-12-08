@@ -18,7 +18,7 @@ final class ExecCommand extends PackageCommand
     {
         $this
             ->setName('exec')
-            ->setDescription('Executes the specified console command in each package')
+            ->setDescription('Execute the specified console command in each package')
             ->addArgument(
                 'console-command',
                 InputArgument::REQUIRED,

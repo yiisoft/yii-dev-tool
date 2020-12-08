@@ -14,7 +14,7 @@ final class LintCommand extends PackageCommand
     {
         $this
             ->setName('lint')
-            ->setDescription('Check packages according to PSR12 standard');
+            ->setDescription('Check packages according to PSR-12 standard');
 
         parent::configure();
     }
