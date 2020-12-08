@@ -168,7 +168,7 @@ Create a new **feature-x** branch in the repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/checkout-branch feature-x yii-demo,view,i18n
+./yii-dev git/checkout feature-x yii-demo,view,i18n
 ```
 
 ### Step 6: writing the code
@@ -219,7 +219,7 @@ slightly different for different tasks and configurations.
 Remember that **yii-dev-tool** contains many other commands for working with repositories:
 
 * `./yii-dev exec` – executes the specified console command in each package
-* `./yii-dev git/checkout-branch` – creates, if not exists, and checkout a git branch
+* `./yii-dev git/checkout` – creates, if not exists, and checkout a git branch
 * `./yii-dev git/commit` – add and commit changes into each package repository
 * `./yii-dev git/pull` – pull changes from package repositories
 * `./yii-dev git/push` – push changes into package repositories
