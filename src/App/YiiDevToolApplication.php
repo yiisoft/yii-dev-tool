@@ -13,7 +13,7 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
-use Yiisoft\YiiDevTool\App\Command\Git\CheckoutBranchCommand;
+use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
@@ -71,7 +71,7 @@ class YiiDevToolApplication extends Application
         return [
             (new HelpCommand())->setHidden(true),
             (new ListCommand())->setHidden(true),
-            new CheckoutBranchCommand(),
+            new CheckoutCommand(),
             new CommitCommand(),
             new TestCommand(),
             new RequestPullCommand(),
