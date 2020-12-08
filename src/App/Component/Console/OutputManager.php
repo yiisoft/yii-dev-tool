@@ -33,6 +33,16 @@ class OutputManager
         return $this->io->isVerbose();
     }
 
+    public function getVerbosity(): int
+    {
+        return $this->io->getVerbosity();
+    }
+
+    public function setVerbosity(int $level): void
+    {
+        $this->io->setVerbosity($level);
+    }
+
     /**
      * It only prepares a package header for output, but does not output it.
      * The header will be automatically displayed later before the first message that will require output.
@@ -81,21 +91,21 @@ class OutputManager
 
     public function newLine($count = 1): self
     {
-        $this->delegateOutputToIO('newLine', $count);
+        $this->delegateOutputToIO('newLine', [$count]);
 
         return $this;
     }
 
     public function info($message): self
     {
-        $this->delegateOutputToIO('writeln', $message);
+        $this->delegateOutputToIO('writeln', [$message]);
 
         return $this;
     }
 
     public function warning($message): self
     {
-        $this->delegateOutputToIO('warning', $message);
+        $this->delegateOutputToIO('warning', [$message]);
 
         return $this;
     }
@@ -109,14 +119,14 @@ class OutputManager
      */
     public function error($message): self
     {
-        $this->delegateOutputToIO('error', $message, true);
+        $this->delegateOutputToIO('error', [$message], true);
 
         return $this;
     }
 
     public function success($message): self
     {
-        $this->delegateOutputToIO('success', $message);
+        $this->delegateOutputToIO('success', [$message]);
 
         return $this;
     }
@@ -126,6 +136,16 @@ class OutputManager
         $this->delegateOutputToIO('done');
 
         return $this;
+    }
+
+    public function confirm(string $question, bool $default = true): bool
+    {
+        return $this->delegateOutputToIO('confirm', [$question, $default], true);
+    }
+
+    public function choice(string $question, array $choices, $default = null)
+    {
+        return $this->delegateOutputToIO('choice', [$question, $choices, $default], true);
     }
 
     public function nothingHasBeenOutput(): bool
@@ -142,19 +162,33 @@ class OutputManager
         }
     }
 
-    private function delegateOutputToIO(string $method, $arg = null, bool $forceOutput = false): void
+    /**
+     * Delegates a call to the specified YiiDevToolStyle method if the next message is marked important,
+     * verbose mode is configured or output is forced. Otherwise, it does nothing and just returns null.
+     *
+     * If some data was previously prepared for output and output is needed,
+     * it outputs the prepared data before YiiDevToolStyle method call.
+     *
+     * @param string $method YiiDevToolStyle method name
+     * @param array $args call arguments
+     * @param bool $forceOutput whether to force call
+     * @return mixed method call result or null
+     *
+     * @see YiiDevToolStyle
+     */
+    private function delegateOutputToIO(string $method, $args = [], bool $forceOutput = false)
     {
+        $result = null;
+
         if ($forceOutput || $this->io->isVerbose() || $this->nextMessageIsImportant) {
             $this->outputHeaderIfPrepared();
 
-            if ($arg === null) {
-                $this->io->$method();
-            } else {
-                $this->io->$method($arg);
-            }
+            $result = call_user_func_array([$this->io, $method], $args);
 
             $this->outputDone = true;
             $this->nextMessageIsImportant = false;
         }
+
+        return $result;
     }
 }

@@ -6,8 +6,6 @@ use GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
@@ -17,9 +15,6 @@ use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 final class MakeCommand extends PackageCommand
 {
-    private InputInterface $input;
-    private OutputInterface $output;
-
     private ?string $tag;
 
     private const MAIN_BRANCHES = ['master', 'main'];
@@ -34,19 +29,14 @@ final class MakeCommand extends PackageCommand
         parent::configure();
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->input = $input;
-        $this->output = $output;
-        parent::initialize($input, $output);
-    }
-
     protected function beforeProcessingPackages(InputInterface $input): void
     {
+        $io = $this->getIO();
+
         $this->tag = $input->getOption('tag');
 
-        if ($this->output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
-            $this->output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        if ($io->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+            $io->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
     }
 
@@ -182,20 +172,7 @@ final class MakeCommand extends PackageCommand
 
     private function confirm(string $message): bool
     {
-        $question = new ConfirmationQuestion($message, false);
-        return $this->getHelper('question')->ask($this->input, $this->output, $question);
-    }
-
-    private function choose(string $message, string $error, array $variants): string
-    {
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            $message,
-            $variants,
-            0
-        );
-        $question->setErrorMessage($error);
-        return $helper->ask($this->input, $this->output, $question);
+        return $this->getIO()->confirm($message, false);
     }
 
     private function getCurrentBranch(GitWorkingCopy $git): string
@@ -223,7 +200,7 @@ final class MakeCommand extends PackageCommand
     private function getVersionToRelease(Version $currentVersion): Version
     {
         if ($this->tag === null) {
-            $versionType = $this->choose('What release is it?', '%s is not a valid release type.', Version::TYPES);
+            $versionType = $this->getIO()->choice('What release is it?', Version::TYPES);
             $nextVersion = $currentVersion->getNext($versionType);
         } else {
             $nextVersion = new Version($this->tag);
