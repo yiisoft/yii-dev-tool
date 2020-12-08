@@ -216,19 +216,26 @@ Go to the pages of the original repositories and create a PR in each:
 That's all. We developed new functionality and submitted it for review 🙂 Of course, the steps will be 
 slightly different for different tasks and configurations. 
 
-Remember that **yii-dev-tool** contains many other commands for working with repositories:
+Remember that **yii-dev-tool** contains many other commands:
 
-* `./yii-dev exec` – executes the specified console command in each package
-* `./yii-dev git/checkout` – creates, if not exists, and checkout a git branch
-* `./yii-dev git/commit` – add and commit changes into each package repository
-* `./yii-dev git/pull` – pull changes from package repositories
-* `./yii-dev git/push` – push changes into package repositories
-* `./yii-dev git/status` – show git status of packages
-* `./yii-dev install` – install packages
-* `./yii-dev lint` – check packages according to PSR12 standard
-* `./yii-dev replicate/files` – copy files specified in `config/replicate/files.php` into each package
-* `./yii-dev replicate/composer-config` – merge `config/replicate/composer.json` into `composer.json` of each package
-* `./yii-dev update` – update packages
+Command                   | Description
+--------------------------|------------
+exec                      | Executes the specified console command in each package.
+git/checkout              | Creates, if not exists, and checkout a git branch.
+git/commit                | Add and commit changes into each package repository.
+git/pull                  | Pull changes from package repositories.
+git/push                  | Push changes into package repositories.
+git/status                | Show git status of packages.
+git/pr/create             | Create a pull request at GitHub.
+github/settings           | Change settings of a GitHub repository.
+install                   | Install packages.
+update                    | Update packages.
+lint                      | Check packages according to PSR-12 standard.
+release/make              | Make a package release.
+replicate/files           | Copy files specified in `config/replicate/files.php` into each package.
+replicate/composer-config | Merge `config/replicate/composer.json` into `composer.json` of each package.
+replicate/copy-file       | Copy file into each package.
+test                      | Test packages.
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.
