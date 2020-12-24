@@ -12,6 +12,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
+use function in_array;
 
 final class MakeCommand extends PackageCommand
 {
@@ -48,13 +49,13 @@ final class MakeCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Releasing {package}");
+        $io->preparePackageHeader($package, 'Releasing {package}');
         $git = $package->getGitWorkingCopy();
 
         if (!$package->composerConfigFileExists()) {
             $io->warning([
                 "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
-                "Releasing skipped.",
+                'Release cancelled.',
             ]);
 
             return;
@@ -69,8 +70,8 @@ final class MakeCommand extends PackageCommand
         if (in_array($minimumStability, $unstableFlags, true)) {
             $io->warning([
                 "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
-                "Release is only possible for stable packages.",
-                "Releasing skipped.",
+                'Release is only possible for stable packages.',
+                'Releasing skipped.',
             ]);
 
             return;
@@ -82,8 +83,8 @@ final class MakeCommand extends PackageCommand
                 $io->warning([
                     "Constraint of dependency <em>{$dependency->getPackageName()}</em> contains an unstable flag.",
                     "The constraint is <em>{$dependency->getConstraint()}</em>.",
-                    "Release is only possible for packages with stable dependencies.",
-                    "Releasing skipped.",
+                    'Release is only possible for packages with stable dependencies.',
+                    'Releasing skipped.',
                 ]);
 
                 return;
@@ -93,7 +94,12 @@ final class MakeCommand extends PackageCommand
         $io->info("Hurray, another release is coming!\n");
 
         $currentVersion = $this->getCurrentVersion($git);
-        $io->info("Current version is $currentVersion.");
+        if ($currentVersion->asString() === '') {
+            $io->info('There is currently no release.');
+        } else {
+            $io->info("Current version is $currentVersion.");
+        }
+
 
         $versionToRelease = $this->getVersionToRelease($currentVersion);
         $io->info("Going to release $versionToRelease.");

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
 final class Version
@@ -29,6 +31,10 @@ final class Version
 
     public function getNext(string $type): Version
     {
+        if ($this->version === '') {
+            return new Version('1.0.0');
+        }
+
         $parts = explode('.', $this->version);
         switch ($type) {
             case self::TYPE_MAJOR:
