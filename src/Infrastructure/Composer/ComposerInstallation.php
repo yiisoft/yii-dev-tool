@@ -52,6 +52,11 @@ class ComposerInstallation
 
         $packages = [];
         foreach ($dependencies as $dependency) {
+            if ($dependency->getPackageName() === 'roave/security-advisories') {
+                // Skip special case because this is a virtual package
+                continue;
+            }
+
             if ($dependency->isPlatformRequirement()) {
                 // Skip platform requirements
                 continue;
@@ -66,6 +71,7 @@ class ComposerInstallation
 
     private function analyzeDependencies(): void
     {
+        /** @var ComposerPackage[] $dependencies */
         $dependencies = array_merge(
             $this->getDependencyPackages(ComposerConfig::SECTION_REQUIRE),
             $this->getDependencyPackages(ComposerConfig::SECTION_REQUIRE_DEV),
