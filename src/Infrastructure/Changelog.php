@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
@@ -13,7 +14,7 @@ final class Changelog
         $this->path = $path;
     }
 
-    public function resort(string $version): void
+    public function resort(Version $version): void
     {
         // split the file into relevant parts
         [$start, $changelog, $end] = $this->splitChangelog($version);
@@ -42,7 +43,7 @@ final class Changelog
         file_put_contents($this->path, implode("\n", array_merge($start, $changelog, $end)));
     }
 
-    public function open(string $version): void
+    public function open(Version $version): void
     {
         $headline = "\n## $version under development\n";
         $headline .= "\n- no changes in this release.\n";
@@ -57,7 +58,7 @@ final class Changelog
         file_put_contents($this->path, implode("\n", array_merge($hl, $lines)));
     }
 
-    public function close(string $version): void
+    public function close(Version $version): void
     {
         $this->replaceInFile(
             '/\d+\.\d+\.\d+ under development/',
@@ -71,7 +72,7 @@ final class Changelog
         file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file)));
     }
 
-    private function splitChangelog(string $version): array
+    private function splitChangelog(Version $version): array
     {
         $lines = explode("\n", file_get_contents($this->path));
 
@@ -83,7 +84,7 @@ final class Changelog
         $state = 'start';
         foreach ($lines as $lineNumber => $line) {
             // starting from the changelogs headline
-            if (isset($lines[$lineNumber - 2]) && strpos($lines[$lineNumber - 2], $version) !== false && strpos($lines[$lineNumber - 2], '## ') === 0) {
+            if (isset($lines[$lineNumber - 2]) && strpos($lines[$lineNumber - 2], '## ') === 0 && strpos($lines[$lineNumber - 2], $version->asString()) !== false) {
                 $state = 'changelog';
             }
             if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && strncmp($lines[$lineNumber + 1], '## ', 3) === 0) {
