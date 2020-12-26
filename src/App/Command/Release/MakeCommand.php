@@ -64,7 +64,7 @@ final class MakeCommand extends PackageCommand
         $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
         $composerConfig = $composerPackage->getComposerConfig();
 
-        $unstableFlags = ['dev', 'alpha', 'beta', 'RC'];
+        $unstableFlags = ['dev', 'alpha', 'beta', 'rc'];
 
         $minimumStability = $composerConfig->getSection(ComposerConfig::SECTION_MINIMUM_STABILITY);
         if (in_array($minimumStability, $unstableFlags, true)) {
