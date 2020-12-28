@@ -9,41 +9,42 @@
 $packages = [
     'docs' => true,
 
-    // config plugin
+    // Config plugin
     'composer-config-plugin' => true,
 
-    // error handler
+    // Error handler
     'error-handler' => true,
+    'friendly-exception' => true,
 
-    // core packages
+    // Dependency injection
     'di' => true,
     'proxy' => true,
     'container-proxy' => true,
     'injector' => true,
     'factory' => true,
-    'access' => true,
+
+    // Events
     'event-dispatcher' => true,
     'yii-event' => true,
-    'security' => true,
-    'data' => true,
-    'profiler' => true,
+
+    // Core packages
     'aliases' => true,
     'serializer' => true,
     'network-utilities' => true,
     'http' => true,
     'data-response' => true,
 
-    // auth
+    // Security
+    'security' => true,
+    'rate-limiter' => true,
+    'csrf' => true,
+
+    // Authentication and authorization
+    'access' => true,
     'auth' => true,
     'auth-jwt' => true,
-
-    // cache
-    'cache' => true,
-    'cache-apcu' => true,
-    'cache-wincache' => true,
-    'cache-file' => true,
-    'cache-db' => true,
-    'cache-memcached' => true,
+    'user' => true,
+    'yii-auth-client' => true,
 
     // RBAC
     'rbac' => true,
@@ -51,7 +52,15 @@ $packages = [
     'rbac-php' => true,
     'rbac-spiral-db' => true,
 
-    // log
+    // Cache
+    'cache' => true,
+    'cache-apcu' => true,
+    'cache-wincache' => true,
+    'cache-file' => true,
+    'cache-db' => true,
+    'cache-memcached' => true,
+
+    // Log
     'log' => true,
     'log-target-db' => true,
     'log-target-email' => true,
@@ -67,12 +76,12 @@ $packages = [
     'translator-formatter-intl' => true,
     'translator-formatter-simple' => true,
 
-    // queue
+    // Queue
     'yii-queue' => true,
     'yii-queue-interop' => true,
     'yii-queue-amqp' => true,
 
-    // mutex
+    // Mutex
     'mutex' => true,
     'mutex-file' => true,
     'mutex-db-pgsql' => true,
@@ -80,11 +89,11 @@ $packages = [
     'mutex-db-mysql' => true,
     // 'mutex-db-redis' => true,
 
-    // mailer
+    // Mailer
     'mailer' => true,
     'mailer-swiftmailer' => true,
 
-    // helpers
+    // Helpers and utilities
     'arrays' => true,
     'strings' => true,
     'files' => true,
@@ -92,14 +101,15 @@ $packages = [
     'html' => true,
     'json' => true,
 
-    // console
+    // Console
     'yii-console' => true,
 
-    // api
-    'yii-api' => true,
+    // Tools
     'yii-swagger' => true,
+    'profiler' => true,
+    //'fixture' => true,
 
-    // db
+    // Databases
     'db' => true,
     'db-mysql' => true,
     'db-pgsql' => true,
@@ -114,70 +124,68 @@ $packages = [
     // 'db-sphinx' => true,
     // 'db-redis' => true,
 
-    // router
+    // Router
     'router' => true,
     'router-fastroute' => true,
 
-    // user
-    'user' => true,
-
-    // web
+    // Web
     'request-model' => true,
     'middleware-dispatcher' => true,
+    'request-body-parser' => true,
     'session' => true,
     'cookies' => true,
     'yii-web' => true,
+
+    // View, assets, templates and widgets
     'view' => true,
     'yii-view' => true,
+    'yii-twig' => true,
     'widget' => true,
     'yii-widgets' => true,
     'form' => true,
     'assets' => true,
     'yii-jquery' => true,
     'yii-masked-input' => true,
+
+    // Data abstractions and widgets
+    'data' => true,
+    'validator' => true,
     'yii-dataview' => true,
 
+    // Debugger
     'yii-debug' => true,
     'yii-debug-api' => true,
     'yii-debug-frontend' => true,
 
+    // Gii
     'yii-gii' => true,
     'yii-gii-frontend' => true,
 
+    // CSS frameworks
     'yii-bootstrap4' => true,
     'yii-bootstrap5' => true,
     'yii-bulma' => true,
-    'yii-twig' => true,
 
     'yii-captcha' => true,
-
-    'yii-auth-client' => true,
-
     'yii-filesystem' => true,
 
-    // middleware
-    'rate-limiter' => true,
-    'csrf' => true,
-    'request-body-parser' => true,
-
-    // demo
+    // Demo
     'yii-demo' => true,
 
-    // application templates
+    // Application templates
     'app' => true,
     'app-api' => true,
 
-    // other
+    // Docker
     'yii-docker' => true,
-    'validator' => true,
-    'friendly-exception' => true,
-    //'fixture' => true,
+
+    // Testing
     'test-support' => true,
 
-    // requirements checker
+    // Requirements checker
     'requirements' => true,
 
-    // package template
+    // Package template
     'package-template' => true,
 ];
 
