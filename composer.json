@@ -23,7 +23,7 @@
         "symfony/console": "^5.2",
         "symfony/filesystem": "^5.2",
         "symfony/finder": "^5.2",
-        "symfony/polyfill-php73": "^1.20",
+        "symfony/polyfill-php73": "^1.22",
         "symfony/process": "^5.2",
         "symfony/yaml": "^5.2",
         "yiisoft/arrays": "3.0.x-dev",
