@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
+use InvalidArgumentException;
 use Yiisoft\Arrays\ArrayHelper;
+use function is_array;
 
 final class Changelog
 {
@@ -35,11 +37,6 @@ final class Changelog
 
             return 'B' . $i++;
         }, SORT_ASC, SORT_NATURAL);
-
-        // re-add leading and trailing lines
-        array_unshift($changelog, '');
-        $changelog[] = '';
-        $changelog[] = '';
 
         file_put_contents($this->path, implode("\n", array_merge($start, $changelog, $end)));
     }
@@ -116,10 +113,10 @@ final class Changelog
      * `SORT_REGULAR`, `SORT_NUMERIC`, `SORT_STRING`, `SORT_LOCALE_STRING`, `SORT_NATURAL` and `SORT_FLAG_CASE`.
      * Please refer to [PHP manual](https://secure.php.net/manual/en/function.sort.php)
      * for more details. When sorting by multiple keys with different sort flags, use an array of sort flags.
-     * @throws \InvalidArgumentException if the $direction or $sortFlag parameters do not have
+     * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */
-    private function multisort(&$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR)
+    private function multisort(&$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR): void
     {
         $keys = is_array($key) ? $key : [$key];
         if (empty($keys) || empty($array)) {
@@ -129,12 +126,12 @@ final class Changelog
         if (is_scalar($direction)) {
             $direction = array_fill(0, $n, $direction);
         } elseif (count($direction) !== $n) {
-            throw new \InvalidArgumentException('The length of $direction parameter must be the same as that of $keys.');
+            throw new InvalidArgumentException('The length of $direction parameter must be the same as that of $keys.');
         }
         if (is_scalar($sortFlag)) {
             $sortFlag = array_fill(0, $n, $sortFlag);
         } elseif (count($sortFlag) !== $n) {
-            throw new \InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
+            throw new InvalidArgumentException('The length of $sortFlag parameter must be the same as that of $keys.');
         }
         $args = [];
         foreach ($keys as $i => $k) {
