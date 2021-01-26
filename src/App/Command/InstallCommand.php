@@ -7,8 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
@@ -25,7 +23,7 @@ final class InstallCommand extends PackageCommand
         return $this;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('install')
@@ -44,135 +42,6 @@ final class InstallCommand extends PackageCommand
     {
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerInstallOptions[] = '--no-plugins';
-        }
-    }
-
-    protected function afterProcessingPackages(): void
-    {
-        $this->createSymbolicLinks();
-    }
-
-    private function gitClone(Package $package): void
-    {
-        $io = $this->getIO();
-        $io->important()->info("Cloning package repository...");
-
-        if ($package->isGitRepositoryCloned()) {
-            $io->warning([
-                'The package already contains <file>.git</file> directory.',
-                'Cloning skipped.',
-            ]);
-
-            return;
-        }
-
-        $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
-
-        $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during cloning package <package>{$package->getId()}</package> repository.",
-                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, 'cloning package repository');
-        }
-    }
-
-    private function setUpstream(Package $package): void
-    {
-        $io = $this->getIO();
-
-        if ($package->isConfiguredRepositoryPersonal()) {
-            $gitWorkingCopy = $package->getGitWorkingCopy();
-            $remoteName = 'upstream';
-
-            if (!$gitWorkingCopy->hasRemote($remoteName)) {
-                $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
-                $io->info("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
-                $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
-                $io->done();
-            }
-        }
-    }
-
-    private function removeSymbolicLinks(Package $package): void
-    {
-        $vendorYiisoftDirectory = "{$package->getPath()}/vendor/yiisoft";
-        if (!file_exists($vendorYiisoftDirectory)) {
-            return;
-        }
-
-        $finder = new Finder();
-        $fs = new Filesystem();
-        $io = $this->getIO();
-
-        $io->important()->info('Removing old package symlinks...');
-
-        /** @var SplFileInfo $fileInfo */
-        foreach ($finder->directories()->in($vendorYiisoftDirectory) as $fileInfo) {
-            $directoryPath = $fileInfo->getPathname();
-
-            if (is_link($directoryPath)) {
-                $io->info("Removing symlink <file>$directoryPath</file>");
-                $fs->remove($directoryPath);
-            }
-        }
-
-        $io->done();
-    }
-
-    private function composerInstall(Package $package): void
-    {
-        $io = $this->getIO();
-
-        $composerCommandName = $this->updateMode ? 'update' : 'install';
-
-        $io->important()->info("Running `composer $composerCommandName`...");
-
-        if (!file_exists("{$package->getPath()}/composer.json")) {
-            $io->warning([
-                "No <file>composer.json</file> in package {$package->getId()}.",
-                "Running `composer $composerCommandName` skipped.",
-            ]);
-
-            return;
-        }
-
-        $process = new Process([
-            'composer',
-            $composerCommandName,
-            '--prefer-dist',
-            '--no-progress',
-            ...$this->additionalComposerInstallOptions,
-            '--working-dir',
-            $package->getPath(),
-            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ]);
-
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during running `composer $composerCommandName`.",
-                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, "running `composer $composerCommandName`");
         }
     }
 
@@ -208,28 +77,131 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    /**
-     * @param Package $package
-     * @param Package[] $installedPackages
-     */
-    private function linkPackages(Package $package, array $installedPackages): void
+    private function gitClone(Package $package): void
     {
-        foreach ($installedPackages as $installedPackage) {
-            if ($package->getId() === $installedPackage->getId()) {
-                continue;
-            }
+        $io = $this->getIO();
+        $io->important()->info("Cloning package repository...");
 
-            $installedPackagePath = "{$package->getPath()}/vendor/yiisoft/{$installedPackage->getId()}";
-            if (file_exists($installedPackagePath)) {
-                $fs = new Filesystem();
-                $fs->remove($installedPackagePath);
+        if ($package->isGitRepositoryCloned()) {
+            $io->warning([
+                'The package already contains <file>.git</file> directory.',
+                'Cloning skipped.',
+            ]);
 
-                $originalPath = DIRECTORY_SEPARATOR === '\\' ?
-                    $installedPackage->getPath() :
-                    "../../../{$installedPackage->getId()}";
-                $fs->symlink($originalPath, $installedPackagePath);
+            return;
+        }
+
+        $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
+
+        $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
+                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
+            ]);
+
+            $this->registerPackageError($package, $output, 'cloning package repository');
+        }
+    }
+
+    private function setUpstream(Package $package): void
+    {
+        $io = $this->getIO();
+
+        if ($package->isConfiguredRepositoryPersonal()) {
+            $gitWorkingCopy = $package->getGitWorkingCopy();
+            $remoteName = 'upstream';
+
+            if (!$gitWorkingCopy->hasRemote($remoteName)) {
+                $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
+                $io->info("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
+                $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
+                $io->done();
             }
         }
+    }
+
+    private function removeSymbolicLinks(Package $package): void
+    {
+        $vendorDirectory = "{$package->getPath()}/vendor";
+        if (!is_dir($vendorDirectory)) {
+            return;
+        }
+
+        $io = $this->getIO();
+
+        $io->important()->info('Removing old package symlinks...');
+
+        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        foreach ($installedPackages as $installedPackage) {
+            $packagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+
+            if (is_dir($packagePath) && is_link($packagePath)) {
+                $io->info("Removing symlink <file>{$packagePath}</file>");
+                unlink($packagePath);
+            }
+        }
+
+        $io->done();
+    }
+
+    private function composerInstall(Package $package): void
+    {
+        $io = $this->getIO();
+
+        $composerCommandName = $this->updateMode ? 'update' : 'install';
+
+        $io->important()->info("Running `composer $composerCommandName`...");
+
+        if (!file_exists("{$package->getPath()}/composer.json")) {
+            $io->warning([
+                "No <file>composer.json</file> in package {$package->getName()}.",
+                "Running `composer $composerCommandName` skipped.",
+            ]);
+
+            return;
+        }
+
+        $process = new Process([
+            'composer',
+            $composerCommandName,
+            '--prefer-dist',
+            '--no-progress',
+            ...$this->additionalComposerInstallOptions,
+            '--working-dir',
+            $package->getPath(),
+            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
+        ]);
+
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during running `composer $composerCommandName`.",
+                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
+            ]);
+
+            $this->registerPackageError($package, $output, "running `composer $composerCommandName`");
+        }
+    }
+
+    protected function afterProcessingPackages(): void
+    {
+        $this->createSymbolicLinks();
     }
 
     private function createSymbolicLinks(): void
@@ -240,10 +212,39 @@ final class InstallCommand extends PackageCommand
 
         $installedPackages = $this->getPackageList()->getInstalledPackages();
         foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
+            $io->info("Package <package>{$package->getName()}</package> linking...");
             $this->linkPackages($package, $installedPackages);
         }
 
         $io->done();
+    }
+
+    /**
+     * @param Package $package
+     * @param Package[] $installedPackages
+     */
+    private function linkPackages(Package $package, array $installedPackages): void
+    {
+        $vendorDirectory = "{$package->getPath()}/vendor";
+        if (!is_dir($vendorDirectory)) {
+            return;
+        }
+
+        $fs = new Filesystem();
+        foreach ($installedPackages as $installedPackage) {
+            if ($package->getName() === $installedPackage->getName()) {
+                continue;
+            }
+
+            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+            if (is_dir($installedPackagePath)) {
+                $fs->remove($installedPackagePath);
+
+                $originalPath = DIRECTORY_SEPARATOR === '\\' ?
+                    $installedPackage->getPath() :
+                    "../../../{$installedPackage->getId()}";
+                $fs->symlink($originalPath, $installedPackagePath);
+            }
+        }
     }
 }
