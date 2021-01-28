@@ -171,6 +171,7 @@ $packages = [
 
     // Demo
     'yii-demo' => true,
+    'demo-api' => true,
 
     // Application templates
     'app' => true,
