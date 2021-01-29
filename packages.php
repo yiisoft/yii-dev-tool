@@ -10,6 +10,7 @@ $packages = [
     'docs' => true,
 
     // Config plugin
+    'config' => true,
     'composer-config-plugin' => true,
 
     // Error handler
