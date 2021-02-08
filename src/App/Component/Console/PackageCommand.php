@@ -238,31 +238,18 @@ class PackageCommand extends Command
         return true;
     }
 
-    private function checkCurrentInstallation(): void
-    {
-        $problemsFound = false;
-        foreach ($this->getTargetPackages() as $package) {
-            if (!$this->isCurrentInstallationValid($package)) {
-                $problemsFound = true;
-            }
-        }
-
-        if ($problemsFound) {
-            exit(1);
-        }
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->initPackageList();
         $this->initTargetPackages($input);
-        $this->checkCurrentInstallation();
 
         $io = $this->getIO();
 
         $this->beforeProcessingPackages($input);
         foreach ($this->getTargetPackages() as $package) {
-            $this->processPackage($package);
+            if ($this->isCurrentInstallationValid($package)) {
+                $this->processPackage($package);
+            }
         }
 
         $io->clearPreparedPackageHeader();
