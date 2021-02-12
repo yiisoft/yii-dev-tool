@@ -163,7 +163,7 @@ $packages = [
     'yii-gii-frontend' => true,
 
     // CSS frameworks
-    'yii-bootstrap4' => true,
+    //'yii-bootstrap4' => true,
     'yii-bootstrap5' => true,
     'yii-bulma' => true,
 
