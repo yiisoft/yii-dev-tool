@@ -78,11 +78,13 @@ final class WhatCommand extends Command
         // Get packages without release.
         foreach ($installedPackages as $installedPackage) {
             if ($this->hasRelease($installedPackage)) {
+                $io->info("Skip {$installedPackage->getName()}. Already released.");
                 // Skip released packages.
                 continue;
             }
 
             if (!$installedPackage->composerConfigFileExists()) {
+                $io->info("Skip {$installedPackage->getName()}. No composer.json.");
                 // Skip packages without composer.json.
                 continue;
             }
@@ -129,10 +131,9 @@ final class WhatCommand extends Command
     {
         $gitWorkingCopy = $package->getGitWorkingCopy();
         foreach ($gitWorkingCopy->tags()->all() as $tag) {
-            if ($tag === '') {
-                continue;
+            if ($tag !== '') {
+                return true;
             }
-            return true;
         }
         return false;
     }
