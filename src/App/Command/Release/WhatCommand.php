@@ -18,7 +18,6 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use function array_key_exists;
 
-
 final class WhatCommand extends Command
 {
     private ?OutputManager $io;
