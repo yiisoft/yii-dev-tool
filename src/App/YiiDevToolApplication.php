@@ -23,6 +23,7 @@ use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
+use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
@@ -84,6 +85,7 @@ class YiiDevToolApplication extends Application
             new ReplicateCopyFileCommand(),
             new StatusCommand(),
             new UpdateCommand(),
+            new WhatCommand(),
             new MakeCommand(),
             new SettingsCommand(),
         ];
