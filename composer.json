@@ -29,7 +29,7 @@
         "yiisoft/arrays": "^1.0",
         "knplabs/github-api": "3.0.0@dev",
         "php-http/guzzle7-adapter": "^0.1",
-        "nyholm/psr7": "^1.3.2"
+        "nyholm/psr7": "^1.4.0"
     },
     "autoload": {
         "psr-4": {
