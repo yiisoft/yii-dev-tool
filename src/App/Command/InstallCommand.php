@@ -183,6 +183,10 @@ final class InstallCommand extends PackageCommand
 
         $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
 
+        if ($this->updateMode && !$hasGitRepositoryAlreadyBeenCloned) {
+            $io->info("Skipped because of package is not installed.");
+            return;
+        }
         if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
             $this->gitClone($package);
 
