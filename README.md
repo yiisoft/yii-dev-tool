@@ -47,6 +47,8 @@ You may select packages by providing a second argument:
 
 > Note: In case you are using PhpStorm you have to add `yiisoft` exclusion pattern in "Settings → Directories → Exclude Files".
 > Else it would go into infinite indexing cycle.
+> 
+> Also, disabling symlinks helps. In order to do it, open "Help → Find Action", type "Registry", find "indexer.follows.symlinks" and disable it.
 
 
 Upgrade
