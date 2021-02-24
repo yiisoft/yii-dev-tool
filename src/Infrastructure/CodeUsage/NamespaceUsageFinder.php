@@ -9,6 +9,8 @@ use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
+use function array_key_exists;
+use function is_string;
 
 class NamespaceUsageFinder
 {
@@ -62,10 +64,34 @@ class NamespaceUsageFinder
     {
         $this->usages = [];
 
+        $foundFiles = [];
+
         foreach ($this->target as $environment => $paths) {
-            $files = $this->getExistingPHPFilePaths($environment);
-            $this->findNamespaceUsagesInFiles($files, $environment);
+            $existingPHPFilePaths = $this->getExistingPHPFilePaths($environment);
+
+            $notUsedFiles = [];
+            foreach ($existingPHPFilePaths as $existingPHPFilePath) {
+                if (!$this->pathAlreadyUsedInAnotherEnvironment($existingPHPFilePath, $foundFiles)) {
+                    $notUsedFiles[] = $existingPHPFilePath;
+                }
+            }
+            $foundFiles[$environment] = $notUsedFiles;
+
+            $this->findNamespaceUsagesInFiles($notUsedFiles, $environment);
         }
+    }
+
+    private function pathAlreadyUsedInAnotherEnvironment(string $path, array $foundFiles): bool
+    {
+        foreach ($foundFiles as $files) {
+            foreach ($files as $file) {
+                if ($file === $path) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function getExistingPHPFilePaths(string $environment): array
