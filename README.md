@@ -148,6 +148,8 @@ See [example](packages.local.php.example).
 
 ### Step 4: install packages
 
+In order to work with Github via SSH, you have to [add](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) your public SSH key to Github account. Add key if you have not done it before.
+
 Now install the packages:
 
 ```bash
