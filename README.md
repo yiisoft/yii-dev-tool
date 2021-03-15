@@ -45,10 +45,8 @@ You may select packages by providing a second argument:
 ./yii-dev install di,rbac,yii-cycle,view
 ```
 
-> Note: In case you are using PhpStorm you have to add `yiisoft` exclusion pattern in "Settings → Directories → Exclude Files".
-> Else it would go into infinite indexing cycle.
-> 
-> Also, disabling symlinks helps. In order to do it, open "Help → Find Action", type "Registry", find "indexer.follows.symlinks" and disable it.
+> Note: In case you are using PhpStorm disabling symlinks helps IDE to index code faster. In order to do it, open
+> "Help → Find Action", type "Registry", find "indexer.follows.symlinks" and disable it.
 
 
 Upgrade
