@@ -172,8 +172,7 @@ final class MakeCommand extends PackageCommand
             $io->done();
 
             $io->info('The following steps are left to do manually:');
-            $io->info("- Close the $currentVersion <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $versionToRelease.");
-            //$io->info("- Create a release on GitHub.");
+            $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
             $io->info('- Release news and announcement.');
         }
     }
