@@ -71,6 +71,7 @@ $packages = [
     // i18n
     'i18n' => true,
     'translator' => true,
+    'translator-extractor' => true,
     'translator-message-php' => true,
     'translator-message-gettext' => true,
     'translator-message-db' => true,
