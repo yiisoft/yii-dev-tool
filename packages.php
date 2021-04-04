@@ -184,6 +184,7 @@ $packages = [
 
     // Testing
     'test-support' => true,
+    'psr-dummy-provider' => true,
 
     // Requirements checker
     'requirements' => true,
