@@ -6,9 +6,9 @@ namespace Yiisoft\YiiDevTool\Infrastructure;
 
 final class Version
 {
-    public const TYPE_MAJOR = 'major';
-    public const TYPE_MINOR = 'minor';
-    public const TYPE_PATCH = 'patch';
+    public const TYPE_MAJOR = 'Major - Incompatible API changes.';
+    public const TYPE_MINOR = 'Minor - Add functionality (backwards-compatible).';
+    public const TYPE_PATCH = 'Patch - Bug fixes (backwards-compatible).';
 
     public const TYPES = [self::TYPE_PATCH, self::TYPE_MINOR, self::TYPE_MAJOR];
 
