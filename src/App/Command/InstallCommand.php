@@ -147,7 +147,7 @@ final class InstallCommand extends PackageCommand
             return;
         }
 
-        $process = new Process([
+        $params = [
             'composer',
             $composerCommandName,
             '--prefer-dist',
@@ -156,7 +156,14 @@ final class InstallCommand extends PackageCommand
             '--working-dir',
             $package->getPath(),
             $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ]);
+        ];
+
+        // Windows doesn't support TTY
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $params[] = '--no-interaction';
+        }
+
+        $process = new Process($params);
 
         $process->setTimeout(null)->run();
 
