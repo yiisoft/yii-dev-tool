@@ -19,6 +19,7 @@ use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\StatusCommand;
+use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
@@ -88,6 +89,7 @@ class YiiDevToolApplication extends Application
             new WhatCommand(),
             new MakeCommand(),
             new SettingsCommand(),
+            new ProtectBranchCommand(),
         ];
     }
 
