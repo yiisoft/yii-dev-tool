@@ -26,13 +26,6 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v2.3.4
 
-      - name: Cache extensions
-        uses: actions/cache@v2.1.4
-        with:
-          path: ${{ steps.cache-env.outputs.dir }}
-          key: ${{ steps.cache-env.outputs.key }}
-          restore-keys: ${{ steps.cache-env.outputs.key }}
-
       - name: Install PHP with extensions
         uses: shivammathur/setup-php@v2
         with:
