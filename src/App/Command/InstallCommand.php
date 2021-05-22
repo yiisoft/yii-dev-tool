@@ -10,6 +10,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
@@ -17,6 +18,7 @@ final class InstallCommand extends PackageCommand
 {
     private bool $updateMode = false;
     private array $additionalComposerInstallOptions = [];
+    private string $composerCommandName = 'install';
 
     public function useUpdateMode(): self
     {
@@ -80,7 +82,7 @@ final class InstallCommand extends PackageCommand
             $io->important()->info($output);
             $io->error([
                 "An error occurred during cloning package <package>{$package->getId()}</package> repository.",
-                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
+                "Package {$this->composerCommandName} aborted.",
             ]);
 
             $this->registerPackageError($package, $output, 'cloning package repository');
@@ -130,57 +132,25 @@ final class InstallCommand extends PackageCommand
         $io->done();
     }
 
-    private function composerInstall(Package $package): void
+    private function installPackage(Package $package): void
     {
         $io = $this->getIO();
 
-        $composerCommandName = $this->updateMode ? 'update' : 'install';
-
-        $io->important()->info("Running `composer $composerCommandName`...");
+        $io->important()->info("Running `composer {$this->composerCommandName}`...");
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
                 "No <file>composer.json</file> in package {$package->getId()}.",
-                "Running `composer $composerCommandName` skipped.",
+                "Running `composer {$this->composerCommandName}` skipped.",
             ]);
 
             return;
         }
-
-        $params = [
-            'composer',
-            $composerCommandName,
-            '--prefer-dist',
-            '--no-progress',
-            ...$this->additionalComposerInstallOptions,
-            '--working-dir',
-            $package->getPath(),
-            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ];
-
-        // Windows doesn't support TTY
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $params[] = '--no-interaction';
+        if ($this->updateMode) {
+            $this->gitPull($io, $package);
         }
 
-        $process = new Process($params);
-
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during running `composer $composerCommandName`.",
-                'Package ' . ($this->updateMode ? 'update' : 'install') . ' aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, "running `composer $composerCommandName`");
-        }
+        $this->composerInstall($package, $io);
     }
 
     protected function processPackage(Package $package): void
@@ -201,6 +171,7 @@ final class InstallCommand extends PackageCommand
                 return;
             }
         }
+        $this->composerCommandName = $this->updateMode ? 'update' : 'install';
 
         $this->setUpstream($package);
 
@@ -212,7 +183,7 @@ final class InstallCommand extends PackageCommand
             }
         }
 
-        $this->composerInstall($package);
+        $this->installPackage($package);
 
         if (!$io->isVerbose()) {
             $io->important()->newLine();
@@ -256,5 +227,68 @@ final class InstallCommand extends PackageCommand
         }
 
         $io->done();
+    }
+
+    private function gitPull(OutputManager $io, Package $package): void
+    {
+        $io->important()->info('Pulling repository');
+        $process = new Process([
+            'git',
+            'pull',
+        ]);
+        $process->setWorkingDirectory($package->getPath());
+
+        $process->setTimeout(null)->run();
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during running `git pull`.",
+            ]);
+
+            $this->registerPackageError($package, $output, "running `git pull`");
+        }
+    }
+
+    private function composerInstall(Package $package, OutputManager $io): void
+    {
+        $params = [
+            'composer',
+            $this->composerCommandName,
+            '--prefer-dist',
+            '--no-progress',
+            ...$this->additionalComposerInstallOptions,
+            '--working-dir',
+            $package->getPath(),
+            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
+        ];
+
+        // Windows doesn't support TTY
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $params[] = '--no-interaction';
+        }
+
+        $process = new Process($params);
+
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during running `composer {$this->composerCommandName}`.",
+                "Package {$this->composerCommandName} aborted.",
+            ]);
+
+            $this->registerPackageError($package, $output, "running `composer {$this->composerCommandName}`");
+        }
     }
 }
