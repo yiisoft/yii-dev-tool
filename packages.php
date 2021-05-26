@@ -172,7 +172,7 @@ $packages = [
     'yii-filesystem' => true,
 
     // Demo
-    'yii-demo' => true,
+    'demo' => true,
     'demo-api' => true,
 
     // Application templates
