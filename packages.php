@@ -20,7 +20,6 @@ $packages = [
     // Dependency injection
     'di' => true,
     'proxy' => true,
-    'container-proxy' => true,
     'injector' => true,
     'factory' => true,
 
@@ -157,6 +156,7 @@ $packages = [
     // Debugger
     'yii-debug' => true,
     'yii-debug-api' => true,
+    'yii-debug-viewer' => true,
     'yii-debug-frontend' => true,
 
     // Gii
