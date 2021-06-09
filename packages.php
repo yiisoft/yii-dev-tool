@@ -29,10 +29,8 @@ $packages = [
 
     // Core packages
     'aliases' => true,
-    'serializer' => true,
     'network-utilities' => true,
     'http' => true,
-    'data-response' => true,
 
     // Security
     'security' => true,
@@ -130,6 +128,7 @@ $packages = [
     'router-fastroute' => true,
 
     // Web
+    'data-response' => true,
     'request-model' => true,
     'middleware-dispatcher' => true,
     'request-body-parser' => true,
