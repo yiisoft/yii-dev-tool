@@ -156,7 +156,6 @@ $packages = [
     'yii-debug' => true,
     'yii-debug-api' => true,
     'yii-debug-viewer' => true,
-    'yii-debug-frontend' => true,
 
     // Gii
     'yii-gii' => true,
