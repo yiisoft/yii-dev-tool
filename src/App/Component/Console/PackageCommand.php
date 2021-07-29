@@ -246,7 +246,9 @@ class PackageCommand extends Command
         $io = $this->getIO();
 
         $this->beforeProcessingPackages($input);
-        foreach ($this->getTargetPackages() as $package) {
+        $packages = $this->getTargetPackages();
+        sort($packages);
+        foreach ($packages as $package) {
             if ($this->isCurrentInstallationValid($package)) {
                 $this->processPackage($package);
             }
