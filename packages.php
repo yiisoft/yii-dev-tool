@@ -190,6 +190,9 @@ $packages = [
 
     // Package template
     'package-template' => true,
+
+    // Integrations
+    'yii-sentry' => true,
 ];
 
 if (file_exists($localFile = __DIR__ . '/packages.local.php')) {
