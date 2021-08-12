@@ -60,7 +60,8 @@ return [
                 // apps (they have to report coverage from Codeception)
                 'app',
                 'app-api',
-                'yii-demo',
+                'demo',
+                'demo-api',
             ],
         ],
         'files' => [
@@ -104,7 +105,7 @@ return [
                 // apps
                 'app',
                 'app-api',
-                'yii-demo',
+                'demo',
             ],
         ],
         'files' => [
@@ -139,7 +140,8 @@ return [
                 // apps
                 'app',
                 'app-api',
-                'yii-demo',
+                'demo',
+                'demo-api',
             ],
         ],
         'files' => [

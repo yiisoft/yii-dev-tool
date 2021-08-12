@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
+use function array_key_exists;
+
 class PackageList
 {
     /** @var Package[] */
@@ -49,7 +51,7 @@ class PackageList
             $this->installedList = [];
 
             foreach ($this->list as $id => $package) {
-                if (file_exists($package->getPath())) {
+                if ($package->enabled() && file_exists($package->getPath())) {
                     $this->installedList[$id] = $package;
                 }
             }

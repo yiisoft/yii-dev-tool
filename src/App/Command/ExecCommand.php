@@ -18,7 +18,7 @@ final class ExecCommand extends PackageCommand
     {
         $this
             ->setName('exec')
-            ->setDescription('Executes the specified console command in each package')
+            ->setDescription('Execute the specified console command in each package')
             ->addArgument(
                 'console-command',
                 InputArgument::REQUIRED,
@@ -47,12 +47,35 @@ final class ExecCommand extends PackageCommand
         $io->preparePackageHeader($package, "Executing command in package {package}");
 
         $process = Process::fromShellCommandline($this->command, $package->getPath());
-        $process->setTimeout(null)->run();
 
-        $output = $process->getOutput() . $process->getErrorOutput();
+        $process
+            /**
+             * Default Process timeout is 60 seconds, but we don't want
+             * to limit the duration of command execution, so we reset the timeout.
+             */
+            ->setTimeout(null)
+            /**
+             * Keep colors, progress bars and other elements of terminal UI.
+             */
+            ->setPty(true)
+            /**
+             * We want to receive the output of the program in real time,
+             * so we pass a callback that will read the data as it comes in.
+             */
+            ->run(function ($type, $data) use ($io) {
+                /**
+                 * We do not split data into output streams by data type,
+                 * because many programs write non-error messages to the error stream.
+                 *
+                 * We write everything to one regular output stream.
+                 */
+                $io->important()->write($data);
+            });
 
-        if (!empty(trim($output))) {
-            $io->important()->info($output);
-        }
+        /**
+         * End each program block with a new line so that
+         * the output of different packages does not stick together.
+         */
+        $io->important()->newLine();
     }
 }

@@ -29,7 +29,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Merging <file>config/replicate/composer.json</file> to package {package}");
+        $io->preparePackageHeader($package, 'Merging <file>config/replicate/composer.json</file> to package {package}');
 
         $targetPath = "{$package->getPath()}/composer.json";
         if (!file_exists($targetPath)) {

@@ -9,24 +9,24 @@ use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-final class CheckoutBranchCommand extends PackageCommand
+final class CheckoutCommand extends PackageCommand
 {
     /** @var string */
     private string $branch;
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
-            ->setName('git/checkout-branch')
+            ->setName('git/checkout')
             ->addArgument('branch', InputArgument::REQUIRED, 'Branch name')
-            ->setDescription('Creates, if not exists, and checkout a git branch');
+            ->setDescription('Create a branch if does not exist, checkout a branch if it exists');
 
         parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->branch = $input->getArgument('branch');
+        $this->branch = (string) $input->getArgument('branch');
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

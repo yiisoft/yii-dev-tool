@@ -87,7 +87,7 @@ class PackageCommand extends Command
             'packages',
             InputArgument::OPTIONAL,
             <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,yii-demo,db-mysql</>
+            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
             If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
             DESCRIPTION
@@ -238,31 +238,20 @@ class PackageCommand extends Command
         return true;
     }
 
-    private function checkCurrentInstallation(): void
-    {
-        $problemsFound = false;
-        foreach ($this->getTargetPackages() as $package) {
-            if (!$this->isCurrentInstallationValid($package)) {
-                $problemsFound = true;
-            }
-        }
-
-        if ($problemsFound) {
-            exit(1);
-        }
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->initPackageList();
         $this->initTargetPackages($input);
-        $this->checkCurrentInstallation();
 
         $io = $this->getIO();
 
         $this->beforeProcessingPackages($input);
-        foreach ($this->getTargetPackages() as $package) {
-            $this->processPackage($package);
+        $packages = $this->getTargetPackages();
+        sort($packages);
+        foreach ($packages as $package) {
+            if ($this->isCurrentInstallationValid($package)) {
+                $this->processPackage($package);
+            }
         }
 
         $io->clearPreparedPackageHeader();
