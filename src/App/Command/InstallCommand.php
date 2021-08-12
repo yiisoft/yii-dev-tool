@@ -47,38 +47,6 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    protected function processPackage(Package $package): void
-    {
-        $io = $this->getIO();
-        $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");
-
-        $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
-
-        if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
-            $this->gitClone($package);
-
-            if ($this->doesPackageContainErrors($package)) {
-                return;
-            }
-        }
-
-        $this->setUpstream($package);
-
-        if ($hasGitRepositoryAlreadyBeenCloned) {
-            $this->removeSymbolicLinks($package);
-
-            if ($this->doesPackageContainErrors($package)) {
-                return;
-            }
-        }
-
-        $this->composerInstall($package);
-
-        if (!$io->isVerbose()) {
-            $io->important()->newLine();
-        }
-    }
-
     private function gitClone(Package $package): void
     {
         $io = $this->getIO();
