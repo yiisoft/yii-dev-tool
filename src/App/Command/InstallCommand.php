@@ -7,8 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
@@ -27,7 +25,7 @@ final class InstallCommand extends PackageCommand
         return $this;
     }
 
-    protected function configure()
+    protected function configure(): void
     {
         $this
             ->setName('install')
@@ -47,11 +45,6 @@ final class InstallCommand extends PackageCommand
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerInstallOptions[] = '--no-plugins';
         }
-    }
-
-    protected function afterProcessingPackages(): void
-    {
-        $this->createSymbolicLinks();
     }
 
     private function gitClone(Package $package): void
@@ -81,8 +74,8 @@ final class InstallCommand extends PackageCommand
 
             $io->important()->info($output);
             $io->error([
-                "An error occurred during cloning package <package>{$package->getId()}</package> repository.",
-                "Package {$this->composerCommandName} aborted.",
+                "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
+                'Package {$this->composerCommandName} aborted.',
             ]);
 
             $this->registerPackageError($package, $output, 'cloning package repository');
@@ -108,24 +101,22 @@ final class InstallCommand extends PackageCommand
 
     private function removeSymbolicLinks(Package $package): void
     {
-        $vendorYiisoftDirectory = "{$package->getPath()}/vendor/yiisoft";
-        if (!file_exists($vendorYiisoftDirectory)) {
+        $vendorDirectory = "{$package->getPath()}/vendor";
+        if (!is_dir($vendorDirectory)) {
             return;
         }
 
-        $finder = new Finder();
-        $fs = new Filesystem();
         $io = $this->getIO();
 
         $io->important()->info('Removing old package symlinks...');
 
-        /** @var SplFileInfo $fileInfo */
-        foreach ($finder->directories()->in($vendorYiisoftDirectory) as $fileInfo) {
-            $directoryPath = $fileInfo->getPathname();
+        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        foreach ($installedPackages as $installedPackage) {
+            $packagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
 
-            if (is_link($directoryPath)) {
-                $io->info("Removing symlink <file>$directoryPath</file>");
-                $fs->remove($directoryPath);
+            if (is_dir($packagePath) && is_link($packagePath)) {
+                $io->info("Removing symlink <file>{$packagePath}</file>");
+                unlink($packagePath);
             }
         }
 
@@ -140,7 +131,7 @@ final class InstallCommand extends PackageCommand
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
-                "No <file>composer.json</file> in package {$package->getId()}.",
+                "No <file>composer.json</file> in package {$package->getName()}.",
                 "Running `composer {$this->composerCommandName}` skipped.",
             ]);
 
@@ -151,6 +142,11 @@ final class InstallCommand extends PackageCommand
         }
 
         $this->composerInstall($package, $io);
+    }
+
+    protected function afterProcessingPackages(): void
+    {
+        $this->createSymbolicLinks();
     }
 
     protected function processPackage(Package $package): void
@@ -196,14 +192,19 @@ final class InstallCommand extends PackageCommand
      */
     private function linkPackages(Package $package, array $installedPackages): void
     {
+        $vendorDirectory = "{$package->getPath()}/vendor";
+        if (!is_dir($vendorDirectory)) {
+            return;
+        }
+
+        $fs = new Filesystem();
         foreach ($installedPackages as $installedPackage) {
-            if ($package->getId() === $installedPackage->getId()) {
+            if ($package->getName() === $installedPackage->getName()) {
                 continue;
             }
 
-            $installedPackagePath = "{$package->getPath()}/vendor/yiisoft/{$installedPackage->getId()}";
-            if (file_exists($installedPackagePath)) {
-                $fs = new Filesystem();
+            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+            if (is_dir($installedPackagePath)) {
                 $fs->remove($installedPackagePath);
 
                 $originalPath = DIRECTORY_SEPARATOR === '\\' ?
