@@ -86,7 +86,7 @@ $packages = [
     'mutex-pdo-pgsql' => true,
     'mutex-pdo-oracle' => true,
     'mutex-pdo-mysql' => true,
-    // 'mutex-db-redis' => true,
+    'mutex-redis' => true,
 
     // Mailer
     'mailer' => true,
