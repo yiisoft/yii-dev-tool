@@ -233,7 +233,7 @@ git/push                  | Push changes into package repositories.
 git/status                | Show git status of packages.
 git/pr/create             | Create a pull request at GitHub.
 github/settings           | Change settings of a GitHub repository.
-list-packages             | List enabled packages.
+list                      | List enabled packages.
 install                   | Install packages.
 update                    | Update packages.
 lint                      | Check packages according to PSR-12 standard.
