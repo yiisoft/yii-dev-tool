@@ -7,14 +7,12 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-final class ListPackagesCommand extends PackageCommand
+final class ListCommand extends PackageCommand
 {
-    private string $command;
-
     protected function configure()
     {
         $this
-            ->setName('list-packages')
+            ->setName('list')
             ->setDescription('List all packages');
 
         parent::configure();
