@@ -7,7 +7,7 @@ namespace Yiisoft\YiiDevTool\App;
 use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\HelpCommand;
-use Symfony\Component\Console\Command\ListCommand;
+use Symfony\Component\Console\Command\ListCommand as ListCommandsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
@@ -23,7 +23,7 @@ use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
-use Yiisoft\YiiDevTool\App\Command\ListPackagesCommand;
+use Yiisoft\YiiDevTool\App\Command\ListCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
@@ -49,6 +49,7 @@ class YiiDevToolApplication extends Application
     public function __construct()
     {
         parent::__construct($this->header);
+        $this->setDefaultCommand('list-commands');
     }
 
     public function setRootDir(string $path): self
@@ -71,14 +72,14 @@ class YiiDevToolApplication extends Application
     {
         return [
             (new HelpCommand())->setHidden(true),
-            (new ListCommand())->setHidden(true),
+            (new ListCommandsCommand())->setName('list-commands')->setHidden(true),
             new CheckoutCommand(),
             new CommitCommand(),
             new TestCommand(),
             new RequestPullCommand(),
             new ExecCommand(),
             new ComposerFixDependenciesCommand(),
-            new ListPackagesCommand(),
+            new ListCommand(),
             new InstallCommand(),
             new LintCommand(),
             new PullCommand(),
