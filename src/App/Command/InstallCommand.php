@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
+use Yiisoft\Files\FileHelper;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
@@ -116,7 +117,7 @@ final class InstallCommand extends PackageCommand
 
             if (is_dir($packagePath) && is_link($packagePath)) {
                 $io->info("Removing symlink <file>{$packagePath}</file>");
-                unlink($packagePath);
+                FileHelper::unlink($packagePath);
             }
         }
 
