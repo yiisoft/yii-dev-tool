@@ -30,8 +30,8 @@ final class Changelog
 
         $i = 0;
         $this->multisort($changelog, function ($line) use (&$i) {
-            if (preg_match('/^- (Chg|Enh|Bug|New)( #\d+(, #\d+)*)?: .+/', $line, $m)) {
-                $o = ['Bug' => 'C', 'Enh' => 'D', 'Chg' => 'E', 'New' => 'F'];
+            if (preg_match('/^- (New|Chg|Enh|Bug)( #\d+(, #\d+)*)?: .+/', $line, $m)) {
+                $o = ['New' => 'C', 'Chg' => 'D', 'Enh' => 'E', 'Bug' => 'F'];
                 return $o[$m[1]] . ' ' . (!empty($m[2]) ? $m[2] : 'AAAA' . $i++);
             }
 
