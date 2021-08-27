@@ -18,6 +18,7 @@ $packages = [
     'friendly-exception' => true,
 
     // Dependency injection
+    'definitions' => true,
     'di' => true,
     'proxy' => true,
     'injector' => true,
