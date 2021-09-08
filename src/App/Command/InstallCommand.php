@@ -138,9 +138,6 @@ final class InstallCommand extends PackageCommand
 
             return;
         }
-        if ($this->updateMode) {
-            $this->gitPull($io, $package);
-        }
 
         $this->composerInstall($package, $io);
     }
@@ -229,31 +226,6 @@ final class InstallCommand extends PackageCommand
         }
 
         $io->done();
-    }
-
-    private function gitPull(OutputManager $io, Package $package): void
-    {
-        $io->important()->info('Pulling repository');
-        $process = new Process([
-            'git',
-            'pull',
-        ]);
-        $process->setWorkingDirectory($package->getPath());
-
-        $process->setTimeout(null)->run();
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during running `git pull`.",
-            ]);
-
-            $this->registerPackageError($package, $output, "running `git pull`");
-        }
     }
 
     private function composerInstall(Package $package, OutputManager $io): void
