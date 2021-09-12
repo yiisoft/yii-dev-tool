@@ -104,6 +104,9 @@ final class InstallCommand extends PackageCommand
 
             return;
         }
+        if ($this->updateMode) {
+            $this->gitPull($io, $package);
+        }
 
         $this->composerInstall($package, $io);
     }
@@ -133,7 +136,7 @@ final class InstallCommand extends PackageCommand
         }
         $this->composerCommandName = $this->updateMode ? 'update' : 'install';
 
-        $this->packageService->setGitUpstream($package, $io);
+        $this->packageService->gitSetUpstream($package, $io);
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
             $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
@@ -147,6 +150,31 @@ final class InstallCommand extends PackageCommand
 
         if (!$io->isVerbose()) {
             $io->important()->newLine();
+        }
+    }
+
+    private function gitPull(OutputManager $io, Package $package): void
+    {
+        $io->important()->info('Pulling repository');
+        $process = new Process([
+            'git',
+            'pull',
+        ]);
+        $process->setWorkingDirectory($package->getPath());
+
+        $process->setTimeout(null)->run();
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during running `git pull`.",
+            ]);
+
+            $this->registerPackageError($package, $output, "running `git pull`");
         }
     }
 

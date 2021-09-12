@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
 final class PackageService
 {
-    public function setGitUpstream(Package $package, OutputManager $io): void
+    public function gitSetUpstream(Package $package, OutputManager $io): void
     {
         if ($package->isConfiguredRepositoryPersonal()) {
             $gitWorkingCopy = $package->getGitWorkingCopy();
