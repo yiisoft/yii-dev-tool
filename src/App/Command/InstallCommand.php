@@ -13,8 +13,8 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 final class InstallCommand extends PackageCommand
 {
-    public static $defaultName = 'install';
-    public static $defaultDescription = 'Clone packages repositories and install composer dependencies';
+    protected static $defaultName = 'install';
+    protected static $defaultDescription = 'Clone packages repositories and install composer dependencies';
 
     private array $additionalComposerInstallOptions = [];
 

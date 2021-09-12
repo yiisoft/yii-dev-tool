@@ -12,8 +12,8 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ExecCommand extends PackageCommand
 {
-    public static $defaultName = 'exec';
-    public static $defaultDescription = 'Execute the specified console command in each package';
+    protected static $defaultName = 'exec';
+    protected static $defaultDescription = 'Execute the specified console command in each package';
 
     private string $command;
 

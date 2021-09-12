@@ -12,15 +12,18 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class CommitCommand extends PackageCommand
 {
+    protected static $defaultName = 'git/commit';
+    protected static $defaultDescription = 'Add and commit changes into each package repository';
+
     /** @var string */
     private string $message;
 
     protected function configure()
     {
         $this
-            ->setName('git/commit')
+            ->setAliases(['commit'])
             ->addArgument('message', InputArgument::REQUIRED, 'Commit message')
-            ->setDescription('Add and commit changes into each package repository');
+        ;
 
         parent::configure();
     }

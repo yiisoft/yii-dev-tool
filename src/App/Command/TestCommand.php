@@ -12,8 +12,8 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class TestCommand extends PackageCommand
 {
-    public static $defaultName = 'test';
-    public static $defaultDescription = 'Test packages';
+    protected static $defaultName = 'test';
+    protected static $defaultDescription = 'Test packages';
 
     private ?string $filter;
 

@@ -9,8 +9,8 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ListCommand extends PackageCommand
 {
-    public static $defaultName = 'list';
-    public static $defaultDescription = 'List all packages';
+    protected static $defaultName = 'list';
+    protected static $defaultDescription = 'List all packages';
 
     protected function configure()
     {

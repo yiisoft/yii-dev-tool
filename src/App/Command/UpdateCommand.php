@@ -14,8 +14,8 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 final class UpdateCommand extends PackageCommand
 {
-    public static $defaultName = 'update';
-    public static $defaultDescription = 'Pull changes from packages repositories and update composer dependencies';
+    protected static $defaultName = 'update';
+    protected static $defaultDescription = 'Pull changes from packages repositories and update composer dependencies';
 
     private array $additionalComposerUpdateOptions = [];
 
