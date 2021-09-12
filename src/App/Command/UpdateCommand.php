@@ -32,11 +32,11 @@ final class UpdateCommand extends PackageCommand
         $this
             ->setAliases(['u'])
             ->addOption(
-            'no-plugins',
-            null,
-            InputOption::VALUE_NONE,
-            'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
-        );
+                'no-plugins',
+                null,
+                InputOption::VALUE_NONE,
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
+            );
 
         parent::configure();
     }
