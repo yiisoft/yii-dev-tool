@@ -69,17 +69,6 @@ final class UpdateCommand extends PackageCommand
             return;
         }
 
-        $this->installPackage($package);
-
-        if (!$io->isVerbose()) {
-            $io->important()->newLine();
-        }
-    }
-
-    private function installPackage(Package $package): void
-    {
-        $io = $this->getIO();
-
         $this->gitPull($package, $io);
 
         $this->packageService->composerUpdate(
@@ -88,6 +77,10 @@ final class UpdateCommand extends PackageCommand
             $this->getErrorsList(),
             $io
         );
+
+        if (!$io->isVerbose()) {
+            $io->important()->newLine();
+        }
     }
 
     private function gitPull(Package $package, OutputManager $io): void

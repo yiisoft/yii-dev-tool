@@ -90,9 +90,7 @@ final class InstallCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Installing package {package}');
 
-        $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
-
-        if (!$hasGitRepositoryAlreadyBeenCloned) {
+        if (!$package->isGitRepositoryCloned()) {
             $this->gitClone($package);
 
             if ($this->doesPackageContainErrors($package)) {
@@ -102,12 +100,10 @@ final class InstallCommand extends PackageCommand
 
         $this->packageService->gitSetUpstream($package, $io);
 
-        if ($hasGitRepositoryAlreadyBeenCloned) {
-            $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
+        $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
 
-            if ($this->doesPackageContainErrors($package)) {
-                return;
-            }
+        if ($this->doesPackageContainErrors($package)) {
+            return;
         }
 
         $this->packageService->composerInstall(
