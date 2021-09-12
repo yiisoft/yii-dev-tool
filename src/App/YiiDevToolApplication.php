@@ -34,7 +34,7 @@ use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
 use Yiisoft\YiiDevTool\App\Command\UpdateCommand;
 
-class YiiDevToolApplication extends Application
+final class YiiDevToolApplication extends Application
 {
     private ?string $rootDir = null;
 
@@ -70,8 +70,9 @@ class YiiDevToolApplication extends Application
         return $this->rootDir;
     }
 
-    protected function getDefaultCommands()
+    protected function getDefaultCommands(): array
     {
+        $packageService = new PackageService();
         return [
             (new HelpCommand())->setHidden(true),
             (new ListCommandsCommand())->setName('list-commands')->setHidden(true),
@@ -81,9 +82,9 @@ class YiiDevToolApplication extends Application
             new RequestPullCommand(),
             new ExecCommand(),
             new ComposerFixDependenciesCommand(),
-            new ComposerUpdateCommand(),
+            new ComposerUpdateCommand($packageService),
             new ListCommand(),
-            new InstallCommand(),
+            new InstallCommand($packageService),
             new LintCommand(),
             new PullCommand(),
             new PushCommand(),
@@ -91,7 +92,7 @@ class YiiDevToolApplication extends Application
             new ReplicateComposerConfigCommand(),
             new ReplicateCopyFileCommand(),
             new StatusCommand(),
-            new UpdateCommand(),
+            new UpdateCommand($packageService),
             new WhatCommand(),
             new MakeCommand(),
             new SettingsCommand(),

@@ -14,9 +14,10 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 final class InstallCommand extends PackageCommand
 {
-    private bool $updateMode = false;
+    public static $defaultName = 'install';
+    public static $defaultDescription = 'Clone packages repositories and install composer dependencies';
+
     private array $additionalComposerInstallOptions = [];
-    private string $composerCommandName = 'install';
 
     private PackageService $packageService;
 
@@ -26,24 +27,14 @@ final class InstallCommand extends PackageCommand
         parent::__construct($name);
     }
 
-    public function useUpdateMode(): self
-    {
-        $this->updateMode = true;
-
-        return $this;
-    }
-
     protected function configure(): void
     {
-        $this
-            ->setName('install')
-            ->setDescription('Install packages')
-            ->addOption(
-                'no-plugins',
-                null,
-                InputOption::VALUE_NONE,
-                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
-            );
+        $this->addOption(
+            'no-plugins',
+            null,
+            InputOption::VALUE_NONE,
+            'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
+        );
 
         parent::configure();
     }
@@ -83,7 +74,7 @@ final class InstallCommand extends PackageCommand
             $io->important()->info($output);
             $io->error([
                 "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
-                'Package {$this->composerCommandName} aborted.',
+                'Package install aborted.',
             ]);
 
             $this->registerPackageError($package, $output, 'cloning package repository');
@@ -94,18 +85,15 @@ final class InstallCommand extends PackageCommand
     {
         $io = $this->getIO();
 
-        $io->important()->info("Running `composer {$this->composerCommandName}`...");
+        $io->important()->info('Running `composer install`...');
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
                 "No <file>composer.json</file> in package {$package->getName()}.",
-                "Running `composer {$this->composerCommandName}` skipped.",
+                'Running `composer install` skipped.',
             ]);
 
             return;
-        }
-        if ($this->updateMode) {
-            $this->gitPull($io, $package);
         }
 
         $this->composerInstall($package, $io);
@@ -119,22 +107,17 @@ final class InstallCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, ($this->updateMode ? 'Updating' : 'Installing') . " package {package}");
+        $io->preparePackageHeader($package, 'Installing package {package}');
 
         $hasGitRepositoryAlreadyBeenCloned = $package->isGitRepositoryCloned();
 
-        if ($this->updateMode && !$hasGitRepositoryAlreadyBeenCloned) {
-            $io->info("Skipped because of package is not installed.");
-            return;
-        }
-        if (!$this->updateMode || !$hasGitRepositoryAlreadyBeenCloned) {
+        if (!$hasGitRepositoryAlreadyBeenCloned) {
             $this->gitClone($package);
 
             if ($this->doesPackageContainErrors($package)) {
                 return;
             }
         }
-        $this->composerCommandName = $this->updateMode ? 'update' : 'install';
 
         $this->packageService->gitSetUpstream($package, $io);
 
@@ -153,36 +136,11 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    private function gitPull(OutputManager $io, Package $package): void
-    {
-        $io->important()->info('Pulling repository');
-        $process = new Process([
-            'git',
-            'pull',
-        ]);
-        $process->setWorkingDirectory($package->getPath());
-
-        $process->setTimeout(null)->run();
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during running `git pull`.",
-            ]);
-
-            $this->registerPackageError($package, $output, "running `git pull`");
-        }
-    }
-
     private function composerInstall(Package $package, OutputManager $io): void
     {
         $params = [
             'composer',
-            $this->composerCommandName,
+            'install',
             '--prefer-dist',
             '--no-progress',
             ...$this->additionalComposerInstallOptions,
@@ -208,11 +166,11 @@ final class InstallCommand extends PackageCommand
 
             $io->important()->info($output);
             $io->error([
-                "An error occurred during running `composer {$this->composerCommandName}`.",
-                "Package {$this->composerCommandName} aborted.",
+                'An error occurred during running `composer install`.',
+                'Package install aborted.',
             ]);
 
-            $this->registerPackageError($package, $output, "running `composer {$this->composerCommandName}`");
+            $this->registerPackageError($package, $output, 'running `composer install`');
         }
     }
 }

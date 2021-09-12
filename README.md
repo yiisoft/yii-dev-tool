@@ -235,8 +235,8 @@ git/status                | Show git status of packages.
 git/pr/create             | Create a pull request at GitHub.
 github/settings           | Change settings of a GitHub repository.
 list                      | List enabled packages.
-install                   | Install packages.
-update                    | Update packages.
+install                   | Clone packages repositories and install composer dependencies.
+update                    | Pull changes from packages repositories and update composer dependencies.
 lint                      | Check packages according to PSR-12 standard.
 release/make              | Make a package release.
 replicate/files           | Copy files specified in `config/replicate/files.php` into each package.
