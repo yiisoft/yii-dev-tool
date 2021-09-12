@@ -10,11 +10,12 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class PushCommand extends PackageCommand
 {
+    public static $defaultName = 'git/push';
+    public static $defaultDescription = 'Push changes into package repositories';
+
     protected function configure()
     {
-        $this
-            ->setName('git/push')
-            ->setDescription('Push changes into package repositories');
+        $this->setAliases(['gph']);
 
         parent::configure();
     }

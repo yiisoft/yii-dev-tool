@@ -10,11 +10,12 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class PullCommand extends PackageCommand
 {
+    public static $defaultName = 'git/pull';
+    public static $defaultDescription = 'Pull changes from package repositories';
+
     protected function configure()
     {
-        $this
-            ->setName('git/pull')
-            ->setDescription('Pull changes from package repositories');
+        $this->setAliases(['gpl']);
 
         parent::configure();
     }

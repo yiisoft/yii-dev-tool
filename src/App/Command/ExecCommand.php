@@ -12,13 +12,15 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ExecCommand extends PackageCommand
 {
+    public static $defaultName = 'exec';
+    public static $defaultDescription = 'Execute the specified console command in each package';
+
     private string $command;
 
     protected function configure()
     {
         $this
-            ->setName('exec')
-            ->setDescription('Execute the specified console command in each package')
+            ->setAliases(['e'])
             ->addArgument(
                 'console-command',
                 InputArgument::REQUIRED,

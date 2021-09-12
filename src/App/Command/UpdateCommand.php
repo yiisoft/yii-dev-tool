@@ -29,7 +29,9 @@ final class UpdateCommand extends PackageCommand
 
     protected function configure(): void
     {
-        $this->addOption(
+        $this
+            ->setAliases(['u'])
+            ->addOption(
             'no-plugins',
             null,
             InputOption::VALUE_NONE,

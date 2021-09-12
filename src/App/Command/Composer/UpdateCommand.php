@@ -27,12 +27,14 @@ final class UpdateCommand extends PackageCommand
 
     protected function configure(): void
     {
-        $this->addOption(
-            'no-plugins',
-            null,
-            InputOption::VALUE_NONE,
-            'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
-        );
+        $this
+            ->setAliases(['cu'])
+            ->addOption(
+                'no-plugins',
+                null,
+                InputOption::VALUE_NONE,
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
+            );
 
         parent::configure();
     }

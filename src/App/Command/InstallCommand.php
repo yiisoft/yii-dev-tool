@@ -28,12 +28,14 @@ final class InstallCommand extends PackageCommand
 
     protected function configure(): void
     {
-        $this->addOption(
-            'no-plugins',
-            null,
-            InputOption::VALUE_NONE,
-            'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
-        );
+        $this
+            ->setAliases(['i'])
+            ->addOption(
+                'no-plugins',
+                null,
+                InputOption::VALUE_NONE,
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
+            );
 
         parent::configure();
     }

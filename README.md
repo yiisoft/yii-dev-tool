@@ -223,26 +223,26 @@ slightly different for different tasks and configurations.
 
 Remember that **yii-dev-tool** contains many other commands:
 
-Command                   | Description
---------------------------|------------
-exec                      | Executes the specified console command in each package.
-composer/update           | Update composer dependencies in packages.
-git/checkout              | Creates, if not exists, and checkout a git branch.
-git/commit                | Add and commit changes into each package repository.
-git/pull                  | Pull changes from package repositories.
-git/push                  | Push changes into package repositories.
-git/status                | Show git status of packages.
-git/pr/create             | Create a pull request at GitHub.
-github/settings           | Change settings of a GitHub repository.
-list                      | List enabled packages.
-install                   | Clone packages repositories and install composer dependencies.
-update                    | Pull changes from packages repositories and update composer dependencies.
-lint                      | Check packages according to PSR-12 standard.
-release/make              | Make a package release.
-replicate/files           | Copy files specified in `config/replicate/files.php` into each package.
-replicate/composer-config | Merge `config/replicate/composer.json` into `composer.json` of each package.
-replicate/copy-file       | Copy file into each package.
-test                      | Test packages.
+Command                   | Alias | Description
+--------------------------|-------|-----
+exec                      | e     | Executes the specified console command in each package.
+composer/update           | cu    | Update composer dependencies in packages.
+git/checkout              | -     | Creates, if not exists, and checkout a git branch.
+git/commit                | -     | Add and commit changes into each package repository.
+git/pull                  | gpl   | Pull changes from package repositories.
+git/push                  | gph   | Push changes into package repositories.
+git/status                | gs    | Show git status of packages.
+git/pr/create             | -     | Create a pull request at GitHub.
+github/settings           | -     | Change settings of a GitHub repository.
+list                      | l     | List enabled packages.
+install                   | i     | Clone packages repositories and install composer dependencies.
+update                    | u     | Pull changes from packages repositories and update composer dependencies.
+lint                      | -     | Check packages according to PSR-12 standard.
+release/make              | -     | Make a package release.
+replicate/files           | -     | Copy files specified in `config/replicate/files.php` into each package.
+replicate/composer-config | -     | Merge `config/replicate/composer.json` into `composer.json` of each package.
+replicate/copy-file       | -     | Copy file into each package.
+test                      | t     | Test packages.
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.
