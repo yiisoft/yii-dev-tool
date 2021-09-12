@@ -5,13 +5,68 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App;
 
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Process\Process;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
 final class PackageService
 {
+    public function composerUpdate(
+        Package $package,
+        array $additionalComposerUpdateOptions,
+        PackageErrorList $errorList,
+        OutputManager $io
+    ): void {
+        $io->important()->info('Running `composer update`...');
+
+        if (!file_exists("{$package->getPath()}/composer.json")) {
+            $io->warning([
+                "No <file>composer.json</file> in package {$package->getName()}.",
+                'Running `composer update` skipped.',
+            ]);
+
+            return;
+        }
+
+        $params = [
+            'composer',
+            'update',
+            '--prefer-dist',
+            '--no-progress',
+            ...$additionalComposerUpdateOptions,
+            '--working-dir',
+            $package->getPath(),
+            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
+        ];
+
+        // Windows doesn't support TTY
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $params[] = '--no-interaction';
+        }
+
+        $process = new Process($params);
+
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                'An error occurred during running `composer update`.',
+                'Package update aborted.',
+            ]);
+
+            $errorList->set($package, $output, 'running `composer update`');
+        }
+    }
+
     public function gitSetUpstream(Package $package, OutputManager $io): void
     {
         if ($package->isConfiguredRepositoryPersonal()) {

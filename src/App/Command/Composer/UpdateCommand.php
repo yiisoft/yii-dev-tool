@@ -68,61 +68,15 @@ final class UpdateCommand extends PackageCommand
             return;
         }
 
-        $this->updatePackage($package);
+        $this->packageService->composerUpdate(
+            $package,
+            $this->additionalComposerUpdateOptions,
+            $this->getErrorsList(),
+            $io
+        );
 
         if (!$io->isVerbose()) {
             $io->important()->newLine();
-        }
-    }
-
-    private function updatePackage(Package $package): void
-    {
-        $io = $this->getIO();
-
-        $io->important()->info('Running `composer update`...');
-
-        if (!file_exists("{$package->getPath()}/composer.json")) {
-            $io->warning([
-                "No <file>composer.json</file> in package {$package->getName()}.",
-                'Running `composer update` skipped.',
-            ]);
-
-            return;
-        }
-
-        $params = [
-            'composer',
-            'update',
-            '--prefer-dist',
-            '--no-progress',
-            ...$this->additionalComposerUpdateOptions,
-            '--working-dir',
-            $package->getPath(),
-            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ];
-
-        // Windows doesn't support TTY
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $params[] = '--no-interaction';
-        }
-
-        $process = new Process($params);
-
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                'An error occurred during running `composer update`.',
-                'Package update aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, 'running `composer update`');
         }
     }
 }

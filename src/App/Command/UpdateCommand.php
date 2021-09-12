@@ -82,18 +82,12 @@ final class UpdateCommand extends PackageCommand
 
         $this->gitPull($package, $io);
 
-        $io->important()->info('Running `composer update`...');
-
-        if (!file_exists("{$package->getPath()}/composer.json")) {
-            $io->warning([
-                "No <file>composer.json</file> in package {$package->getName()}.",
-                'Running `composer update` skipped.',
-            ]);
-
-            return;
-        }
-
-        $this->composerUpdate($package, $io);
+        $this->packageService->composerUpdate(
+            $package,
+            $this->additionalComposerUpdateOptions,
+            $this->getErrorsList(),
+            $io
+        );
     }
 
     private function gitPull(Package $package, OutputManager $io): void
@@ -118,44 +112,6 @@ final class UpdateCommand extends PackageCommand
             ]);
 
             $this->registerPackageError($package, $output, 'running `git pull`');
-        }
-    }
-
-    private function composerUpdate(Package $package, OutputManager $io): void
-    {
-        $params = [
-            'composer',
-            'update',
-            '--prefer-dist',
-            '--no-progress',
-            ...$this->additionalComposerUpdateOptions,
-            '--working-dir',
-            $package->getPath(),
-            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ];
-
-        // Windows doesn't support TTY
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $params[] = '--no-interaction';
-        }
-
-        $process = new Process($params);
-
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                'An error occurred during running `composer update`.',
-                'Package update aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, 'running `composer update`');
         }
     }
 }
