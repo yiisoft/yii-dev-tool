@@ -14,57 +14,34 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
 final class PackageService
 {
-    public function composerUpdate(
+    public function composerInstall(
         Package $package,
-        array $additionalComposerUpdateOptions,
+        array $additionalOptions,
         PackageErrorList $errorList,
         OutputManager $io
     ): void {
-        $io->important()->info('Running `composer update`...');
+        $this->composerInstallOrUpdate(
+            'install',
+            $package,
+            $additionalOptions,
+            $errorList,
+            $io
+        );
+    }
 
-        if (!file_exists("{$package->getPath()}/composer.json")) {
-            $io->warning([
-                "No <file>composer.json</file> in package {$package->getName()}.",
-                'Running `composer update` skipped.',
-            ]);
-
-            return;
-        }
-
-        $params = [
-            'composer',
-            'update',
-            '--prefer-dist',
-            '--no-progress',
-            ...$additionalComposerUpdateOptions,
-            '--working-dir',
-            $package->getPath(),
-            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
-        ];
-
-        // Windows doesn't support TTY
-        if (DIRECTORY_SEPARATOR === '\\') {
-            $params[] = '--no-interaction';
-        }
-
-        $process = new Process($params);
-
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                'An error occurred during running `composer update`.',
-                'Package update aborted.',
-            ]);
-
-            $errorList->set($package, $output, 'running `composer update`');
-        }
+    public function composerUpdate(
+        Package $package,
+        array $additionalOptions,
+        PackageErrorList $errorList,
+        OutputManager $io
+    ): void {
+        $this->composerInstallOrUpdate(
+            'install',
+            $package,
+            $additionalOptions,
+            $errorList,
+            $io
+        );
     }
 
     public function gitSetUpstream(Package $package, OutputManager $io): void
@@ -142,6 +119,60 @@ final class PackageService
                     "../../../{$installedPackage->getId()}";
                 $fs->symlink($originalPath, $installedPackagePath);
             }
+        }
+    }
+
+    private function composerInstallOrUpdate(
+        string $command,
+        Package $package,
+        array $additionalOptions,
+        PackageErrorList $errorList,
+        OutputManager $io
+    ): void {
+        $io->important()->info("Running `composer $command`...");
+
+        if (!file_exists("{$package->getPath()}/composer.json")) {
+            $io->warning([
+                "No <file>composer.json</file> in package {$package->getName()}.",
+                "Running `composer $command` skipped.",
+            ]);
+
+            return;
+        }
+
+        $params = [
+            'composer',
+            $command,
+            '--prefer-dist',
+            '--no-progress',
+            ...$additionalOptions,
+            '--working-dir',
+            $package->getPath(),
+            $io->hasColorSupport() ? '--ansi' : '--no-ansi',
+        ];
+
+        // Windows doesn't support TTY
+        if (DIRECTORY_SEPARATOR === '\\') {
+            $params[] = '--no-interaction';
+        }
+
+        $process = new Process($params);
+
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+        } else {
+            $output = $process->getErrorOutput();
+
+            $io->important()->info($output);
+            $io->error([
+                "An error occurred during running `composer $command`.",
+                "Package $command aborted.",
+            ]);
+
+            $errorList->set($package, $output, "running `composer $command`");
         }
     }
 }
