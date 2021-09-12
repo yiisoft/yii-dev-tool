@@ -6,18 +6,25 @@ namespace Yiisoft\YiiDevTool\App\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
-use Yiisoft\Files\FileHelper;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\PackageService;
 
 final class InstallCommand extends PackageCommand
 {
     private bool $updateMode = false;
     private array $additionalComposerInstallOptions = [];
     private string $composerCommandName = 'install';
+
+    private PackageService $packageService;
+
+    public function __construct(PackageService $packageService, string $name = null)
+    {
+        $this->packageService = $packageService;
+        parent::__construct($name);
+    }
 
     public function useUpdateMode(): self
     {
@@ -83,47 +90,6 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    private function setUpstream(Package $package): void
-    {
-        $io = $this->getIO();
-
-        if ($package->isConfiguredRepositoryPersonal()) {
-            $gitWorkingCopy = $package->getGitWorkingCopy();
-            $remoteName = 'upstream';
-
-            if (!$gitWorkingCopy->hasRemote($remoteName)) {
-                $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
-                $io->info("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
-                $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
-                $io->done();
-            }
-        }
-    }
-
-    private function removeSymbolicLinks(Package $package): void
-    {
-        $vendorDirectory = "{$package->getPath()}/vendor";
-        if (!is_dir($vendorDirectory)) {
-            return;
-        }
-
-        $io = $this->getIO();
-
-        $io->important()->info('Removing old package symlinks...');
-
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
-        foreach ($installedPackages as $installedPackage) {
-            $packagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
-
-            if (is_dir($packagePath) && is_link($packagePath)) {
-                $io->info("Removing symlink <file>{$packagePath}</file>");
-                FileHelper::unlink($packagePath);
-            }
-        }
-
-        $io->done();
-    }
-
     private function installPackage(Package $package): void
     {
         $io = $this->getIO();
@@ -144,7 +110,7 @@ final class InstallCommand extends PackageCommand
 
     protected function afterProcessingPackages(): void
     {
-        $this->createSymbolicLinks();
+        $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
     }
 
     protected function processPackage(Package $package): void
@@ -167,10 +133,10 @@ final class InstallCommand extends PackageCommand
         }
         $this->composerCommandName = $this->updateMode ? 'update' : 'install';
 
-        $this->setUpstream($package);
+        $this->packageService->setGitUpstream($package, $io);
 
         if ($hasGitRepositoryAlreadyBeenCloned) {
-            $this->removeSymbolicLinks($package);
+            $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
 
             if ($this->doesPackageContainErrors($package)) {
                 return;
@@ -182,50 +148,6 @@ final class InstallCommand extends PackageCommand
         if (!$io->isVerbose()) {
             $io->important()->newLine();
         }
-    }
-
-    /**
-     * @param Package $package
-     * @param Package[] $installedPackages
-     */
-    private function linkPackages(Package $package, array $installedPackages): void
-    {
-        $vendorDirectory = "{$package->getPath()}/vendor";
-        if (!is_dir($vendorDirectory)) {
-            return;
-        }
-
-        $fs = new Filesystem();
-        foreach ($installedPackages as $installedPackage) {
-            if ($package->getName() === $installedPackage->getName()) {
-                continue;
-            }
-
-            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
-            if (is_dir($installedPackagePath)) {
-                $fs->remove($installedPackagePath);
-
-                $originalPath = DIRECTORY_SEPARATOR === '\\' ?
-                    $installedPackage->getPath() :
-                    "../../../{$installedPackage->getId()}";
-                $fs->symlink($originalPath, $installedPackagePath);
-            }
-        }
-    }
-
-    private function createSymbolicLinks(): void
-    {
-        $io = $this->getIO();
-
-        $io->important()->info('Re-linking vendor directories...');
-
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
-        foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
-            $this->linkPackages($package, $installedPackages);
-        }
-
-        $io->done();
     }
 
     private function composerInstall(Package $package, OutputManager $io): void

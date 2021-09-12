@@ -226,6 +226,7 @@ Remember that **yii-dev-tool** contains many other commands:
 Command                   | Description
 --------------------------|------------
 exec                      | Executes the specified console command in each package.
+composer/update           | Update composer dependencies in packages.
 git/checkout              | Creates, if not exists, and checkout a git branch.
 git/commit                | Add and commit changes into each package repository.
 git/pull                  | Pull changes from package repositories.

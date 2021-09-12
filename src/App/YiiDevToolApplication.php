@@ -12,6 +12,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
+use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CommitCommand;
@@ -80,6 +81,7 @@ class YiiDevToolApplication extends Application
             new RequestPullCommand(),
             new ExecCommand(),
             new ComposerFixDependenciesCommand(),
+            new ComposerUpdateCommand(),
             new ListCommand(),
             new InstallCommand(),
             new LintCommand(),
