@@ -15,6 +15,7 @@ class Package
     private string $id;
     private ?string $configuredRepositoryUrl;
     private string $path;
+    private string $vendor;
     private ?GitWorkingCopy $gitWorkingCopy = null;
 
     private static function getGitWrapper(): GitWrapper
@@ -38,6 +39,7 @@ class Package
             throw new InvalidArgumentException('Package config must contain a boolean or a string.');
         }
 
+        $this->vendor = 'yiisoft';
         if ($config === false) {
             $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {
@@ -46,6 +48,7 @@ class Package
             $this->configuredRepositoryUrl = "https://github.com/yiisoft/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
             $this->configuredRepositoryUrl = "git@github.com:$config.git";
+            [$this->vendor] = explode('/', $config);
         } else {
             $this->configuredRepositoryUrl = $config;
         }
@@ -65,7 +68,7 @@ class Package
 
     public function getVendor(): string
     {
-        return 'yiisoft';
+        return $this->vendor;
     }
 
     public function getConfiguredRepositoryUrl(): string
