@@ -36,7 +36,7 @@ final class PackageService
         OutputManager $io
     ): void {
         $this->composerInstallOrUpdate(
-            'install',
+            'update',
             $package,
             $additionalOptions,
             $errorList,
