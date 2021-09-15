@@ -108,6 +108,11 @@ class PackageCommand extends Command
         return $this->io;
     }
 
+    protected function getErrorsList(): PackageErrorList
+    {
+        return $this->errorList;
+    }
+
     private function initPackageList(): void
     {
         $io = $this->getIO();

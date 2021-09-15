@@ -10,11 +10,12 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class StatusCommand extends PackageCommand
 {
-    protected function configure()
+    protected static $defaultName = 'git/status';
+    protected static $defaultDescription = 'Show git status of packages';
+
+    protected function configure(): void
     {
-        $this
-            ->setName('git/status')
-            ->setDescription('Show git status of packages');
+        $this->setAliases(['status', 's']);
 
         parent::configure();
     }

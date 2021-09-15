@@ -2,20 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Composer;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Process\Process;
-use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
 
 final class UpdateCommand extends PackageCommand
 {
-    protected static $defaultName = 'update';
-    protected static $defaultDescription = 'Pull changes from packages repositories and update composer dependencies';
+    protected static $defaultName = 'composer/update';
+    protected static $defaultDescription = 'Update composer dependencies in packages';
 
     private array $additionalComposerUpdateOptions = [];
 
@@ -30,7 +28,7 @@ final class UpdateCommand extends PackageCommand
     protected function configure(): void
     {
         $this
-            ->setAliases(['u'])
+            ->setAliases(['cu'])
             ->addOption(
                 'no-plugins',
                 null,
@@ -56,7 +54,7 @@ final class UpdateCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, 'Updating package {package}');
+        $io->preparePackageHeader($package, 'Updating composer dependencies of package {package}');
 
         if (!$package->isGitRepositoryCloned()) {
             $io->info('Skipped because of package is not installed.');
@@ -71,8 +69,6 @@ final class UpdateCommand extends PackageCommand
             return;
         }
 
-        $this->gitPull($package, $io);
-
         $this->packageService->composerUpdate(
             $package,
             $this->additionalComposerUpdateOptions,
@@ -82,31 +78,6 @@ final class UpdateCommand extends PackageCommand
 
         if (!$io->isVerbose()) {
             $io->important()->newLine();
-        }
-    }
-
-    private function gitPull(Package $package, OutputManager $io): void
-    {
-        $io->important()->info('Pulling repository');
-        $process = new Process([
-            'git',
-            'pull',
-        ]);
-        $process->setWorkingDirectory($package->getPath());
-
-        $process->setTimeout(null)->run();
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                'An error occurred during running `git pull`.',
-            ]);
-
-            $this->registerPackageError($package, $output, 'running `git pull`');
         }
     }
 }

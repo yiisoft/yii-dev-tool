@@ -9,11 +9,12 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ListCommand extends PackageCommand
 {
+    protected static $defaultName = 'list';
+    protected static $defaultDescription = 'List all packages';
+
     protected function configure()
     {
-        $this
-            ->setName('list')
-            ->setDescription('List all packages');
+        $this->setAliases(['l']);
 
         parent::configure();
     }

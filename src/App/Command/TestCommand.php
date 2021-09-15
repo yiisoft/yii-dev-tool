@@ -12,15 +12,16 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class TestCommand extends PackageCommand
 {
+    protected static $defaultName = 'test';
+    protected static $defaultDescription = 'Test packages';
+
     private ?string $filter;
 
     protected function configure(): void
     {
         $this
-            ->setName('test')
-            ->setDescription('Test packages')
-            ->addOption('filter', null, InputOption::VALUE_REQUIRED, 'Filter test cases by the word.')
-        ;
+            ->setAliases(['t'])
+            ->addOption('filter', null, InputOption::VALUE_REQUIRED, 'Filter test cases by the word.');
 
         parent::configure();
     }

@@ -11,15 +11,18 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class CheckoutCommand extends PackageCommand
 {
+    protected static $defaultName = 'git/checkout';
+    protected static $defaultDescription = 'Create a branch if does not exist, checkout a branch if it exists';
+
     /** @var string */
     private string $branch;
 
     protected function configure(): void
     {
         $this
-            ->setName('git/checkout')
+            ->setAliases(['checkout'])
             ->addArgument('branch', InputArgument::REQUIRED, 'Branch name')
-            ->setDescription('Create a branch if does not exist, checkout a branch if it exists');
+        ;
 
         parent::configure();
     }
