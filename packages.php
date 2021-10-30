@@ -170,6 +170,9 @@ $packages = [
     'yii-captcha' => true,
     'yii-filesystem' => true,
 
+    // Runners
+    'yii-runner-roadrunner' => true,
+
     // Demo
     'demo' => true,
     'demo-api' => true,
