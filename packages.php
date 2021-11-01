@@ -171,6 +171,8 @@ $packages = [
     'yii-filesystem' => true,
 
     // Runners
+    'yii-runner' => true,
+    'yii-runner-console' => true,
     'yii-runner-roadrunner' => true,
 
     // Demo
