@@ -172,6 +172,7 @@ $packages = [
 
     // Runners
     'yii-runner' => true,
+    'yii-runner-web' => true,
     'yii-runner-console' => true,
     'yii-runner-roadrunner' => true,
 
