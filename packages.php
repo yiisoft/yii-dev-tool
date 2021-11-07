@@ -58,6 +58,7 @@ $packages = [
     'cache-file' => true,
     'cache-db' => true,
     'cache-memcached' => true,
+    'cache-redis' => true,
 
     // Log
     'log' => true,
