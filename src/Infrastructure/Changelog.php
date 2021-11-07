@@ -43,7 +43,7 @@ final class Changelog
 
     public function open(Version $version): void
     {
-        $headline = "\n## $version under development\n";
+        $headline = "## $version under development\n";
         $headline .= "\n- no changes in this release.\n";
 
         $lines = explode("\n", file_get_contents($this->path));
