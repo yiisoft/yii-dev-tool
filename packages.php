@@ -137,6 +137,7 @@ $packages = [
     'request-body-parser' => true,
     'session' => true,
     'cookies' => true,
+    'yii-http' => true,
     'yii-web' => true,
 
     // View, assets, templates and widgets
@@ -173,7 +174,7 @@ $packages = [
 
     // Runners
     'yii-runner' => true,
-    'yii-runner-web' => true,
+    'yii-runner-http' => true,
     'yii-runner-console' => true,
     'yii-runner-roadrunner' => true,
 
