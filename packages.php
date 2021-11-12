@@ -138,6 +138,7 @@ $packages = [
     'session' => true,
     'cookies' => true,
     'yii-http' => true,
+    'yii-middleware' => true,
     'yii-web' => true,
 
     // View, assets, templates and widgets
