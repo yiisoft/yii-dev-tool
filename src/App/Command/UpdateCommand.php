@@ -88,10 +88,14 @@ final class UpdateCommand extends PackageCommand
     private function gitPull(Package $package, OutputManager $io): void
     {
         $io->important()->info('Pulling repository');
-        $process = new Process([
-            'git',
-            'pull',
-        ]);
+
+        if ($package->isConfiguredRepositoryPersonal()) {
+            $gitCommand = ['git', 'pull', 'upstream', 'master'];
+        } else {
+            $gitCommand = ['git', 'pull'];
+        }
+
+        $process = new Process($gitCommand);
         $process->setWorkingDirectory($package->getPath());
 
         $process->setTimeout(null)->run();
