@@ -11,7 +11,6 @@ $packages = [
 
     // Config plugin
     'config' => true,
-    'composer-config-plugin' => true,
 
     // Error handler
     'error-handler' => true,
@@ -79,7 +78,6 @@ $packages = [
 
     // Queue
     'yii-queue' => true,
-    'yii-queue-interop' => true,
     'yii-queue-amqp' => true,
 
     // Mutex
@@ -125,6 +123,7 @@ $packages = [
     'yii-cycle' => true,
     // 'db-sphinx' => true,
     // 'db-redis' => true,
+    'data-db' => true,
 
     // Router
     'router' => true,
