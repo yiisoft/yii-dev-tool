@@ -228,6 +228,7 @@ Command                   | Aliases   | Description
 exec                      | e         | Executes the specified console command in each package.
 composer/update           | cu        | Update composer dependencies in packages.
 git/checkout              | checkout  | Creates, if not exists, and checkout a git branch.
+git/clone                 | clone     | Clone of package repositories.
 git/commit                | commit    | Add and commit changes into each package repository.
 git/pull                  | pull      | Pull changes from package repositories.
 git/push                  | push      | Push changes into package repositories.
