@@ -6,7 +6,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
@@ -47,41 +46,6 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    private function gitClone(Package $package): void
-    {
-        $io = $this->getIO();
-        $io->important()->info("Cloning package repository...");
-
-        if ($package->isGitRepositoryCloned()) {
-            $io->warning([
-                'The package already contains <file>.git</file> directory.',
-                'Cloning skipped.',
-            ]);
-
-            return;
-        }
-
-        $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
-
-        $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
-        $process->setTimeout(null)->run();
-
-        if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
-            $io->done();
-        } else {
-            $output = $process->getErrorOutput();
-
-            $io->important()->info($output);
-            $io->error([
-                "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
-                'Package install aborted.',
-            ]);
-
-            $this->registerPackageError($package, $output, 'cloning package repository');
-        }
-    }
-
     protected function afterProcessingPackages(): void
     {
         $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
@@ -93,7 +57,7 @@ final class InstallCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Installing package {package}');
 
         if (!$package->isGitRepositoryCloned()) {
-            $this->gitClone($package);
+            $this->packageService->gitClone($package, self::$defaultName, $this->getErrorsList(), $io);
 
             if ($this->doesPackageContainErrors($package)) {
                 return;
@@ -112,7 +76,7 @@ final class InstallCommand extends PackageCommand
             $package,
             $this->additionalComposerInstallOptions,
             $this->getErrorsList(),
-            $this->getIO()
+            $io,
         );
 
         if (!$io->isVerbose()) {

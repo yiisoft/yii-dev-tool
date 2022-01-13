@@ -44,6 +44,45 @@ final class PackageService
         );
     }
 
+    public function gitClone(
+        Package $package,
+        string $commandName,
+        PackageErrorList $errorList,
+        OutputManager $io
+    ): void {
+        $io->important()->info('Cloning package repository...');
+
+        if ($package->isGitRepositoryCloned()) {
+            $io->warning([
+                'The package already contains <file>.git</file> directory.',
+                'Cloning skipped.',
+            ]);
+
+            return;
+        }
+
+        $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
+
+        $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
+        $process->setTimeout(null)->run();
+
+        if ($process->isSuccessful()) {
+            $io->info($process->getOutput() . $process->getErrorOutput());
+            $io->done();
+            return;
+        }
+
+        $output = $process->getErrorOutput();
+        $io->important()->info($output);
+
+        $io->error([
+            "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
+            "Package $commandName aborted.",
+        ]);
+
+        $errorList->set($package, $output, 'cloning package repository');
+    }
+
     public function gitSetUpstream(Package $package, OutputManager $io): void
     {
         if ($package->isConfiguredRepositoryPersonal()) {
