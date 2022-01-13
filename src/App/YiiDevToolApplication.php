@@ -15,6 +15,7 @@ use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
+use Yiisoft\YiiDevTool\App\Command\Git\CloneCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
@@ -77,6 +78,7 @@ final class YiiDevToolApplication extends Application
             (new HelpCommand())->setHidden(true),
             (new ListCommandsCommand())->setName('list-commands')->setHidden(true),
             new CheckoutCommand(),
+            new CloneCommand($packageService),
             new CommitCommand(),
             new TestCommand(),
             new RequestPullCommand(),
