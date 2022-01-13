@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\PackageService;
 final class CloneCommand extends PackageCommand
 {
     protected static $defaultName = 'git/clone';
-    protected static $defaultDescription = 'Clone of package repositories';
+    protected static $defaultDescription = 'Package repositories cloning';
 
     private PackageService $packageService;
 
