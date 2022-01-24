@@ -48,7 +48,7 @@ $packages = [
     'rbac' => true,
     'rbac-db' => true,
     'rbac-php' => true,
-    'rbac-spiral-db' => true,
+    'rbac-cycle-db' => true,
 
     // Cache
     'cache' => true,
