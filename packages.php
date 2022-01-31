@@ -107,7 +107,6 @@ $packages = [
     // Tools
     'yii-swagger' => true,
     'profiler' => true,
-    //'fixture' => true,
 
     // Databases
     'db' => true,
