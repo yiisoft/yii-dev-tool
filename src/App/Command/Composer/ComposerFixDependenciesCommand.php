@@ -14,9 +14,22 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependenciesModifier;
 
-class ComposerFixDependenciesCommand extends PackageCommand
+final class ComposerFixDependenciesCommand extends PackageCommand
 {
     private array $skippedPackageIds = [];
+
+    private const DEV_PATHS = [
+        'tests',
+        'config/params-test.php',
+        'config/tests.php',
+        'public/index-test.php',
+    ];
+
+    private const PRODUCTION_PATHS = [
+        'config',
+        'src',
+        'public/index.php',
+    ];
 
     protected function configure(): void
     {
@@ -24,7 +37,7 @@ class ComposerFixDependenciesCommand extends PackageCommand
             ->setName('composer/fix-dependencies')
             ->setDescription('Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
@@ -55,7 +68,7 @@ class ComposerFixDependenciesCommand extends PackageCommand
         if (!$package->composerConfigFileExists()) {
             $io->warning([
                 "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
-                "Dependencies fixing skipped.",
+                'Dependencies fixing skipped.',
             ]);
 
             return;
@@ -71,13 +84,13 @@ class ComposerFixDependenciesCommand extends PackageCommand
             foreach ($notInstalledDependencyPackages as $notInstalledDependencyPackage) {
                 $message .= " <package>{$notInstalledDependencyPackage->getName()}</package>";
             }
-            $message .= " is not installed.";
+            $message .= ' is not installed.';
 
             $this->skippedPackageIds[] = $package->getId();
 
             $io->warning([
                 $message,
-                "Dependencies fixing skipped.",
+                'Dependencies fixing skipped.',
             ]);
 
             return;
@@ -87,15 +100,8 @@ class ComposerFixDependenciesCommand extends PackageCommand
 
         $namespaceUsages =
             (new NamespaceUsageFinder())
-            ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, [
-                'config/common.php',
-                'config/web.php',
-                'src',
-            ], $composerPackage->getPath())
-            ->addTargetPaths(CodeUsageEnvironment::DEV, [
-                'config/tests.php',
-                'tests',
-            ], $composerPackage->getPath())
+            ->addTargetPaths(CodeUsageEnvironment::DEV, self::DEV_PATHS, $composerPackage->getPath())
+            ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, self::PRODUCTION_PATHS, $composerPackage->getPath())
             ->getUsages();
 
         /**
@@ -126,11 +132,11 @@ class ComposerFixDependenciesCommand extends PackageCommand
 
         if ($originalDependencyList->isEqualTo($currentDependencyList)
             && $originalDevDependencyList->isEqualTo($currentDevDependencyList)) {
-            $io->info("Nothing to fix.")->newLine();
+            $io->info('Nothing to fix.')->newLine();
             return;
         }
 
         $composerConfig->writeToFile($composerPackage->getComposerConfigPath());
-        $io->important()->success("✔ Composer config fixed.");
+        $io->important()->success('✔ Composer config fixed.');
     }
 }

@@ -9,15 +9,16 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigMerger;
 
-class ReplicateComposerConfigCommand extends PackageCommand
+final class ReplicateComposerConfigCommand extends PackageCommand
 {
     protected function configure(): void
     {
         $this
             ->setName('replicate/composer-config')
             ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
-            ->addPackageArgument()
         ;
+
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
@@ -28,7 +29,7 @@ class ReplicateComposerConfigCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Merging <file>config/replicate/composer.json</file> to package {package}");
+        $io->preparePackageHeader($package, 'Merging <file>config/replicate/composer.json</file> to package {package}');
 
         $targetPath = "{$package->getPath()}/composer.json";
         if (!file_exists($targetPath)) {

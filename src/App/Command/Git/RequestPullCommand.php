@@ -13,6 +13,9 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class RequestPullCommand extends PackageCommand
 {
+    protected static $defaultName = 'git/pr/create';
+    protected static $defaultDescription = 'Create a GitHub pull request';
+
     private string $title;
 
     private string $body;
@@ -22,14 +25,13 @@ final class RequestPullCommand extends PackageCommand
     protected function configure(): void
     {
         $this
-            ->setName('git/pr/create')
-            ->addArgument('title', InputArgument::REQUIRED, 'Title of pull request.')
-            ->addOption('body', 'b', InputOption::VALUE_REQUIRED, 'Description of pull request.')
-            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make PR available to processing.')
-            ->setDescription('Add and commit changes into each package repository')
+            ->setAliases(['pr'])
+            ->addArgument('title', InputArgument::REQUIRED, 'Title of a pull request.')
+            ->addOption('body', 'b', InputOption::VALUE_REQUIRED, 'Description of a pull request.')
+            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make a non-draft pull request.')
         ;
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

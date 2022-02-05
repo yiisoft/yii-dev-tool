@@ -8,15 +8,15 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class LintCommand extends PackageCommand
+final class LintCommand extends PackageCommand
 {
     protected function configure()
     {
         $this
             ->setName('lint')
-            ->setDescription('Check packages according to PSR12 standard');
+            ->setDescription('Check packages according to PSR-12 standard');
 
-        $this->addPackageArgument();
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

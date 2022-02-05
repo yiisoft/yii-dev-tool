@@ -17,10 +17,12 @@ class CodeUsage
 
     /**
      * @param string $identifier Unique identifier of code usage: namespace, package name, etc.
-     * @param string[] $environments Environment in which the code is used.
+     * @param string|string[] $environments Environment(s) in which the code is used.
      */
-    public function __construct(string $identifier, array $environments = [])
+    public function __construct(string $identifier, $environments)
     {
+        $environments = (array) $environments;
+
         foreach ($environments as $environment) {
             if (!is_string($environment)) {
                 throw new InvalidArgumentException('Each environment must be a string.');
@@ -77,10 +79,5 @@ class CodeUsage
         }
 
         return in_array($environment, $this->environments, true);
-    }
-
-    public function used(): bool
-    {
-        return count($this->environments) > 0;
     }
 }

@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class ReplicateCopyFileCommand extends PackageCommand
+final class ReplicateCopyFileCommand extends PackageCommand
 {
     private string $source;
 
@@ -22,8 +22,9 @@ class ReplicateCopyFileCommand extends PackageCommand
             ->setDescription('Copy file into each package')
             ->addArgument('source', InputArgument::REQUIRED, 'Source file path')
             ->addArgument('destination', InputArgument::REQUIRED, 'Destination file path')
-            ->addPackageArgument()
         ;
+
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void

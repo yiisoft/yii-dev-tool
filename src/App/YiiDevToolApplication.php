@@ -7,31 +7,35 @@ namespace Yiisoft\YiiDevTool\App;
 use RuntimeException;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\HelpCommand;
-use Symfony\Component\Console\Command\ListCommand;
+use Symfony\Component\Console\Command\ListCommand as ListCommandsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
+use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
-use Yiisoft\YiiDevTool\App\Command\Git\CheckoutBranchCommand;
+use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
+use Yiisoft\YiiDevTool\App\Command\Git\CloneCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CommitCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\StatusCommand;
+use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
+use Yiisoft\YiiDevTool\App\Command\ListCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
+use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
+use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
-use Yiisoft\YiiDevTool\App\Command\Travis\TravisEnsureCronjobCommand;
-use Yiisoft\YiiDevTool\App\Command\Travis\TravisUpdateSlackConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\UpdateCommand;
 
-class YiiDevToolApplication extends Application
+final class YiiDevToolApplication extends Application
 {
     private ?string $rootDir = null;
 
@@ -48,6 +52,7 @@ class YiiDevToolApplication extends Application
     public function __construct()
     {
         parent::__construct($this->header);
+        $this->setDefaultCommand('list-commands');
     }
 
     public function setRootDir(string $path): self
@@ -66,18 +71,22 @@ class YiiDevToolApplication extends Application
         return $this->rootDir;
     }
 
-    protected function getDefaultCommands()
+    protected function getDefaultCommands(): array
     {
+        $packageService = new PackageService();
         return [
             (new HelpCommand())->setHidden(true),
-            (new ListCommand())->setHidden(true),
-            new CheckoutBranchCommand(),
+            (new ListCommandsCommand())->setName('list-commands')->setHidden(true),
+            new CheckoutCommand(),
+            new CloneCommand($packageService),
             new CommitCommand(),
             new TestCommand(),
             new RequestPullCommand(),
             new ExecCommand(),
             new ComposerFixDependenciesCommand(),
-            new InstallCommand(),
+            new ComposerUpdateCommand($packageService),
+            new ListCommand(),
+            new InstallCommand($packageService),
             new LintCommand(),
             new PullCommand(),
             new PushCommand(),
@@ -85,11 +94,12 @@ class YiiDevToolApplication extends Application
             new ReplicateComposerConfigCommand(),
             new ReplicateCopyFileCommand(),
             new StatusCommand(),
-            new TravisEnsureCronjobCommand(),
-            new TravisUpdateSlackConfigCommand(),
-            new UpdateCommand(),
+            new UpdateCommand($packageService),
+            new WhatCommand(),
             new MakeCommand(),
             new SettingsCommand(),
+            new ProtectBranchCommand(),
+            new ContributorsCommand(),
         ];
     }
 

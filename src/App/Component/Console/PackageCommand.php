@@ -25,8 +25,6 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
  */
 class PackageCommand extends Command
 {
-    protected const EXIT_SUCCESS = 0;
-
     private ?OutputManager $io;
     private ?PackageList $packageList;
     private ?PackageErrorList $errorList;
@@ -88,13 +86,13 @@ class PackageCommand extends Command
         return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
-    protected function addPackageArgument(): void
+    protected function configure()
     {
         $this->addArgument(
             'packages',
             InputArgument::OPTIONAL,
             <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,yii-demo,db-mysql</>
+            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
             If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
             DESCRIPTION
@@ -113,6 +111,11 @@ class PackageCommand extends Command
         }
 
         return $this->io;
+    }
+
+    protected function getErrorsList(): PackageErrorList
+    {
+        return $this->errorList;
     }
 
     private function initPackageList(): void
@@ -188,7 +191,7 @@ class PackageCommand extends Command
 
         if (!$package->isGitRepositoryCloned()) {
             // TODO: Implement extensible validation instead of checking command names
-            if (in_array($this->getName(), ['install', 'update'], true)) {
+            if (in_array($this->getName(), ['install', 'update', 'git/clone'], true)) {
                 return true;
             }
 
@@ -245,31 +248,17 @@ class PackageCommand extends Command
         return true;
     }
 
-    private function checkCurrentInstallation(): void
-    {
-        $problemsFound = false;
-        foreach ($this->getTargetPackages() as $package) {
-            if (!$this->isCurrentInstallationValid($package)) {
-                $problemsFound = true;
-            }
-        }
-
-        if ($problemsFound) {
-            exit(1);
-        }
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->initPackageList();
         $this->initTargetPackages($input);
-        $this->checkCurrentInstallation();
 
         $io = $this->getIO();
 
         $this->beforeProcessingPackages($input);
 
         $packages = $this->getTargetPackages();
+        sort($packages);
 
         if (count($packages) > 1) {
             $pool = new PriorityPool();
@@ -277,13 +266,13 @@ class PackageCommand extends Command
 
             $generator = (function () use ($packages) {
                 foreach ($packages as $package) {
-                    yield new ProcessRun(new Process(
-                        [
+                    if ($this->isCurrentInstallationValid($package)) {
+                        yield new ProcessRun(new Process([
                             __DIR__ . '/../../../../yii-dev',
                             $this->getName(),
                             $package->getId(),
-                        ]
-                    ));
+                        ]));
+                    }
                 }
             })();
 
@@ -306,7 +295,7 @@ class PackageCommand extends Command
             }
         }
 
-        return self::EXIT_SUCCESS;
+        return Command::SUCCESS;
     }
 
     protected function getPackageList(): PackageList

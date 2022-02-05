@@ -1,23 +1,23 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Command\Release;
 
 use GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\Console\Question\ChoiceQuestion;
-use Symfony\Component\Console\Question\ConfirmationQuestion;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
+use function in_array;
 
-class MakeCommand extends PackageCommand
+final class MakeCommand extends PackageCommand
 {
-    private InputInterface $input;
-    private OutputInterface $output;
-
     private ?string $tag;
 
     private const MAIN_BRANCHES = ['master', 'main'];
@@ -29,22 +29,17 @@ class MakeCommand extends PackageCommand
             ->setDescription('Make a package release')
             ->addOption('tag', null, InputArgument::OPTIONAL, 'Version to tag');
 
-        $this->addPackageArgument();
-    }
-
-    protected function initialize(InputInterface $input, OutputInterface $output)
-    {
-        $this->input = $input;
-        $this->output = $output;
-        parent::initialize($input, $output);
+        parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
+        $io = $this->getIO();
+
         $this->tag = $input->getOption('tag');
 
-        if ($this->output->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
-            $this->output->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
+        if ($io->getVerbosity() < OutputInterface::VERBOSITY_VERBOSE) {
+            $io->setVerbosity(OutputInterface::VERBOSITY_VERBOSE);
         }
     }
 
@@ -56,13 +51,57 @@ class MakeCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Releasing {package}");
+        $io->preparePackageHeader($package, 'Releasing {package}');
         $git = $package->getGitWorkingCopy();
+
+        if (!$package->composerConfigFileExists()) {
+            $io->warning([
+                "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
+                'Release cancelled.',
+            ]);
+
+            return;
+        }
+
+        $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
+        $composerConfig = $composerPackage->getComposerConfig();
+
+        $unstableFlags = ['dev', 'alpha', 'beta', 'rc'];
+
+        $minimumStability = $composerConfig->getSection(ComposerConfig::SECTION_MINIMUM_STABILITY);
+        if (in_array($minimumStability, $unstableFlags, true)) {
+            $io->warning([
+                "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
+                'Release is only possible for stable packages.',
+                'Releasing skipped.',
+            ]);
+
+            return;
+        }
+
+        $dependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
+        foreach ($dependencyList->getDependencies() as $dependency) {
+            if ($dependency->constraintContainsAnyOfStabilityFlags($unstableFlags)) {
+                $io->warning([
+                    "Constraint of dependency <em>{$dependency->getPackageName()}</em> contains an unstable flag.",
+                    "The constraint is <em>{$dependency->getConstraint()}</em>.",
+                    'Release is only possible for packages with stable dependencies.',
+                    'Releasing skipped.',
+                ]);
+
+                return;
+            }
+        }
 
         $io->info("Hurray, another release is coming!\n");
 
         $currentVersion = $this->getCurrentVersion($git);
-        $io->info("Current version is $currentVersion.");
+        if ($currentVersion->asString() === '') {
+            $io->info('There is currently no release.');
+        } else {
+            $io->info("Current version is $currentVersion.");
+        }
+
 
         $versionToRelease = $this->getVersionToRelease($currentVersion);
         $io->info("Going to release $versionToRelease.");
@@ -133,28 +172,14 @@ class MakeCommand extends PackageCommand
             $io->done();
 
             $io->info('The following steps are left to do manually:');
-            $io->info("- Close the $currentVersion <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $versionToRelease.");
-            //$io->info("- Create a release on GitHub.");
+            $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
             $io->info('- Release news and announcement.');
         }
     }
 
     private function confirm(string $message): bool
     {
-        $question = new ConfirmationQuestion($message, false);
-        return $this->getHelper('question')->ask($this->input, $this->output, $question);
-    }
-
-    private function choose(string $message, string $error, array $variants): string
-    {
-        $helper = $this->getHelper('question');
-        $question = new ChoiceQuestion(
-            $message,
-            $variants,
-            0
-        );
-        $question->setErrorMessage($error);
-        return $helper->ask($this->input, $this->output, $question);
+        return $this->getIO()->confirm($message, false);
     }
 
     private function getCurrentBranch(GitWorkingCopy $git): string
@@ -182,7 +207,7 @@ class MakeCommand extends PackageCommand
     private function getVersionToRelease(Version $currentVersion): Version
     {
         if ($this->tag === null) {
-            $versionType = $this->choose('What release is it?', '%s is not a valid release type.', Version::TYPES);
+            $versionType = $this->getIO()->choice('What release is it?', Version::TYPES);
             $nextVersion = $currentVersion->getNext($versionType);
         } else {
             $nextVersion = new Version($this->tag);

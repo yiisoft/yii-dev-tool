@@ -139,11 +139,7 @@ class ComposerPackageUsageAnalyzer
             $packageName = $package->getName();
 
             if ($this->hasPackageUsage($packageName)) {
-                $packageUsage = $this->getPackageUsage($packageName);
-
-                if ($packageUsage->used()) {
-                    continue;
-                }
+                continue;
             }
 
             $result[] = $package->getName();

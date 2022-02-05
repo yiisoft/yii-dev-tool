@@ -7,9 +7,11 @@ namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config;
 use InvalidArgumentException;
 use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency\ComposerConfigDependencyList;
+use function array_key_exists;
 
 class ComposerConfig
 {
+    public const SECTION_MINIMUM_STABILITY = 'minimum-stability';
     public const SECTION_PROVIDE = 'provide';
     public const SECTION_REQUIRE = 'require';
     public const SECTION_REQUIRE_DEV = 'require-dev';
@@ -32,7 +34,7 @@ class ComposerConfig
     public static function validateDependencySection(string $section): void
     {
         if (!in_array($section, self::getAllDependencySections(), true)) {
-            throw new InvalidArgumentException("Invalid section.");
+            throw new InvalidArgumentException('Invalid section.');
         }
     }
 
@@ -94,20 +96,20 @@ class ComposerConfig
     {
         $namespaces = [];
 
-        if (isset($this->data["autoload"]["psr-4"])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data["autoload"]["psr-4"]));
+        if (isset($this->data['autoload']['psr-4'])) {
+            $namespaces = array_merge($namespaces, array_keys($this->data['autoload']['psr-4']));
         }
 
-        if (isset($this->data["autoload-dev"]["psr-4"])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data["autoload-dev"]["psr-4"]));
+        if (isset($this->data['autoload-dev']['psr-4'])) {
+            $namespaces = array_merge($namespaces, array_keys($this->data['autoload-dev']['psr-4']));
         }
 
-        if (isset($this->data["autoload"]["psr-0"])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data["autoload"]["psr-0"]));
+        if (isset($this->data['autoload']['psr-0'])) {
+            $namespaces = array_merge($namespaces, array_keys($this->data['autoload']['psr-0']));
         }
 
-        if (isset($this->data["autoload-dev"]["psr-0"])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data["autoload-dev"]["psr-0"]));
+        if (isset($this->data['autoload-dev']['psr-0'])) {
+            $namespaces = array_merge($namespaces, array_keys($this->data['autoload-dev']['psr-0']));
         }
 
         return $namespaces;
@@ -115,10 +117,10 @@ class ComposerConfig
 
     public function usesNonPSRAutoload(): bool
     {
-        return isset($this->data["autoload"]["classmap"])
-            || isset($this->data["autoload"]["files"])
-            || isset($this->data["autoload-dev"]["classmap"])
-            || isset($this->data["autoload-dev"]["files"]);
+        return isset($this->data['autoload']['classmap'])
+            || isset($this->data['autoload']['files'])
+            || isset($this->data['autoload-dev']['classmap'])
+            || isset($this->data['autoload-dev']['files']);
     }
 
     public function sortPackagesEnabled(): bool

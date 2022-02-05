@@ -8,15 +8,16 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class StatusCommand extends PackageCommand
+final class StatusCommand extends PackageCommand
 {
-    protected function configure()
-    {
-        $this
-            ->setName('git/status')
-            ->setDescription('Show git status of packages');
+    protected static $defaultName = 'git/status';
+    protected static $defaultDescription = 'Show git status of packages';
 
-        $this->addPackageArgument();
+    protected function configure(): void
+    {
+        $this->setAliases(['status', 's']);
+
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

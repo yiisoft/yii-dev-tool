@@ -8,15 +8,16 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
-class PullCommand extends PackageCommand
+final class PullCommand extends PackageCommand
 {
-    protected function configure()
-    {
-        $this
-            ->setName('git/pull')
-            ->setDescription('Pull changes from package repositories');
+    protected static $defaultName = 'git/pull';
+    protected static $defaultDescription = 'Pull changes from package repositories';
 
-        $this->addPackageArgument();
+    protected function configure(): void
+    {
+        $this->setAliases(['pull']);
+
+        parent::configure();
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string
