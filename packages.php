@@ -49,6 +49,7 @@ $packages = [
     'rbac-db' => true,
     'rbac-php' => true,
     'rbac-cycle-db' => true,
+    'rbac-rules-container' => true,
 
     // Cache
     'cache' => true,
