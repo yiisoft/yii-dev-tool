@@ -31,6 +31,7 @@ class PackageErrorList implements Iterator, Countable
         reset($this->list);
     }
 
+    #[\ReturnTypeWillChange]
     public function current()
     {
         return current($this->list);
@@ -41,6 +42,7 @@ class PackageErrorList implements Iterator, Countable
         return key($this->list);
     }
 
+    #[\ReturnTypeWillChange]
     public function next()
     {
         return next($this->list);
