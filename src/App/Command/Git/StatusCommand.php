@@ -37,12 +37,10 @@ final class StatusCommand extends PackageCommand
         $output = $process->getOutput();
 
         if (empty($output)) {
-
             $io->important()->success("[$branchName] ✔ nothing to commit, working tree clean");
             $io->done();
         } else {
-
-            $io->important()->info("[$branchName]".PHP_EOL.$output);
+            $io->important()->info("[$branchName]" . PHP_EOL . $output);
         }
     }
 }
