@@ -16,6 +16,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
+
 use function array_key_exists;
 
 final class WhatCommand extends Command
@@ -91,7 +92,7 @@ final class WhatCommand extends Command
 
             $packagesWithoutRelease[$installedPackage->getName()] = [
                 'dependencies' => 0,
-                'dependents' => 0
+                'dependents' => 0,
             ];
         }
 
@@ -113,16 +114,45 @@ final class WhatCommand extends Command
             }
         }
 
-        uasort($packagesWithoutRelease, static fn ($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]);
+        uasort(
+            $packagesWithoutRelease,
+            static fn($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
+        );
 
+        $packagesToRelease = [];
+        $packagesToDevelop = [];
         foreach ($packagesWithoutRelease as $packageName => $stats) {
-            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
             if ($stats['dependencies'] > 0) {
-                $io->important()->error($message);
+                $packagesToDevelop[] = $packageName;
             } else {
-                $io->important()->success($message);
+                $packagesToRelease[] = $packageName;
             }
         }
+
+        $io->important()->info('Packages to release:');
+        $io->important()->newLine();
+
+        foreach ($packagesToRelease as $packageName) {
+            $stats = $packagesWithoutRelease[$packageName];
+            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
+            $io->important()->success($message);
+        }
+
+        $io->important()->info('Packages to develop:');
+        $io->important()->newLine();
+
+        foreach ($packagesToDevelop as $packageName) {
+            $stats = $packagesWithoutRelease[$packageName];
+            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
+            $io->important()->error($message);
+        }
+
+        $io->important()->info(<<<TEXT
+        [N/M] – an indicator, where
+        N – count unreleased packages from which the package depends
+        M – count unreleased packages which depends on the package
+        TEXT
+        );
 
         return Command::SUCCESS;
     }
