@@ -123,7 +123,7 @@ final class WhatCommand extends Command
 
         uasort(
             $packagesWithoutRelease,
-            static fn($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
+            static fn ($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
         );
 
         $successStyle = new TableCellStyle(['fg' => 'green']);
@@ -174,7 +174,8 @@ final class WhatCommand extends Command
 
         $tableIO->render();
 
-        $io->important()->info(<<<TEXT
+        $io->important()->info(
+            <<<TEXT
         <success>Out deps</success> – count unreleased packages from which the package depends
         <success>In deps</success> – count unreleased packages which depends on the package
         TEXT
@@ -239,6 +240,6 @@ final class WhatCommand extends Command
 
     private function concatDependencies($deps): string
     {
-        return implode("\n", array_map(fn(array $array) => implode(', ', $array), array_chunk($deps, 7)));
+        return implode("\n", array_map(fn (array $array) => implode(', ', $array), array_chunk($deps, 7)));
     }
 }
