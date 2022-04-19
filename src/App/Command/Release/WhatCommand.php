@@ -97,6 +97,7 @@ final class WhatCommand extends Command
             $packagesWithoutRelease[$installedPackage->getName()] = [
                 'dependencies' => 0,
                 'dependents' => 0,
+                'deps' => [],
             ];
         }
 
@@ -114,7 +115,9 @@ final class WhatCommand extends Command
                 }
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
+                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName($installedPackage->getName());
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
+                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName($dependencyName);
             }
         }
 
@@ -122,8 +125,6 @@ final class WhatCommand extends Command
             $packagesWithoutRelease,
             static fn($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
         );
-
-        $tableIO = new Table($output);
 
         $successStyle = new TableCellStyle(['fg' => 'green']);
         $errorStyle = new TableCellStyle(['fg' => 'red']);
@@ -136,22 +137,26 @@ final class WhatCommand extends Command
                     new TableCell($packageName, ['style' => $errorStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
+                    $this->concatDependencies($stats['deps'])
                 ];
             } else {
                 $packagesToRelease[] = [
                     new TableCell($packageName, ['style' => $successStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
+                    $this->concatDependencies($stats['deps'])
                 ];
             }
         }
 
-        $tableIO->setHeaders(['Package', 'Outgoing dependencies', 'Incoming dependencies']);
+        $tableIO = new Table($output);
+        $tableIO->setHeaders(['Package', 'Out deps', 'In deps', 'Packages']);
+        $tableIO->setColumnMaxWidth(3, 120);
 
         if (count($packagesToRelease) > 0) {
             $tableIO->addRow([
                 new TableCell('Packages to release', [
-                    'colspan' => 3,
+                    'colspan' => 4,
                     'style' => new TableCellStyle(['align' => 'center', 'bg' => 'green']),
                 ]),
             ]);
@@ -160,7 +165,7 @@ final class WhatCommand extends Command
         if (count($packagesToDevelop) > 0) {
             $tableIO->addRow([
                 new TableCell('Packages to develop', [
-                    'colspan' => 3,
+                    'colspan' => 4,
                     'style' => new TableCellStyle(['align' => 'center', 'bg' => 'red']),
                 ]),
             ]);
@@ -170,8 +175,8 @@ final class WhatCommand extends Command
         $tableIO->render();
 
         $io->important()->info(<<<TEXT
-        <success>Outgoing dependencies</success> – count unreleased packages from which the package depends
-        <success>Incoming dependencies</success> – count unreleased packages which depends on the package
+        <success>Out deps</success> – count unreleased packages from which the package depends
+        <success>In deps</success> – count unreleased packages which depends on the package
         TEXT
         );
 
@@ -225,5 +230,15 @@ final class WhatCommand extends Command
     protected function getAppRootDir(): string
     {
         return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    }
+
+    private function removeVendorName(string $packageName): string|array
+    {
+        return str_replace('yiisoft/', '', $packageName);
+    }
+
+    private function concatDependencies($deps): string
+    {
+        return implode("\n", array_map(fn(array $array) => implode(', ', $array), array_chunk($deps, 7)));
     }
 }
