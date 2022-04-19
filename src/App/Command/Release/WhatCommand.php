@@ -7,6 +7,10 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableCellStyle;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
@@ -119,38 +123,55 @@ final class WhatCommand extends Command
             static fn($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
         );
 
+        $tableIO = new Table($output);
+
+        $successStyle = new TableCellStyle(['fg' => 'green']);
+        $errorStyle = new TableCellStyle(['fg' => 'red']);
         $packagesToRelease = [];
         $packagesToDevelop = [];
+
         foreach ($packagesWithoutRelease as $packageName => $stats) {
             if ($stats['dependencies'] > 0) {
-                $packagesToDevelop[] = $packageName;
+                $packagesToDevelop[] = [
+                    new TableCell($packageName, ['style' => $errorStyle]),
+                    $stats['dependencies'],
+                    $stats['dependents'],
+                ];
             } else {
-                $packagesToRelease[] = $packageName;
+                $packagesToRelease[] = [
+                    new TableCell($packageName, ['style' => $successStyle]),
+                    $stats['dependencies'],
+                    $stats['dependents'],
+                ];
             }
         }
 
-        $io->important()->info('Packages to release:');
-        $io->important()->newLine();
+        $tableIO->setHeaders(['Package', 'Outgoing dependencies', 'Incoming dependencies']);
 
-        foreach ($packagesToRelease as $packageName) {
-            $stats = $packagesWithoutRelease[$packageName];
-            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
-            $io->important()->success($message);
+        if (count($packagesToRelease) > 0) {
+            $tableIO->addRow([
+                new TableCell('Packages to release', [
+                    'colspan' => 3,
+                    'style' => new TableCellStyle(['align' => 'center', 'bg' => 'green']),
+                ]),
+            ]);
+            $tableIO->addRows($packagesToRelease);
+        }
+        if (count($packagesToDevelop) > 0) {
+            $tableIO->addRow([
+                new TableCell('Packages to develop', [
+                    'colspan' => 3,
+                    'style' => new TableCellStyle(['align' => 'center', 'bg' => 'red']),
+                ]),
+            ]);
+            $tableIO->addRows($packagesToDevelop);
         }
 
-        $io->important()->info('Packages to develop:');
-        $io->important()->newLine();
-
-        foreach ($packagesToDevelop as $packageName) {
-            $stats = $packagesWithoutRelease[$packageName];
-            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
-            $io->important()->error($message);
-        }
+        $tableIO->render();
 
         $io->important()->info(<<<TEXT
-        [N/M] – an indicator, where
-        N – count unreleased packages from which the package depends
-        M – count unreleased packages which depends on the package
+        <success>Outgoing dependencies</success> – count unreleased packages from which the package depends
+        <success>Incoming dependencies</success> – count unreleased packages which depends on the package
         TEXT
         );
 
