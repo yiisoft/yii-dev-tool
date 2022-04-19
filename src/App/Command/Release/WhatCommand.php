@@ -7,6 +7,10 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Helper\Table;
+use Symfony\Component\Console\Helper\TableCell;
+use Symfony\Component\Console\Helper\TableCellStyle;
+use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
@@ -16,6 +20,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
+
 use function array_key_exists;
 
 final class WhatCommand extends Command
@@ -91,7 +96,8 @@ final class WhatCommand extends Command
 
             $packagesWithoutRelease[$installedPackage->getName()] = [
                 'dependencies' => 0,
-                'dependents' => 0
+                'dependents' => 0,
+                'deps' => [],
             ];
         }
 
@@ -109,20 +115,71 @@ final class WhatCommand extends Command
                 }
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
+                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName($installedPackage->getName());
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
+                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName($dependencyName);
             }
         }
 
-        uasort($packagesWithoutRelease, static fn ($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]);
+        uasort(
+            $packagesWithoutRelease,
+            static fn ($a, $b) => [$a['dependencies'], -$a['dependents']] <=> [$b['dependencies'], -$b['dependents']]
+        );
+
+        $successStyle = new TableCellStyle(['fg' => 'green']);
+        $errorStyle = new TableCellStyle(['fg' => 'red']);
+        $packagesToRelease = [];
+        $packagesToDevelop = [];
 
         foreach ($packagesWithoutRelease as $packageName => $stats) {
-            $message = "[{$stats['dependencies']}/{$stats['dependents']}] $packageName";
             if ($stats['dependencies'] > 0) {
-                $io->important()->error($message);
+                $packagesToDevelop[] = [
+                    new TableCell($packageName, ['style' => $errorStyle]),
+                    $stats['dependencies'],
+                    $stats['dependents'],
+                    $this->concatDependencies($stats['deps'])
+                ];
             } else {
-                $io->important()->success($message);
+                $packagesToRelease[] = [
+                    new TableCell($packageName, ['style' => $successStyle]),
+                    $stats['dependencies'],
+                    $stats['dependents'],
+                    $this->concatDependencies($stats['deps'])
+                ];
             }
         }
+
+        $tableIO = new Table($output);
+        $tableIO->setHeaders(['Package', 'Out deps', 'In deps', 'Packages']);
+        $tableIO->setColumnMaxWidth(3, 120);
+
+        if (count($packagesToRelease) > 0) {
+            $tableIO->addRow([
+                new TableCell('Packages to release', [
+                    'colspan' => 4,
+                    'style' => new TableCellStyle(['align' => 'center', 'bg' => 'green']),
+                ]),
+            ]);
+            $tableIO->addRows($packagesToRelease);
+        }
+        if (count($packagesToDevelop) > 0) {
+            $tableIO->addRow([
+                new TableCell('Packages to develop', [
+                    'colspan' => 4,
+                    'style' => new TableCellStyle(['align' => 'center', 'bg' => 'red']),
+                ]),
+            ]);
+            $tableIO->addRows($packagesToDevelop);
+        }
+
+        $tableIO->render();
+
+        $io->important()->info(
+            <<<TEXT
+        <success>Out deps</success> – count unreleased packages from which the package depends
+        <success>In deps</success> – count unreleased packages which depends on the package
+        TEXT
+        );
 
         return Command::SUCCESS;
     }
@@ -174,5 +231,15 @@ final class WhatCommand extends Command
     protected function getAppRootDir(): string
     {
         return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+    }
+
+    private function removeVendorName(string $packageName): string|array
+    {
+        return str_replace('yiisoft/', '', $packageName);
+    }
+
+    private function concatDependencies($deps): string
+    {
+        return implode("\n", array_map(fn (array $array) => implode(', ', $array), array_chunk($deps, 7)));
     }
 }
