@@ -96,6 +96,7 @@ $packages = [
 
     // Helpers and utilities
     'arrays' => true,
+    'classifier' => true,
     'strings' => true,
     'files' => true,
     'var-dumper' => true,
