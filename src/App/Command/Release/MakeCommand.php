@@ -230,7 +230,7 @@ final class MakeCommand extends PackageCommand
         $client = new Client();
         try {
             $token = $this->getToken();
-        } catch (\Exception $e) {
+        } catch (\RuntimeException $e) {
             $io->error($e->getMessage());
             $io->warning('Skipped creating release on GitHub.');
             return;
@@ -244,7 +244,7 @@ final class MakeCommand extends PackageCommand
             'tag_name' => $versionToRelease->asString(),
             'body' => implode("\n", $changelog->getReleaseNotes($versionToRelease)),
             'draft' => false,
-            'prerelease' => false // TODO: check if this is pre-release
+            'prerelease' => false, // TODO: check if this is pre-release
         ]);
     }
 

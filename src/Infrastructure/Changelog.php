@@ -65,6 +65,11 @@ final class Changelog
         );
     }
 
+    /**
+     * @param Version $version
+     *
+     * @return string[]
+     */
     public function getReleaseNotes(Version $version): array
     {
         [, $changelog,] = $this->splitChangelog($version);
