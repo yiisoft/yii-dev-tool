@@ -72,7 +72,7 @@ final class Changelog
      */
     public function getReleaseNotes(Version $version): array
     {
-        [, $changelog,] = $this->splitChangelog($version);
+        [, $changelog] = $this->splitChangelog($version);
 
         return $changelog;
     }

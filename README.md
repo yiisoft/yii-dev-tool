@@ -71,6 +71,9 @@ To customize the configuration of **yii-dev-tool**, create your local configurat
 using file `packages.local.php.example` as example. In this file you will find examples of all available 
 configuration options.
 
+Some commands such as `github/protect/branch`, `github/settings`, `release/make` require a Github auth token. Therefore, you need to create a personal access token on Github.
+Then save it in `config/github.token` file.
+
 
 Docker
 ------

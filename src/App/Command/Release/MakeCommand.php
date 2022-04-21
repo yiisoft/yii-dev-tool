@@ -168,13 +168,11 @@ final class MakeCommand extends PackageCommand
             'm' => 'Prepare for next release'
         ]);
 
-        if ($this->confirm('Push commits and tags?')) {
+        if ($this->confirm('Push commits and tags, and release on GitHub?')) {
             $git->push();
             $git->pushTags();
 
-            if ($this->confirm('Release on GitHub?')) {
-                $this->releaseOnGithub($package, $versionToRelease);
-            }
+            $this->releaseOnGithub($package, $versionToRelease);
 
             $io->done();
 
