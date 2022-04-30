@@ -223,7 +223,7 @@ final class MakeCommand extends PackageCommand
     private function releaseOnGithub(Package $package, Version $versionToRelease): void
     {
         $io = $this->getIO();
-        $io->info("Creating release on GitHub for $versionToRelease.");
+        $io->info("Creating release on GitHub for $versionToRelease...");
 
         $client = new Client();
         try {
