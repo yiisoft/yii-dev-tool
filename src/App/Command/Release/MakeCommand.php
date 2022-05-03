@@ -82,6 +82,17 @@ final class MakeCommand extends PackageCommand
             return;
         }
 
+        $tokenFile = $this->getAppRootDir() . 'config/github.token';
+        if (!file_exists($tokenFile)) {
+            $io->warning([
+                "There's no $tokenFile. Please create one and put your GitHub token there.",
+                'Token is required to create release on GitHub.',
+                'Release cancelled.',
+            ]);
+
+            return;
+        }
+
         $dependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
         foreach ($dependencyList->getDependencies() as $dependency) {
             if ($dependency->constraintContainsAnyOfStabilityFlags($unstableFlags)) {
