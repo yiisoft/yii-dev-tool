@@ -65,6 +65,19 @@ final class Changelog
         );
     }
 
+    /**
+     * @param Version $version
+     *
+     * @return string[]
+     */
+    public function getReleaseNotes(Version $version): array
+    {
+        $headline = ["## Release Notes\n"];
+        [, $changelog] = $this->splitChangelog($version);
+
+        return array_merge($headline, $changelog);
+    }
+
     private function replaceInFile($pattern, $replace, $file): void
     {
         file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file)));

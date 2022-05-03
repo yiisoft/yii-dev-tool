@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Release;
 
+use Github\Api\Repository\Releases;
+use Github\AuthMethod;
+use Github\Client;
 use GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -74,6 +77,17 @@ final class MakeCommand extends PackageCommand
                 "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
                 'Release is only possible for stable packages.',
                 'Releasing skipped.',
+            ]);
+
+            return;
+        }
+
+        $tokenFile = $this->getAppRootDir() . 'config/github.token';
+        if (!file_exists($tokenFile)) {
+            $io->warning([
+                "There's no $tokenFile. Please create one and put your GitHub token there.",
+                'Token is required to create release on GitHub.',
+                'Release cancelled.',
             ]);
 
             return;
@@ -165,9 +179,11 @@ final class MakeCommand extends PackageCommand
             'm' => 'Prepare for next release'
         ]);
 
-        if ($this->confirm('Push commits and tags?')) {
+        if ($this->confirm('Push commits and tags, and release on GitHub?')) {
             $git->push();
             $git->pushTags();
+
+            $this->releaseOnGithub($package, $versionToRelease);
 
             $io->done();
 
@@ -213,5 +229,41 @@ final class MakeCommand extends PackageCommand
             $nextVersion = new Version($this->tag);
         }
         return $nextVersion;
+    }
+
+    private function releaseOnGithub(Package $package, Version $versionToRelease): void
+    {
+        $io = $this->getIO();
+        $io->info("Creating release on GitHub for $versionToRelease.\n");
+
+        $client = new Client();
+        try {
+            $token = $this->getToken();
+        } catch (\RuntimeException $e) {
+            $io->error($e->getMessage());
+            $io->warning('Skipped creating release on GitHub.');
+            return;
+        }
+        $changelogPath = $package->getPath() . '/CHANGELOG.md';
+        $changelog = new Changelog($changelogPath);
+        $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
+        $release = new Releases($client);
+        $release->create($package->getVendor(), $package->getId(), [
+            'name' => sprintf('Release %s (%s)', $versionToRelease, date('F d, Y')),
+            'tag_name' => $versionToRelease->asString(),
+            'body' => implode("\n", $changelog->getReleaseNotes($versionToRelease)),
+            'draft' => false,
+            'prerelease' => false, // TODO: check if this is pre-release
+        ]);
+    }
+
+    private function getToken(): string
+    {
+        $tokenFile = $this->getAppRootDir() . 'config/github.token';
+        if (!file_exists($tokenFile)) {
+            throw new \RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there.");
+        }
+
+        return trim(file_get_contents($tokenFile));
     }
 }
