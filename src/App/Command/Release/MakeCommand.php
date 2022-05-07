@@ -249,7 +249,7 @@ final class MakeCommand extends PackageCommand
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
         $release = new Releases($client);
         $release->create($package->getVendor(), $package->getId(), [
-            'name' => sprintf('Release %s (%s)', $versionToRelease, date('F d, Y')),
+            'name' => sprintf('Version %s', $versionToRelease),
             'tag_name' => $versionToRelease->asString(),
             'body' => implode("\n", $changelog->getReleaseNotes($versionToRelease)),
             'draft' => false,

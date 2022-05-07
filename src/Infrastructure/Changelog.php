@@ -72,10 +72,9 @@ final class Changelog
      */
     public function getReleaseNotes(Version $version): array
     {
-        $headline = ["## Release Notes\n"];
         [, $changelog] = $this->splitChangelog($version);
 
-        return array_merge($headline, $changelog);
+        return $changelog;
     }
 
     private function replaceInFile($pattern, $replace, $file): void
