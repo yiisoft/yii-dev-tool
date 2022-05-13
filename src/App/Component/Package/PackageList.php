@@ -71,7 +71,7 @@ class PackageList
         if ($this->installedAndEnabledList === null) {
             $this->installedAndEnabledList = array_filter(
                 $this->getInstalledPackages(),
-                static fn(Package $package) => $package->enabled(),
+                static fn (Package $package) => $package->enabled(),
             );
         }
 
