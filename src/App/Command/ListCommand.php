@@ -39,7 +39,7 @@ final class ListCommand extends PackageCommand
 
     private function getMaxNameLength(): int
     {
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
         $maxLength = 0;
 
         foreach ($installedPackages as $package) {

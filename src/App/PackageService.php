@@ -102,7 +102,7 @@ final class PackageService
     {
         $io->important()->info('Re-linking vendor directories...');
 
-        $installedPackages = $packageList->getInstalledPackages();
+        $installedPackages = $packageList->getInstalledAndEnabledPackages();
         foreach ($installedPackages as $package) {
             $io->info("Package <package>{$package->getId()}</package> linking...");
             $this->linkPackages($package, $installedPackages);

@@ -10,13 +10,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
 use Symfony\Component\Console\Helper\TableCellStyle;
-use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
-use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
@@ -78,7 +76,7 @@ final class WhatCommand extends Command
 
         $packagesWithoutRelease = [];
 
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
 
         // Get packages without release.
         foreach ($installedPackages as $installedPackage) {

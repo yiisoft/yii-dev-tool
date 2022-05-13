@@ -14,6 +14,9 @@ class PackageList
     /** @var null|Package[] */
     private ?array $installedList = null;
 
+    /** @var null|Package[] */
+    private ?array $installedAndEnabledList = null;
+
     public function __construct(string $configFile, string $packagesRootDir)
     {
         /** @noinspection PhpIncludeInspection */
@@ -51,13 +54,28 @@ class PackageList
             $this->installedList = [];
 
             foreach ($this->list as $id => $package) {
-                if ($package->enabled() && file_exists($package->getPath())) {
+                if (file_exists($package->getPath())) {
                     $this->installedList[$id] = $package;
                 }
             }
         }
 
         return $this->installedList;
+    }
+
+    /**
+     * @return Package[]
+     */
+    public function getInstalledAndEnabledPackages(): array
+    {
+        if ($this->installedAndEnabledList === null) {
+            $this->installedAndEnabledList = array_filter(
+                $this->getInstalledPackages(),
+                static fn(Package $package) => $package->enabled(),
+            );
+        }
+
+        return $this->installedAndEnabledList;
     }
 
     /**
