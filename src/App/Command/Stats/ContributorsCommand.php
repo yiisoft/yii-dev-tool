@@ -72,9 +72,8 @@ final class ContributorsCommand extends Command
         }
 
         $this->initPackageList();
-        $io = $this->getIO();
 
-        $installedPackages = $this->getPackageList()->getInstalledPackages();
+        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
 
         $contributors = [];
 
