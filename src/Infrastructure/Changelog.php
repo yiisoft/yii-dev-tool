@@ -114,17 +114,19 @@ final class Changelog
 
     /**
      * Sorts an array of objects or arrays (with the same structure) by one or several keys.
+     *
      * @param array $array the array to be sorted. The array will be modified after calling this method.
-     * @param string|\Closure|array $key the key(s) to be sorted by. This refers to a key name of the sub-array
+     * @param array|\Closure|string $key the key(s) to be sorted by. This refers to a key name of the sub-array
      * elements, a property name of the objects, or an anonymous function returning the values for comparison
      * purpose. The anonymous function signature should be: `function($item)`.
      * To sort by multiple keys, provide an array of keys here.
-     * @param int|array $direction the sorting direction. It can be either `SORT_ASC` or `SORT_DESC`.
+     * @param array|int $direction the sorting direction. It can be either `SORT_ASC` or `SORT_DESC`.
      * When sorting by multiple keys with different sorting directions, use an array of sorting directions.
-     * @param int|array $sortFlag the PHP sort flag. Valid values include
+     * @param array|int $sortFlag the PHP sort flag. Valid values include
      * `SORT_REGULAR`, `SORT_NUMERIC`, `SORT_STRING`, `SORT_LOCALE_STRING`, `SORT_NATURAL` and `SORT_FLAG_CASE`.
      * Please refer to [PHP manual](https://secure.php.net/manual/en/function.sort.php)
      * for more details. When sorting by multiple keys with different sort flags, use an array of sort flags.
+     *
      * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */

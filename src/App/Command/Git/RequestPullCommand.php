@@ -49,7 +49,7 @@ final class RequestPullCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Creating PR for {package} repository");
+        $io->preparePackageHeader($package, 'Creating PR for {package} repository');
 
         $processParameters = [
             'gh',

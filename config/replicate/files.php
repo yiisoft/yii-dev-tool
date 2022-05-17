@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /**
  * Replication config.
  */
@@ -42,7 +44,7 @@ return [
             'exclude' => [
                 'docs',
                 'yii-docker',
-                'requirements'
+                'requirements',
             ],
         ],
         'files' => [
@@ -65,7 +67,7 @@ return [
             ],
         ],
         'files' => [
-            '.scrutinizer.yml'
+            '.scrutinizer.yml',
         ],
     ],
     'styleci' => [
@@ -81,7 +83,7 @@ return [
             ],
         ],
         'files' => [
-            '.styleci.yml'
+            '.styleci.yml',
         ],
     ],
     'bc_' => [

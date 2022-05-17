@@ -32,6 +32,7 @@ class ComposerConfigDependency
 
     /**
      * @param string[] $flags
+     *
      * @return bool
      */
     public function constraintContainsAnyOfStabilityFlags(array $flags): bool

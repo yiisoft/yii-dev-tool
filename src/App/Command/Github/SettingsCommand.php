@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
@@ -26,7 +28,7 @@ final class SettingsCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Adjusting settings for {package}");
+        $io->preparePackageHeader($package, 'Adjusting settings for {package}');
 
         $client = new Client();
         $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);

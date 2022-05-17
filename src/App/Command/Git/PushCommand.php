@@ -28,7 +28,7 @@ final class PushCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Pushing package {package}");
+        $io->preparePackageHeader($package, 'Pushing package {package}');
 
         $gitWorkingCopy = $package->getGitWorkingCopy();
 

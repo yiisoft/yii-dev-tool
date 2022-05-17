@@ -41,6 +41,7 @@ class ComposerInstallation
 
     /**
      * @param string $section
+     *
      * @return ComposerPackage[]
      */
     public function getDependencyPackages(string $section): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Protection;
@@ -36,7 +38,7 @@ final class ProtectBranchCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Protecting {package}");
+        $io->preparePackageHeader($package, 'Protecting {package}');
 
         $client = new Client();
         $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);

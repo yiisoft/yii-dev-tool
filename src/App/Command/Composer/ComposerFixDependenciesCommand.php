@@ -63,7 +63,7 @@ final class ComposerFixDependenciesCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Fixing package {package} dependencies");
+        $io->preparePackageHeader($package, 'Fixing package {package} dependencies');
 
         if (!$package->composerConfigFileExists()) {
             $io->warning([

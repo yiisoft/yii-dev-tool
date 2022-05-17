@@ -51,6 +51,7 @@ class OutputManager
      * @param Package $package
      * @param string $header A detailed version of header.
      * Substring '{package}' will be replaced by the name of the package.
+     *
      * @return $this
      */
     public function preparePackageHeader(Package $package, string $header): self
@@ -80,6 +81,7 @@ class OutputManager
      * Important messages are always displayed regardless of anything.
      *
      * @param bool $isImportant
+     *
      * @return $this
      */
     public function important($isImportant = true): self
@@ -122,6 +124,7 @@ class OutputManager
      * There is no need to mark them important.
      *
      * @param $message
+     *
      * @return $this
      */
     public function error($message): self
@@ -179,6 +182,7 @@ class OutputManager
      * @param string $method YiiDevToolStyle method name
      * @param array $args call arguments
      * @param bool $forceOutput whether to force call
+     *
      * @return mixed method call result or null
      *
      * @see YiiDevToolStyle

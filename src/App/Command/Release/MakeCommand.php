@@ -160,13 +160,13 @@ final class MakeCommand extends PackageCommand
         $git->commit([
             'S' => true,
             'a' => true,
-            'm' => "Release version $versionToRelease"
+            'm' => "Release version $versionToRelease",
         ]);
 
         $io->info("Adding a tag for $versionToRelease.");
         $git->tag([
             's' => $versionToRelease,
-            'm' => $versionToRelease
+            'm' => $versionToRelease,
         ]);
 
         $nextVersion = $versionToRelease->getNext(Version::TYPE_PATCH);
@@ -176,7 +176,7 @@ final class MakeCommand extends PackageCommand
         $io->info('Committing changes.');
         $git->commit([
             'a' => true,
-            'm' => 'Prepare for next release'
+            'm' => 'Prepare for next release',
         ]);
 
         if ($this->confirm('Push commits and tags, and release on GitHub?')) {

@@ -35,7 +35,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
         if (!file_exists($targetPath)) {
             $io->warning([
                 "No <file>composer.json</file> in package {$package->getId()}.",
-                "Replication of composer config skipped.",
+                'Replication of composer config skipped.',
             ]);
 
             return;

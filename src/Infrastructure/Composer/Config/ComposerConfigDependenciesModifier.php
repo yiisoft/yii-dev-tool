@@ -98,7 +98,7 @@ class ComposerConfigDependenciesModifier
     {
         foreach ($packageNames as $packageName) {
             if (!is_string($packageName)) {
-                throw new InvalidArgumentException("Package names must be an array of strings.");
+                throw new InvalidArgumentException('Package names must be an array of strings.');
             }
         }
     }

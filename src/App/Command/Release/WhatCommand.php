@@ -135,14 +135,14 @@ final class WhatCommand extends Command
                     new TableCell($packageName, ['style' => $errorStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
-                    $this->concatDependencies($stats['deps'])
+                    $this->concatDependencies($stats['deps']),
                 ];
             } else {
                 $packagesToRelease[] = [
                     new TableCell($packageName, ['style' => $successStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
-                    $this->concatDependencies($stats['deps'])
+                    $this->concatDependencies($stats['deps']),
                 ];
             }
         }
