@@ -28,7 +28,7 @@ final class PullCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Pulling package {package}");
+        $io->preparePackageHeader($package, 'Pulling package {package}');
 
         if ($package->isConfiguredRepositoryPersonal()) {
             $gitCommand = ['git', 'pull', 'upstream', 'master'];

@@ -39,7 +39,7 @@ class ComposerConfigDependencyList
         return count($this->dependencies) === 0;
     }
 
-    public function isEqualTo(ComposerConfigDependencyList $otherList): bool
+    public function isEqualTo(self $otherList): bool
     {
         return $this->asArray() === $otherList->asArray();
     }

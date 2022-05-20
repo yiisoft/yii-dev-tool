@@ -11,10 +11,10 @@ class PackageList
     /** @var Package[] */
     private array $list = [];
 
-    /** @var null|Package[] */
+    /** @var Package[]|null */
     private ?array $installedList = null;
 
-    /** @var null|Package[] */
+    /** @var Package[]|null */
     private ?array $installedAndEnabledList = null;
 
     public function __construct(string $configFile, string $packagesRootDir)

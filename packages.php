@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * See file packages.local.php.example for customization examples.
  *

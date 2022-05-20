@@ -29,10 +29,10 @@ final class Version
         return $this->version;
     }
 
-    public function getNext(string $type): Version
+    public function getNext(string $type): self
     {
         if ($this->version === '') {
-            return new Version('1.0.0');
+            return new self('1.0.0');
         }
 
         $parts = explode('.', $this->version);

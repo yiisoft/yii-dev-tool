@@ -27,7 +27,7 @@ final class LintCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Linting package {package}");
+        $io->preparePackageHeader($package, 'Linting package {package}');
 
         $process = new Process([
             './vendor/bin/phpcs',
@@ -35,7 +35,7 @@ final class LintCommand extends PackageCommand
             $io->hasColorSupport() ? '--colors' : '--no-colors',
             '--standard=PSR12',
             '--ignore=*/vendor/*,*/docs/*',
-         ], $this->getAppRootDir());
+        ], $this->getAppRootDir());
 
         $process->run();
 

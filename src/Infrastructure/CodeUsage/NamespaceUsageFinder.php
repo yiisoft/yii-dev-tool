@@ -16,6 +16,7 @@ class NamespaceUsageFinder
 {
     /**
      * Names of environments as keys and an array of paths to the target files as a value.
+     *
      * @var array[]
      */
     private array $target = [];

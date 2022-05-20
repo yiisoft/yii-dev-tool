@@ -35,10 +35,10 @@ class ReplicationSet
             return false;
         }
 
-        if (in_array('*', $this->excludedPackages, true) || in_array($name, $this->excludedPackages, true)) {
-            return false;
-        }
+        return !(in_array('*', $this->excludedPackages, true) || in_array($name, $this->excludedPackages, true))
 
-        return true;
+
+
+         ;
     }
 }

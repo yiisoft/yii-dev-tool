@@ -105,7 +105,7 @@ final class ReplicateFilesCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Replication to package {package}");
+        $io->preparePackageHeader($package, 'Replication to package {package}');
 
         foreach ($this->sets as $set) {
             $replicationSet = $this->getReplicationSet($set);

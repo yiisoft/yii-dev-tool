@@ -67,6 +67,7 @@ class ComposerPackageUsageAnalyzer
 
     /**
      * @param string $environment
+     *
      * @return string[] array of package names.
      */
     public function getNamesOfPackagesUsedInSpecifiedEnvironment(string $environment): array
@@ -84,6 +85,7 @@ class ComposerPackageUsageAnalyzer
 
     /**
      * @param string $environment
+     *
      * @return string[] array of package names.
      */
     public function getNamesOfPackagesUsedOnlyInSpecifiedEnvironment(string $environment): array

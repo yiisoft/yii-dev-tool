@@ -41,7 +41,7 @@ final class CommitCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Committing {package} repository");
+        $io->preparePackageHeader($package, 'Committing {package} repository');
 
         $process = new Process(['git', 'add', '-A'], $package->getPath());
         $process->run();

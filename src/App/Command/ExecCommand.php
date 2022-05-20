@@ -46,7 +46,7 @@ final class ExecCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, "Executing command in package {package}");
+        $io->preparePackageHeader($package, 'Executing command in package {package}');
 
         $process = Process::fromShellCommandline($this->command, $package->getPath());
 

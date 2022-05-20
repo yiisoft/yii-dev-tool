@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use Production\Config\Config;
 
 return new Config([
@@ -9,5 +11,5 @@ return new Config([
     ],
     'objects' => [
         'spl-fixed-array' => new \Production\Spl\SplFixedArray(),
-    ]
+    ],
 ]);
