@@ -1,7 +1,7 @@
-Yii 3 development environment
+Yii3 development environment
 =============================
 
-This repo contains tools to set up a development environment for Yii 3 packages.
+This repo contains tools to set up a development environment for Yii3 packages.
 It allows working on separate packages and test the result in other packages at the same time.
 Could be used for third party packages as well.
 
@@ -39,7 +39,7 @@ composer install
 ./yii-dev install
 ```
     
-The above command will clone all Yii 3 packages and run `composer install` in them.
+The above command will clone all Yii3 packages and run `composer install` in them.
 You may select packages by providing a second argument:
 
 ```bash
