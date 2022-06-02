@@ -195,7 +195,9 @@ final class MakeCommand extends PackageCommand
 
     private function confirm(string $message): bool
     {
-        return $this->getIO()->confirm($message, false);
+        return $this
+            ->getIO()
+            ->confirm($message, false);
     }
 
     private function getCurrentBranch(GitWorkingCopy $git): string
@@ -215,7 +217,9 @@ final class MakeCommand extends PackageCommand
 
     private function getCurrentVersion(GitWorkingCopy $git): Version
     {
-        $tags = $git->tags()->all();
+        $tags = $git
+            ->tags()
+            ->all();
         rsort($tags, SORT_NATURAL); // TODO this can not deal with alpha/beta/rc...
         return new Version(reset($tags));
     }
@@ -223,7 +227,9 @@ final class MakeCommand extends PackageCommand
     private function getVersionToRelease(Version $currentVersion): Version
     {
         if ($this->tag === null) {
-            $versionType = $this->getIO()->choice('What release is it?', Version::TYPES);
+            $versionType = $this
+                ->getIO()
+                ->choice('What release is it?', Version::TYPES);
             $nextVersion = $currentVersion->getNext($versionType);
         } else {
             $nextVersion = new Version($this->tag);

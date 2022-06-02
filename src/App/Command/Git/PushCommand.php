@@ -33,7 +33,9 @@ final class PushCommand extends PackageCommand
         $gitWorkingCopy = $package->getGitWorkingCopy();
 
         try {
-            $currentBranch = $gitWorkingCopy->getBranches()->head();
+            $currentBranch = $gitWorkingCopy
+                ->getBranches()
+                ->head();
 
             if ($currentBranch === 'master') {
                 $gitWorkingCopy->push();

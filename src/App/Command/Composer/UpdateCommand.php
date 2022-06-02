@@ -77,7 +77,9 @@ final class UpdateCommand extends PackageCommand
         );
 
         if (!$io->isVerbose()) {
-            $io->important()->newLine();
+            $io
+                ->important()
+                ->newLine();
         }
     }
 }

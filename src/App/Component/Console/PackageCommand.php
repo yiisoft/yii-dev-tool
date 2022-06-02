@@ -78,7 +78,9 @@ class PackageCommand extends Command
      */
     protected function getAppRootDir(): string
     {
-        return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return rtrim($this
+                ->getApplication()
+                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     protected function configure()
@@ -267,7 +269,9 @@ class PackageCommand extends Command
         if ($io->nothingHasBeenOutput()) {
             $message = $this->getMessageWhenNothingHasBeenOutput();
             if ($message !== null) {
-                $io->important()->info($message);
+                $io
+                    ->important()
+                    ->info($message);
             }
         }
 
@@ -315,13 +319,15 @@ class PackageCommand extends Command
         $io = $this->getIO();
 
         if (count($this->errorList) > 0) {
-            $io->important()->info([
-                '<em>',
-                '=======================================================================',
-                'SUMMARY OF ERRORS THAT OCCURRED',
-                '=======================================================================',
-                '</em>',
-            ]);
+            $io
+                ->important()
+                ->info([
+                    '<em>',
+                    '=======================================================================',
+                    'SUMMARY OF ERRORS THAT OCCURRED',
+                    '=======================================================================',
+                    '</em>',
+                ]);
 
             foreach ($this->errorList as $packageError) {
                 $io->preparePackageHeader(
@@ -329,7 +335,9 @@ class PackageCommand extends Command
                     "Package {package} error occurred during <em>{$packageError->getDuring()}</em>:"
                 );
 
-                $io->important()->info($packageError->getMessage());
+                $io
+                    ->important()
+                    ->info($packageError->getMessage());
             }
         }
     }

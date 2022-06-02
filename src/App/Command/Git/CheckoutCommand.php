@@ -43,7 +43,9 @@ final class CheckoutCommand extends PackageCommand
         $io->preparePackageHeader($package, "Checkout branch <em>{$this->branch}</em> in {package} repository");
 
         $gitWorkingCopy = $package->getGitWorkingCopy();
-        $branches = $gitWorkingCopy->getBranches()->all();
+        $branches = $gitWorkingCopy
+            ->getBranches()
+            ->all();
         $branchExists = in_array($this->branch, $branches, true);
 
         if ($branchExists) {

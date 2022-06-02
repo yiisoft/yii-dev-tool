@@ -42,7 +42,9 @@ final class CloneCommand extends PackageCommand
         $this->packageService->gitSetUpstream($package, $io);
 
         if (!$io->isVerbose()) {
-            $io->important()->newLine();
+            $io
+                ->important()
+                ->newLine();
         }
     }
 }

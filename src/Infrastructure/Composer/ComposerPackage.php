@@ -54,27 +54,37 @@ class ComposerPackage
 
     public function isComposerPlugin(): bool
     {
-        return $this->getComposerConfig()->getSection('type') === 'composer-plugin';
+        return $this
+                ->getComposerConfig()
+                ->getSection('type') === 'composer-plugin';
     }
 
     public function getPSRNamespaces(): array
     {
-        return $this->getComposerConfig()->getPSRNamespaces();
+        return $this
+            ->getComposerConfig()
+            ->getPSRNamespaces();
     }
 
     public function usesNonPSRAutoload(): bool
     {
-        return $this->getComposerConfig()->usesNonPSRAutoload();
+        return $this
+            ->getComposerConfig()
+            ->usesNonPSRAutoload();
     }
 
     public function providesBinaries(): bool
     {
-        return $this->getComposerConfig()->hasSection('bin');
+        return $this
+            ->getComposerConfig()
+            ->hasSection('bin');
     }
 
     public function getProvidedPackagesAsArray(): array
     {
-        $provideSectionData = $this->getComposerConfig()->getSection(ComposerConfig::SECTION_PROVIDE);
+        $provideSectionData = $this
+            ->getComposerConfig()
+            ->getSection(ComposerConfig::SECTION_PROVIDE);
 
         return $provideSectionData ?? [];
     }

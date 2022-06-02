@@ -76,7 +76,9 @@ final class WhatCommand extends Command
 
         $packagesWithoutRelease = [];
 
-        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
+        $installedPackages = $this
+            ->getPackageList()
+            ->getInstalledAndEnabledPackages();
 
         // Get packages without release.
         foreach ($installedPackages as $installedPackage) {
@@ -172,12 +174,14 @@ final class WhatCommand extends Command
 
         $tableIO->render();
 
-        $io->important()->info(
-            <<<TEXT
+        $io
+            ->important()
+            ->info(
+                <<<TEXT
         <success>Out deps</success> – count unreleased packages from which the package depends
         <success>In deps</success> – count unreleased packages which depends on the package
         TEXT
-        );
+            );
 
         return Command::SUCCESS;
     }
@@ -185,7 +189,9 @@ final class WhatCommand extends Command
     private function hasRelease(Package $package): bool
     {
         $gitWorkingCopy = $package->getGitWorkingCopy();
-        foreach ($gitWorkingCopy->tags()->all() as $tag) {
+        foreach ($gitWorkingCopy
+                     ->tags()
+                     ->all() as $tag) {
             if ($tag !== '') {
                 return true;
             }
@@ -228,7 +234,9 @@ final class WhatCommand extends Command
      */
     protected function getAppRootDir(): string
     {
-        return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return rtrim($this
+                ->getApplication()
+                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     private function removeVendorName(string $packageName): string|array

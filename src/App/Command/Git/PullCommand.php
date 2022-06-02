@@ -37,17 +37,23 @@ final class PullCommand extends PackageCommand
         }
 
         $process = new Process($gitCommand, $package->getPath());
-        $process->setTimeout(null)->run();
+        $process
+            ->setTimeout(null)
+            ->run();
 
         if ($process->isSuccessful()) {
             $output = $process->getOutput() . $process->getErrorOutput();
 
-            $io->important(trim($output) !== 'Already up to date.')->info($output);
+            $io
+                ->important(trim($output) !== 'Already up to date.')
+                ->info($output);
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->important()->info($output);
+            $io
+                ->important()
+                ->info($output);
             $io->error([
                 "An error occurred during pulling package <package>{$package->getId()}</package> repository.",
                 'Package pull aborted.',

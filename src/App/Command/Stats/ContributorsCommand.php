@@ -73,12 +73,16 @@ final class ContributorsCommand extends Command
 
         $this->initPackageList();
 
-        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
+        $installedPackages = $this
+            ->getPackageList()
+            ->getInstalledAndEnabledPackages();
 
         $contributors = [];
 
         foreach ($installedPackages as $installedPackage) {
-            $git = $installedPackage->getGitWorkingCopy()->getWrapper();
+            $git = $installedPackage
+                ->getGitWorkingCopy()
+                ->getWrapper();
             $out = $git->git("shortlog -s -e --group=author --group=trailer:co-authored-by$sinceCommand HEAD", $installedPackage->getPath());
             foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
                 [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
@@ -115,6 +119,8 @@ final class ContributorsCommand extends Command
      */
     protected function getAppRootDir(): string
     {
-        return rtrim($this->getApplication()->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return rtrim($this
+                ->getApplication()
+                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 }

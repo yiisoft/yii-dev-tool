@@ -75,7 +75,9 @@ final class TestCommand extends PackageCommand
 
         $output = $process->getErrorOutput();
         $this->registerPackageError($package, $output, 'testing package');
-        $io->important()->info($process->getOutput() . $output);
+        $io
+            ->important()
+            ->info($process->getOutput() . $output);
     }
 
     private function isComposerTestNotImplemented(Process $process): bool

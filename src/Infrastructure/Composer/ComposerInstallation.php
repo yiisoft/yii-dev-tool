@@ -49,7 +49,10 @@ class ComposerInstallation
         ComposerConfig::validateDependencySection($section);
 
         $rootPackage = $this->rootPackage;
-        $dependencies = $this->rootPackage->getComposerConfig()->getDependencyList($section)->getDependencies();
+        $dependencies = $this->rootPackage
+            ->getComposerConfig()
+            ->getDependencyList($section)
+            ->getDependencies();
 
         $packages = [];
         foreach ($dependencies as $dependency) {

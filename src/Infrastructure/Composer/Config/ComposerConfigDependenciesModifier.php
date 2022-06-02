@@ -108,7 +108,9 @@ class ComposerConfigDependenciesModifier
         $dependencyList = $this->config->getDependencyList($section);
 
         if ($dependencyList->hasDependency($packageName)) {
-            return $dependencyList->getDependency($packageName)->getConstraint();
+            return $dependencyList
+                ->getDependency($packageName)
+                ->getConstraint();
         }
 
         return 'dev-master';

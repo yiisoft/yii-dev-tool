@@ -112,7 +112,9 @@ class NamespaceUsageFinder
                 continue;
             }
 
-            foreach ((new Finder())->in($absolutePath)->name('*.php') as $finderFile) {
+            foreach ((new Finder())
+                         ->in($absolutePath)
+                         ->name('*.php') as $finderFile) {
                 $files[] = $finderFile->getRealPath();
             }
         }
@@ -135,7 +137,9 @@ class NamespaceUsageFinder
 
     private function findNamespaceUsagesInPhpCode(string &$code, string $environment): void
     {
-        $stmts = (new ParserFactory())->create(ParserFactory::PREFER_PHP7)->parse($code);
+        $stmts = (new ParserFactory())
+            ->create(ParserFactory::PREFER_PHP7)
+            ->parse($code);
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NamespaceUsageFinderNameResolver($this, $environment));
         $nodeTraverser->traverse($stmts);
