@@ -62,12 +62,16 @@ final class CommitCommand extends PackageCommand
         $process->run();
 
         if ($process->isSuccessful()) {
-            $io->important()->info($process->getOutput() . $process->getErrorOutput());
+            $io
+                ->important()
+                ->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->important()->info($output);
+            $io
+                ->important()
+                ->info($output);
             $io->error([
                 "An error occurred during committing package <package>{$package->getId()}</package> repository.",
                 'Package committing aborted.',

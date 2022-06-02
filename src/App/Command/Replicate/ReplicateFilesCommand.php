@@ -126,7 +126,9 @@ final class ReplicateFilesCommand extends PackageCommand
                 continue;
             }
 
-            $sourcePackage = $this->getPackageList()->getPackage($replicationSet->getSourcePackage());
+            $sourcePackage = $this
+                ->getPackageList()
+                ->getPackage($replicationSet->getSourcePackage());
 
             $fs = new Filesystem();
             foreach ($replicationSet->getFiles() as $sourceFile) {

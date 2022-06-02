@@ -34,12 +34,16 @@ final class ListCommand extends PackageCommand
     private function info(string $message): void
     {
         $io = $this->getIO();
-        $io->important()->info($message);
+        $io
+            ->important()
+            ->info($message);
     }
 
     private function getMaxNameLength(): int
     {
-        $installedPackages = $this->getPackageList()->getInstalledAndEnabledPackages();
+        $installedPackages = $this
+            ->getPackageList()
+            ->getInstalledAndEnabledPackages();
         $maxLength = 0;
 
         foreach ($installedPackages as $package) {

@@ -50,7 +50,9 @@ final class PackageService
         PackageErrorList $errorList,
         OutputManager $io
     ): void {
-        $io->important()->info('Cloning package repository...');
+        $io
+            ->important()
+            ->info('Cloning package repository...');
 
         if ($package->isGitRepositoryCloned()) {
             $io->warning([
@@ -64,7 +66,9 @@ final class PackageService
         $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
 
         $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
-        $process->setTimeout(null)->run();
+        $process
+            ->setTimeout(null)
+            ->run();
 
         if ($process->isSuccessful()) {
             $io->info($process->getOutput() . $process->getErrorOutput());
@@ -73,7 +77,9 @@ final class PackageService
         }
 
         $output = $process->getErrorOutput();
-        $io->important()->info($output);
+        $io
+            ->important()
+            ->info($output);
 
         $io->error([
             "An error occurred during cloning package <package>{$package->getName()}</package> repository.",
@@ -100,7 +106,9 @@ final class PackageService
 
     public function createSymbolicLinks(PackageList $packageList, OutputManager $io): void
     {
-        $io->important()->info('Re-linking vendor directories...');
+        $io
+            ->important()
+            ->info('Re-linking vendor directories...');
 
         $installedPackages = $packageList->getInstalledAndEnabledPackages();
         foreach ($installedPackages as $package) {
@@ -118,7 +126,9 @@ final class PackageService
             return;
         }
 
-        $io->important()->info('Removing old package symlinks...');
+        $io
+            ->important()
+            ->info('Removing old package symlinks...');
 
         $installedPackages = $packageList->getInstalledPackages();
         foreach ($installedPackages as $installedPackage) {
@@ -168,7 +178,9 @@ final class PackageService
         PackageErrorList $errorList,
         OutputManager $io
     ): void {
-        $io->important()->info("Running `composer $command`...");
+        $io
+            ->important()
+            ->info("Running `composer $command`...");
 
         if (!file_exists("{$package->getPath()}/composer.json")) {
             $io->warning([
@@ -197,7 +209,9 @@ final class PackageService
 
         $process = new Process($params);
 
-        $process->setTimeout(null)->run();
+        $process
+            ->setTimeout(null)
+            ->run();
 
         if ($process->isSuccessful()) {
             $io->info($process->getOutput() . $process->getErrorOutput());
@@ -205,7 +219,9 @@ final class PackageService
         } else {
             $output = $process->getErrorOutput();
 
-            $io->important()->info($output);
+            $io
+                ->important()
+                ->info($output);
             $io->error([
                 "An error occurred during running `composer $command`.",
                 "Package $command aborted.",

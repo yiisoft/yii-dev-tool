@@ -72,7 +72,9 @@ final class RequestPullCommand extends PackageCommand
         $process->run();
 
         if ($process->isSuccessful()) {
-            $io->important()->info($process->getOutput() . $process->getErrorOutput());
+            $io
+                ->important()
+                ->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
 
             return;
@@ -89,7 +91,9 @@ final class RequestPullCommand extends PackageCommand
 
         $output = $process->getErrorOutput();
 
-        $io->important()->info($output);
+        $io
+            ->important()
+            ->info($output);
         $io->error([
             "An error occurred during creating PR for package <package>{$package->getId()}</package> repository.",
             'Creating PR aborted.',

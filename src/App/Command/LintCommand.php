@@ -40,7 +40,9 @@ final class LintCommand extends PackageCommand
         $process->run();
 
         if ($process->getExitCode() > 0) {
-            $io->important()->info($process->getOutput() . $process->getErrorOutput());
+            $io
+                ->important()
+                ->info($process->getOutput() . $process->getErrorOutput());
         } else {
             $io->success('✔ No problems found.');
         }

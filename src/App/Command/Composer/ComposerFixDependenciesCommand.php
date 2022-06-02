@@ -100,9 +100,9 @@ final class ComposerFixDependenciesCommand extends PackageCommand
 
         $namespaceUsages =
             (new NamespaceUsageFinder())
-            ->addTargetPaths(CodeUsageEnvironment::DEV, self::DEV_PATHS, $composerPackage->getPath())
-            ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, self::PRODUCTION_PATHS, $composerPackage->getPath())
-            ->getUsages();
+                ->addTargetPaths(CodeUsageEnvironment::DEV, self::DEV_PATHS, $composerPackage->getPath())
+                ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, self::PRODUCTION_PATHS, $composerPackage->getPath())
+                ->getUsages();
 
         /**
          * TODO: Ignore autoload-dev namespaces of dependencies during analysis.
@@ -132,11 +132,15 @@ final class ComposerFixDependenciesCommand extends PackageCommand
 
         if ($originalDependencyList->isEqualTo($currentDependencyList)
             && $originalDevDependencyList->isEqualTo($currentDevDependencyList)) {
-            $io->info('Nothing to fix.')->newLine();
+            $io
+                ->info('Nothing to fix.')
+                ->newLine();
             return;
         }
 
         $composerConfig->writeToFile($composerPackage->getComposerConfigPath());
-        $io->important()->success('✔ Composer config fixed.');
+        $io
+            ->important()
+            ->success('✔ Composer config fixed.');
     }
 }

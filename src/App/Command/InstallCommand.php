@@ -80,7 +80,9 @@ final class InstallCommand extends PackageCommand
         );
 
         if (!$io->isVerbose()) {
-            $io->important()->newLine();
+            $io
+                ->important()
+                ->newLine();
         }
     }
 }

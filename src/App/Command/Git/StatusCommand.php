@@ -34,12 +34,19 @@ final class StatusCommand extends PackageCommand
         $process->run();
         $output = $process->getOutput();
 
-        $branchName = $package->getGitWorkingCopy()->getBranches()->head();
+        $branchName = $package
+            ->getGitWorkingCopy()
+            ->getBranches()
+            ->head();
 
         if (!empty($output)) {
-            $io->important()->info("[$branchName]" . PHP_EOL . $output);
+            $io
+                ->important()
+                ->info("[$branchName]" . PHP_EOL . $output);
         } else {
-            $io->important()->success("[$branchName] ✔ nothing to commit, working tree clean");
+            $io
+                ->important()
+                ->success("[$branchName] ✔ nothing to commit, working tree clean");
             $io->done();
         }
     }

@@ -81,13 +81,17 @@ final class UpdateCommand extends PackageCommand
         );
 
         if (!$io->isVerbose()) {
-            $io->important()->newLine();
+            $io
+                ->important()
+                ->newLine();
         }
     }
 
     private function gitPull(Package $package, OutputManager $io): void
     {
-        $io->important()->info('Pulling repository');
+        $io
+            ->important()
+            ->info('Pulling repository');
 
         if ($package->isConfiguredRepositoryPersonal()) {
             $gitCommand = ['git', 'pull', 'upstream', 'master'];
@@ -98,14 +102,18 @@ final class UpdateCommand extends PackageCommand
         $process = new Process($gitCommand);
         $process->setWorkingDirectory($package->getPath());
 
-        $process->setTimeout(null)->run();
+        $process
+            ->setTimeout(null)
+            ->run();
         if ($process->isSuccessful()) {
             $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io->important()->info($output);
+            $io
+                ->important()
+                ->info($output);
             $io->error([
                 'An error occurred during running `git pull`.',
             ]);

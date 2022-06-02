@@ -71,13 +71,17 @@ final class ExecCommand extends PackageCommand
                  *
                  * We write everything to one regular output stream.
                  */
-                $io->important()->write($data);
+                $io
+                    ->important()
+                    ->write($data);
             });
 
         /**
          * End each program block with a new line so that
          * the output of different packages does not stick together.
          */
-        $io->important()->newLine();
+        $io
+            ->important()
+            ->newLine();
     }
 }

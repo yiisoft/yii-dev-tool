@@ -76,7 +76,9 @@ final class YiiDevToolApplication extends Application
         $packageService = new PackageService();
         return [
             (new HelpCommand())->setHidden(true),
-            (new ListCommandsCommand())->setName('list-commands')->setHidden(true),
+            (new ListCommandsCommand())
+                ->setName('list-commands')
+                ->setHidden(true),
             new CheckoutCommand(),
             new CloneCommand($packageService),
             new CommitCommand(),
