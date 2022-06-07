@@ -4,8 +4,9 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
-use GitWrapper\GitWorkingCopy;
-use GitWrapper\GitWrapper;
+use Symfony\Component\Process\ExecutableFinder;
+use Symplify\GitWrapper\GitWorkingCopy;
+use Symplify\GitWrapper\GitWrapper;
 use InvalidArgumentException;
 use RuntimeException;
 
@@ -20,7 +21,9 @@ class Package
     private static function getGitWrapper(): GitWrapper
     {
         if (static::$gitWrapper === null) {
-            static::$gitWrapper = new GitWrapper();
+            $finder = new ExecutableFinder();
+            $gitBinary = $finder->find('git');
+            static::$gitWrapper = new GitWrapper($gitBinary);
         }
 
         return static::$gitWrapper;

@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
-use GitWrapper\Exception\GitException;
+use Symplify\GitWrapper\Exception\GitException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
