@@ -24,7 +24,7 @@
         "php-http/guzzle7-adapter": "^1.0",
         "squizlabs/php_codesniffer": "^3.6",
         "symfony/console": "^5.2",
-        "symfony/filesystem": "^5.2",
+        "symfony/filesystem": "^6.1",
         "symfony/finder": "^5.2",
         "symfony/polyfill-php73": "^1.22",
         "symfony/process": "^6.0",
