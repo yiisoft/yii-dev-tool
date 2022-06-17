@@ -23,7 +23,7 @@
         "nyholm/psr7": "^1.4.0",
         "php-http/guzzle7-adapter": "^1.0",
         "squizlabs/php_codesniffer": "^3.6",
-        "symfony/console": "^5.2",
+        "symfony/console": "^6.1",
         "symfony/filesystem": "^5.2",
         "symfony/finder": "^5.2",
         "symfony/polyfill-php73": "^1.22",
