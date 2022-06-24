@@ -165,8 +165,8 @@ final class MakeCommand extends PackageCommand
 
         $io->info("Adding a tag for $versionToRelease.");
         $git->tag([
-            's' => $versionToRelease,
-            'm' => $versionToRelease,
+            's' => (string) $versionToRelease,
+            'm' => (string) $versionToRelease,
         ]);
 
         $nextVersion = $versionToRelease->getNext(Version::TYPE_PATCH);
