@@ -156,7 +156,6 @@ $packages = [
     // Data abstractions and widgets
     'data' => true,
     'validator' => true,
-    'validator-rule-handler-container' => true,
     'yii-dataview' => true,
 
     // Debugger
