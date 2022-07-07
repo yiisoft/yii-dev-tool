@@ -13,7 +13,7 @@ Requirements
 
 If you prefer manual install, you need:
 - GNU/Linux or Windows **with bash**
-- PHP 7.4 or higher
+- PHP 8.0 or higher
 - [Composer](https://getcomposer.org/) installed and
   available [as `composer` on the command line](https://getcomposer.org/doc/00-intro.md#globally)
 
