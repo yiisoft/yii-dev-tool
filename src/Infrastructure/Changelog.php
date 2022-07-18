@@ -6,6 +6,7 @@ namespace Yiisoft\YiiDevTool\Infrastructure;
 
 use InvalidArgumentException;
 use Yiisoft\Arrays\ArrayHelper;
+
 use function is_array;
 
 final class Changelog
@@ -20,7 +21,7 @@ final class Changelog
     public function resort(Version $version): void
     {
         // split the file into relevant parts
-        [$start, $changelog, $end] = $this->splitChangelog($version);
+        [$start, $changelog, $end] = $this->splitChangelog();
 
         // cleanup whitespace
         foreach ($changelog as $i => $line) {
@@ -72,7 +73,7 @@ final class Changelog
      */
     public function getReleaseNotes(Version $version): array
     {
-        [, $changelog] = $this->splitChangelog($version);
+        [, $changelog] = $this->splitChangelog($version->asString());
 
         return $changelog;
     }
@@ -82,7 +83,10 @@ final class Changelog
         file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file)));
     }
 
-    private function splitChangelog(Version $version): array
+    /**
+     * @param string|null $version Version of package or null for "under development".
+     */
+    private function splitChangelog(?string $version = null): array
     {
         $lines = explode("\n", file_get_contents($this->path));
 
@@ -94,7 +98,14 @@ final class Changelog
         $state = 'start';
         foreach ($lines as $lineNumber => $line) {
             // starting from the changelogs headline
-            if (isset($lines[$lineNumber - 2]) && strpos($lines[$lineNumber - 2], '## ') === 0 && strpos($lines[$lineNumber - 2], $version->asString()) !== false) {
+            if (
+                isset($lines[$lineNumber - 2])
+                && str_starts_with($lines[$lineNumber - 2], '## ' . ($version === null ? '' : ($version . ' ')))
+                && (
+                    $version !== null
+                    || str_ends_with($lines[$lineNumber - 2], 'under development')
+                )
+            ) {
                 $state = 'changelog';
             }
             if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && strncmp($lines[$lineNumber + 1], '## ', 3) === 0) {
