@@ -247,6 +247,8 @@ replicate/files           | -         | Copy files specified in `config/replicat
 replicate/composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package.
 replicate/copy-file       | -         | Copy file into each package.
 test                      | t         | Test packages.
+enable                    | -         | Enable packages.
+disable                   | -         | Disable packages.
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.

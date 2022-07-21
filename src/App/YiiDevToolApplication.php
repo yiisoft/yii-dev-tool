@@ -13,6 +13,8 @@ use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
+use Yiisoft\YiiDevTool\App\Command\DisableCommand;
+use Yiisoft\YiiDevTool\App\Command\EnableCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CloneCommand;
@@ -102,6 +104,8 @@ final class YiiDevToolApplication extends Application
             new SettingsCommand(),
             new ProtectBranchCommand(),
             new ContributorsCommand(),
+            new EnableCommand(),
+            new DisableCommand(),
         ];
     }
 
