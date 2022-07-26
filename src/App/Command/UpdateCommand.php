@@ -36,6 +36,12 @@ final class UpdateCommand extends PackageCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
+            )
+            ->addOption(
+                'ignore-platform-reqs',
+                null,
+                InputOption::VALUE_NONE,
+                'Use <fg=green>--ignore-platform-reqs</> during <fg=green;options=bold>composer update</>'
             );
 
         parent::configure();
@@ -45,6 +51,9 @@ final class UpdateCommand extends PackageCommand
     {
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerUpdateOptions[] = '--no-plugins';
+        }
+        if ($input->getOption('ignore-platform-reqs') !== false) {
+            $this->additionalComposerUpdateOptions[] = '--ignore-platform-reqs';
         }
     }
 
