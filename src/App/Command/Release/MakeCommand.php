@@ -7,6 +7,7 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use Github\Api\Repository\Releases;
 use Github\AuthMethod;
 use Github\Client;
+use RuntimeException;
 use Symplify\GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -87,6 +88,7 @@ final class MakeCommand extends PackageCommand
             $io->warning([
                 "There's no $tokenFile. Please create one and put your GitHub token there.",
                 'Token is required to create release on GitHub.',
+                "You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.",
                 'Release cancelled.',
             ]);
 
@@ -245,7 +247,7 @@ final class MakeCommand extends PackageCommand
         $client = new Client();
         try {
             $token = $this->getToken();
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $io->error($e->getMessage());
             $io->warning('Skipped creating release on GitHub.');
             return;
@@ -267,7 +269,7 @@ final class MakeCommand extends PackageCommand
     {
         $tokenFile = $this->getAppRootDir() . 'config/github.token';
         if (!file_exists($tokenFile)) {
-            throw new \RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there.");
+            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
         }
 
         return trim(file_get_contents($tokenFile));
