@@ -6,6 +6,7 @@ namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
 use Github\Client;
+use RuntimeException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
@@ -47,7 +48,7 @@ final class SettingsCommand extends PackageCommand
     {
         $tokenFile = $this->getAppRootDir() . 'config/github.token';
         if (!file_exists($tokenFile)) {
-            throw new \RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there.");
+            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
         }
 
         return trim(file_get_contents($tokenFile));
