@@ -51,13 +51,15 @@ final class DisableCommand extends Command
         $alreadyDisabledPackages = [];
         $disabledPackages = [];
         foreach ($disablePackageIds as $packageId) {
-            if (isset($packages[$packageId])) {
-                if ($packages[$packageId]) {
-                    $packages[$packageId] = false;
-                    $disabledPackages[] = $packageId;
-                } else {
-                    $alreadyDisabledPackages[] = $packageId;
-                }
+            if (!isset($packages[$packageId])) {
+                continue;
+            }
+
+            if ($packages[$packageId]) {
+                $packages[$packageId] = false;
+                $disabledPackages[] = $packageId;
+            } else {
+                $alreadyDisabledPackages[] = $packageId;
             }
         }
 
@@ -72,13 +74,14 @@ final class DisableCommand extends Command
 
         if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
             $io->info('Packages not found.');
-        } else {
-            if (!empty($alreadyDisabledPackages)) {
-                $io->text("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
-            }
-            if (!empty($disabledPackages)) {
-                $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
-            }
+            return Command::SUCCESS;
+        }
+
+        if (!empty($alreadyDisabledPackages)) {
+            $io->text("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
+        }
+        if (!empty($disabledPackages)) {
+            $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
         }
 
         return Command::SUCCESS;
