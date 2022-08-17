@@ -48,11 +48,18 @@ final class DisableCommand extends Command
             $disablePackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
         }
 
+        $alreadyDisabledPackages = [];
         $disabledPackages = [];
         foreach ($disablePackageIds as $packageId) {
-            if (isset($packages[$packageId])) {
+            if (!isset($packages[$packageId])) {
+                continue;
+            }
+
+            if ($packages[$packageId]) {
                 $packages[$packageId] = false;
                 $disabledPackages[] = $packageId;
+            } else {
+                $alreadyDisabledPackages[] = $packageId;
             }
         }
 
@@ -65,10 +72,16 @@ final class DisableCommand extends Command
         fwrite($handle, '];' . "\n");
         fclose($handle);
 
+        if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
+            $io->info('Packages not found.');
+            return Command::SUCCESS;
+        }
+
+        if (!empty($alreadyDisabledPackages)) {
+            $io->text("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
+        }
         if (!empty($disabledPackages)) {
             $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
-        } else {
-            $io->info('Packages not found.');
         }
 
         return Command::SUCCESS;

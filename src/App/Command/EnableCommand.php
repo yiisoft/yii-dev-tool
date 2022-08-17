@@ -48,9 +48,16 @@ final class EnableCommand extends Command
             $enablePackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
         }
 
+        $alreadyEnabledPackages = [];
         $enabledPackages = [];
         foreach ($enablePackageIds as $packageId) {
-            if (isset($packages[$packageId])) {
+            if (!isset($packages[$packageId])) {
+                continue;
+            }
+
+            if ($packages[$packageId]) {
+                $alreadyEnabledPackages[] = $packageId;
+            } else {
                 $packages[$packageId] = true;
                 $enabledPackages[] = $packageId;
             }
@@ -65,10 +72,16 @@ final class EnableCommand extends Command
         fwrite($handle, '];' . "\n");
         fclose($handle);
 
+        if (empty($alreadyEnabledPackages) && empty($enabledPackages)) {
+            $io->info('Packages not found.');
+            return Command::SUCCESS;
+        }
+
+        if (!empty($alreadyEnabledPackages)) {
+            $io->text("Already enabled packages:\n — " . implode("\n — ", $alreadyEnabledPackages) . "\n");
+        }
         if (!empty($enabledPackages)) {
             $io->success("Enabled packages:\n — " . implode("\n — ", $enabledPackages));
-        } else {
-            $io->info('Packages not found.');
         }
 
         return Command::SUCCESS;
