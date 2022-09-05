@@ -77,7 +77,6 @@ $packages = [
     'translator-message-gettext' => true,
     'translator-message-db' => true,
     'translator-formatter-intl' => true,
-    'translator-formatter-simple' => true,
 
     // Queue
     'yii-queue' => true,
