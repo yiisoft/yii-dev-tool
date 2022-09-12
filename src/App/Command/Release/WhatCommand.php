@@ -54,7 +54,18 @@ final class WhatCommand extends Command
         $io = $this->getIO();
 
         try {
+            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
+            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
+                $io->error([
+                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
+                    'See <file>owner-packages.php</file> to set the packages owner.'
+                ]);
+
+                exit(1);
+            }
+
             $this->packageList = new PackageList(
+                $ownerPackages,
                 $this->getAppRootDir() . 'packages.php',
                 $this->getAppRootDir() . 'dev',
             );

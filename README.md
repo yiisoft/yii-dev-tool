@@ -131,7 +131,14 @@ composer install
 ### Step 3: configure yii-dev-tool to use forks
 
 In order for **yii-dev-tool** to use our forks, they must be configured. 
-Create your configuration:
+
+It is possible to specify the owner for all packages in the owner-packages.php file
+
+```php
+return 'samdark';
+```
+
+Or create your configuration:
 
 ```bash
 cd yii-dev-tool
