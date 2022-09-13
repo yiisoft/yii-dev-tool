@@ -84,14 +84,14 @@ class Package
 
     public function getOriginalRepositoryHttpsUrl(): string
     {
-        return "https://github.com/yiisoft/{$this->id}.git";
+        return "https://github.com/{$this->owner}/{$this->id}.git";
     }
 
     public function getPossibleOriginalRepositoryUrls(): array
     {
         return [
-            "https://github.com/yiisoft/{$this->id}.git",
-            "git@github.com:yiisoft/{$this->id}.git",
+            "https://github.com/{$this->owner}/{$this->id}.git",
+            "git@github.com:{$this->owner}/{$this->id}.git",
         ];
     }
 
