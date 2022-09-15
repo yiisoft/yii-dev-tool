@@ -17,6 +17,7 @@ class Package
     private ?string $configuredRepositoryUrl;
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
+    private string $owner;
 
     private static function getGitWrapper(): GitWrapper
     {
@@ -29,13 +30,14 @@ class Package
         return static::$gitWrapper;
     }
 
-    public function __construct(string $id, $config, string $packagesRootDir)
+    public function __construct(string $id, $config, string $owner, string $packagesRootDir)
     {
         if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
             throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
         }
 
         $this->id = $id;
+        $this->owner = $owner;
 
         if (!is_bool($config) && !is_string($config)) {
             throw new InvalidArgumentException('Package config must contain a boolean or a string.');
@@ -44,9 +46,9 @@ class Package
         if ($config === false) {
             $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {
-            $this->configuredRepositoryUrl = "git@github.com:yiisoft/$id.git";
+            $this->configuredRepositoryUrl = "git@github.com:$this->owner/$id.git";
         } elseif ($config === 'https') {
-            $this->configuredRepositoryUrl = "https://github.com/yiisoft/$id.git";
+            $this->configuredRepositoryUrl = "https://github.com/$this->owner/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
             $this->configuredRepositoryUrl = "git@github.com:$config.git";
         } else {
@@ -68,7 +70,7 @@ class Package
 
     public function getVendor(): string
     {
-        return 'yiisoft';
+        return $this->owner;
     }
 
     public function getConfiguredRepositoryUrl(): string
@@ -82,14 +84,14 @@ class Package
 
     public function getOriginalRepositoryHttpsUrl(): string
     {
-        return "https://github.com/yiisoft/{$this->id}.git";
+        return "https://github.com/{$this->owner}/{$this->id}.git";
     }
 
     public function getPossibleOriginalRepositoryUrls(): array
     {
         return [
-            "https://github.com/yiisoft/{$this->id}.git",
-            "git@github.com:yiisoft/{$this->id}.git",
+            "https://github.com/{$this->owner}/{$this->id}.git",
+            "git@github.com:{$this->owner}/{$this->id}.git",
         ];
     }
 
