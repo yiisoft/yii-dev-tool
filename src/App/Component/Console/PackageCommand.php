@@ -124,7 +124,7 @@ class PackageCommand extends Command
             if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
                 $io->error([
                     'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
-                    'See <file>owner-packages.php</file> to set the packages owner.'
+                    'See <file>owner-packages.php</file> to set the packages owner.',
                 ]);
 
                 exit(1);
