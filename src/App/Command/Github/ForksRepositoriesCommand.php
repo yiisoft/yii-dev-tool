@@ -56,15 +56,16 @@ final class ForksRepositoriesCommand extends Command
         $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
         $forks = (new Forks($client));
 
-        foreach ($targetRepositories as $repository){
+        foreach ($targetRepositories as $repository) {
             try {
                 // See http://developer.github.com/v3/repos/forks/
                 $forks->create($ownerRepository, $repository);
                 $output->write("<success>Successfully forked repository: $repository</success>" . PHP_EOL);
             } catch (GithubRuntimeException $e) {
-                $output->write([
+                $output->write(
+                    [
                         "<error>Error when forking a repository $repository: {$e->getMessage()}</error>",
-                        '<error>Check if the nickname of the owner and the name of the repository are correct</error>' . PHP_EOL
+                        '<error>Check if the nickname of the owner and the name of the repository are correct</error>' . PHP_EOL,
                     ],
                     true
                 );
