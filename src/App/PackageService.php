@@ -104,17 +104,20 @@ final class PackageService
         }
     }
 
-    public function createSymbolicLinks(PackageList $packageList, OutputManager $io): void
+    /**
+     * @param Package $package
+     * @param PackageList $packageList
+     * @param OutputManager $io
+     */
+    public function createSymbolicLinks(Package $package, PackageList $packageList, OutputManager $io): void
     {
         $io
             ->important()
-            ->info('Re-linking vendor directories...');
+            ->info('Re-linking vendor directories for package: ' . $package->getName());
 
         $installedPackages = $packageList->getInstalledAndEnabledPackages();
-        foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
-            $this->linkPackages($package, $installedPackages);
-        }
+        $io->info("Package <package>{$package->getId()}</package> linking...");
+        $this->linkPackages($package, $installedPackages);
 
         $io->done();
     }
@@ -144,9 +147,9 @@ final class PackageService
     }
 
     /**
-     * @param Package[] $installedPackages
+     * @param Package[] $targetPackages
      */
-    private function linkPackages(Package $package, array $installedPackages): void
+    private function linkPackages(Package $package, array $targetPackages): void
     {
         $vendorDirectory = "{$package->getPath()}/vendor";
         if (!is_dir($vendorDirectory)) {
@@ -154,19 +157,19 @@ final class PackageService
         }
 
         $fs = new Filesystem();
-        foreach ($installedPackages as $installedPackage) {
-            if ($package->getName() === $installedPackage->getName()) {
+        foreach ($targetPackages as $targetPackage) {
+            if ($package->getName() === $targetPackage->getName()) {
                 continue;
             }
 
-            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
-            if (is_dir($installedPackagePath)) {
-                $fs->remove($installedPackagePath);
+            $targetPackagePath = "{$vendorDirectory}/{$targetPackage->getName()}";
+            if (is_dir($targetPackagePath)) {
+                $fs->remove($targetPackagePath);
 
                 $originalPath = DIRECTORY_SEPARATOR === '\\' ?
-                    $installedPackage->getPath() :
-                    "../../../{$installedPackage->getId()}";
-                $fs->symlink($originalPath, $installedPackagePath);
+                    $targetPackage->getPath() :
+                    "../../../{$targetPackage->getId()}";
+                $fs->symlink($originalPath, $targetPackagePath);
             }
         }
     }
