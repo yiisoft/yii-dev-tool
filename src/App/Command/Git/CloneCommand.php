@@ -39,8 +39,6 @@ final class CloneCommand extends PackageCommand
             return;
         }
 
-        $this->packageService->gitSetUpstream($package, $io);
-
         if (!$io->isVerbose()) {
             $io
                 ->important()

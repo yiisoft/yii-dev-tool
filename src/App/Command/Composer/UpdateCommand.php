@@ -70,8 +70,6 @@ final class UpdateCommand extends PackageCommand
             return;
         }
 
-        $this->packageService->gitSetUpstream($package, $io);
-
         $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
 
         if ($this->doesPackageContainErrors($package)) {

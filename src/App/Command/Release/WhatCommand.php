@@ -252,7 +252,7 @@ final class WhatCommand extends Command
 
     private function removeVendorName(string $packageName): string|array
     {
-        return str_replace('yiisoft/', '', $packageName);
+        return preg_replace('/^[a-z0-9][a-z0-9-]*[a-z0-9]\//i', '', $packageName);
     }
 
     private function concatDependencies($deps): string
