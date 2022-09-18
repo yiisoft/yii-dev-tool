@@ -232,7 +232,7 @@ final class WhatCommand extends Command
             $names[] = $dependency->getPackageName();
         }
 
-        return $names;
+        return array_unique($names);
     }
 
     /**
