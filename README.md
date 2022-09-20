@@ -245,6 +245,7 @@ Remember that **yii-dev-tool** contains many other commands:
 | git/status                | status, s | Show git status of packages.                                                 |
 | git/pr/create             | pr        | Create a pull request at GitHub.                                             |
 | github/forks              | forks     | Create forks of repositories                                                 |
+| github/sync               | sync      | Sync forks from upstream repositories                                        |
 | github/settings           | -         | Change settings of a GitHub repository.                                      |
 | list                      | l         | List enabled packages.                                                       |
 | install                   | i         | Clone packages repositories and install composer dependencies.               |
