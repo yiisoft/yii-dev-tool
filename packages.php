@@ -194,6 +194,7 @@ $packages = [
     'test-support' => true,
     'psr-dummy-provider' => true,
     'dummy-provider' => true,
+    'yii-testing' => true,
 
     // Requirements checker
     'requirements' => true,
