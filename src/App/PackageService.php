@@ -106,11 +106,6 @@ final class PackageService
         }
     }
 
-    /**
-     * @param Package $package
-     * @param PackageList $packageList
-     * @param OutputManager $io
-     */
     public function createSymbolicLinks(Package $package, PackageList $packageList, OutputManager $io): void
     {
         $io
@@ -165,9 +160,9 @@ final class PackageService
     }
 
     /**
-     * @param Package[] $targetPackages
+     * @param Package[] $installedPackages
      */
-    private function linkPackages(Package $package, array $targetPackages): void
+    private function linkPackages(Package $package, array $installedPackages): void
     {
         $vendorDirectory = "{$package->getPath()}/vendor";
         if (!is_dir($vendorDirectory)) {
@@ -175,23 +170,23 @@ final class PackageService
         }
 
         $fs = new Filesystem();
-        foreach ($targetPackages as $targetPackage) {
-            if ($package->getName() === $targetPackage->getName()) {
+        foreach ($installedPackages as $installedPackage) {
+            if ($package->getName() === $installedPackage->getName()) {
                 continue;
             }
 
-            $composerPackage = new ComposerPackage($targetPackage->getName(), $targetPackage->getPath());
+            $composerPackage = new ComposerPackage($installedPackage->getName(), $installedPackage->getPath());
             $upstreamNamePackage = $composerPackage
                                                 ->getComposerConfig()
                                                 ->getSection('name');
-            $targetPackagePath = "{$vendorDirectory}/{$upstreamNamePackage}";
-            if (is_dir($targetPackagePath)) {
-                $fs->remove($targetPackagePath);
+            $installedPackagePath = "{$vendorDirectory}/{$upstreamNamePackage}";
+            if (is_dir($installedPackagePath)) {
+                $fs->remove($installedPackagePath);
 
                 $originalPath = DIRECTORY_SEPARATOR === '\\' ?
-                    $targetPackage->getPath() :
-                    "../../../{$targetPackage->getId()}";
-                $fs->symlink($originalPath, $targetPackagePath);
+                    $installedPackage->getPath() :
+                    "../../../{$installedPackage->getId()}";
+                $fs->symlink($originalPath, $installedPackagePath);
             }
         }
     }
