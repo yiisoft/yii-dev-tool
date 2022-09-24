@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App;
 
+use RuntimeException;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Yiisoft\Files\FileHelper;
@@ -11,6 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 
 final class PackageService
 {
@@ -111,7 +113,13 @@ final class PackageService
             ->info('Re-linking vendor directories for package: ' . $package->getName());
 
         $installedPackages = $packageList->getInstalledAndEnabledPackages();
-        $this->linkPackages($package, $installedPackages);
+        try {
+            $this->linkPackages($package, $installedPackages);
+        } catch (RuntimeException $e) {
+            $io
+                ->important()
+                ->error("Linking error package {$package->getName()}: " . $e->getMessage());
+        }
 
         $io->done();
     }
@@ -129,11 +137,21 @@ final class PackageService
 
         $installedPackages = $packageList->getInstalledPackages();
         foreach ($installedPackages as $installedPackage) {
-            $packagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+            try {
+                $composerPackage = new ComposerPackage($installedPackage->getName(), $installedPackage->getPath());
+                $upstreamNamePackage = $composerPackage
+                                                        ->getComposerConfig()
+                                                        ->getSection('name');
+                $packagePath = "{$vendorDirectory}/{$upstreamNamePackage}";
 
-            if (is_dir($packagePath) && is_link($packagePath)) {
-                $io->info("Removing symlink <file>{$packagePath}</file>");
-                FileHelper::unlink($packagePath);
+                if (is_dir($packagePath) && is_link($packagePath)) {
+                    $io->info("Removing symlink <file>{$packagePath}</file>");
+                    FileHelper::unlink($packagePath);
+                }
+            } catch (RuntimeException $e) {
+                $io
+                    ->important()
+                    ->error("Error while removing package links {$installedPackage->getName()}: " . $e->getMessage());
             }
         }
 
@@ -156,7 +174,11 @@ final class PackageService
                 continue;
             }
 
-            $installedPackagePath = "{$vendorDirectory}/{$installedPackage->getName()}";
+            $composerPackage = new ComposerPackage($installedPackage->getName(), $installedPackage->getPath());
+            $upstreamNamePackage = $composerPackage
+                                                    ->getComposerConfig()
+                                                    ->getSection('name');
+            $installedPackagePath = "{$vendorDirectory}/{$upstreamNamePackage}";
             if (is_dir($installedPackagePath)) {
                 $fs->remove($installedPackagePath);
 
