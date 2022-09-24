@@ -104,17 +104,14 @@ final class PackageService
         }
     }
 
-    public function createSymbolicLinks(PackageList $packageList, OutputManager $io): void
+    public function createSymbolicLinks(Package $package, PackageList $packageList, OutputManager $io): void
     {
         $io
             ->important()
-            ->info('Re-linking vendor directories...');
+            ->info('Re-linking vendor directories for package: ' . $package->getName());
 
         $installedPackages = $packageList->getInstalledAndEnabledPackages();
-        foreach ($installedPackages as $package) {
-            $io->info("Package <package>{$package->getId()}</package> linking...");
-            $this->linkPackages($package, $installedPackages);
-        }
+        $this->linkPackages($package, $installedPackages);
 
         $io->done();
     }
