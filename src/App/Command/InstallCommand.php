@@ -66,8 +66,6 @@ final class InstallCommand extends PackageCommand
             }
         }
 
-        $this->packageService->gitSetUpstream($package, $io);
-
         $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
 
         if ($this->doesPackageContainErrors($package)) {

@@ -30,13 +30,7 @@ final class PullCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Pulling package {package}');
 
-        if ($package->isConfiguredRepositoryPersonal()) {
-            $gitCommand = ['git', 'pull', 'upstream', 'master'];
-        } else {
-            $gitCommand = ['git', 'pull'];
-        }
-
-        $process = new Process($gitCommand, $package->getPath());
+        $process = new Process(['git', 'pull'], $package->getPath());
         $process
             ->setTimeout(null)
             ->run();

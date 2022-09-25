@@ -50,8 +50,12 @@ class Package
         } elseif ($config === 'https') {
             $this->configuredRepositoryUrl = "https://github.com/$this->owner/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
+            preg_match('|^([a-z0-9-]+)/[a-z0-9_.-]+$|i', $config, $ownerMatches);
+            $this->owner = $ownerMatches[1] ?? $owner;
             $this->configuredRepositoryUrl = "git@github.com:$config.git";
         } else {
+            preg_match('|^git@github.com:([a-z0-9-]+)/[a-z0-9_.-]+$|i', $config, $ownerMatches);
+            $this->owner = $ownerMatches[1] ?? $owner;
             $this->configuredRepositoryUrl = $config;
         }
 
@@ -80,28 +84,6 @@ class Package
         }
 
         return $this->configuredRepositoryUrl;
-    }
-
-    public function getOriginalRepositoryHttpsUrl(): string
-    {
-        return "https://github.com/{$this->owner}/{$this->id}.git";
-    }
-
-    public function getPossibleOriginalRepositoryUrls(): array
-    {
-        return [
-            "https://github.com/{$this->owner}/{$this->id}.git",
-            "git@github.com:{$this->owner}/{$this->id}.git",
-        ];
-    }
-
-    public function isConfiguredRepositoryPersonal(): bool
-    {
-        return !in_array(
-            $this->getConfiguredRepositoryUrl(),
-            $this->getPossibleOriginalRepositoryUrls(),
-            true
-        );
     }
 
     public function disabled(): bool

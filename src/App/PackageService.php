@@ -91,21 +91,6 @@ final class PackageService
         $errorList->set($package, $output, 'cloning package repository');
     }
 
-    public function gitSetUpstream(Package $package, OutputManager $io): void
-    {
-        if ($package->isConfiguredRepositoryPersonal()) {
-            $gitWorkingCopy = $package->getGitWorkingCopy();
-            $remoteName = 'upstream';
-
-            if (!$gitWorkingCopy->hasRemote($remoteName)) {
-                $upstreamUrl = $package->getOriginalRepositoryHttpsUrl();
-                $io->info("Setting repository remote 'upstream' to <file>$upstreamUrl</file>");
-                $gitWorkingCopy->addRemote($remoteName, $upstreamUrl);
-                $io->done();
-            }
-        }
-    }
-
     public function createSymbolicLinks(Package $package, PackageList $packageList, OutputManager $io): void
     {
         $io
