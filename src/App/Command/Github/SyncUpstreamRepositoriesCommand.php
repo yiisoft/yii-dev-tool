@@ -32,15 +32,15 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
         try {
             preg_match('|^[a-z0-9-]+/([a-z0-9_.-]+)$|i', $package->getName(), $repoMatches);
             if (isset($repoMatches[1])) {
-                $repository->mergeUpstream($package->getVendor(), $repoMatches[1]);
-                $this->getIO()->write("<success>Repository successfully synced: {$package->getName()}</success>" . PHP_EOL);
+                $repository->mergeUpstream($package->getVendor(), $repoMatches[1], 'master');
+                $this->getIO()->important()->success("Repository successfully synced: {$package->getName()}");
             } else {
                 $this->getIO()->error(
                     $this->errorMessage($package->getName())
                 );
             }
         } catch (GithubRuntimeException $e) {
-            $this->getIO()->write(
+            $this->getIO()->error(
                 $this->errorMessage($package->getName(), $e->getMessage())
             );
         }
@@ -50,8 +50,8 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     {
         $error = $message ? "{$packageName}: {$message}" : $packageName;
         return [
-            "<error>Error when syncing a repository $error </error>",
-            '<error>Check if the nickname of the owner and the name of the repository are correct</error>' . PHP_EOL,
+            "Error when syncing a repository $error ",
+            'Check if the nickname of the owner and the name of the repository are correct',
         ];
     }
 
