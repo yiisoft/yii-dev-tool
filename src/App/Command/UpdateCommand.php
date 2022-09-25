@@ -72,8 +72,6 @@ final class UpdateCommand extends PackageCommand
             return;
         }
 
-        $this->packageService->gitSetUpstream($package, $io);
-
         $this->packageService->removeSymbolicLinks($package, $this->getPackageList(), $io);
 
         if ($this->doesPackageContainErrors($package)) {
@@ -102,13 +100,7 @@ final class UpdateCommand extends PackageCommand
             ->important()
             ->info('Pulling repository');
 
-        if ($package->isConfiguredRepositoryPersonal()) {
-            $gitCommand = ['git', 'pull', 'upstream', 'master'];
-        } else {
-            $gitCommand = ['git', 'pull'];
-        }
-
-        $process = new Process($gitCommand);
+        $process = new Process(['git', 'pull']);
         $process->setWorkingDirectory($package->getPath());
 
         $process

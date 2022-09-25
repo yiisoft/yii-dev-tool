@@ -237,22 +237,6 @@ class PackageCommand extends Command
             return false;
         }
 
-        // TODO: Implement extensible validation instead of checking command names
-        if ($this->getName() === 'pull') {
-            if ($package->isConfiguredRepositoryPersonal()) {
-                if (!$gitWorkingCopy->hasRemote('upstream')) {
-                    $io->error([
-                        "Package <package>{$package->getId()}</package> repository is personal and has no remote 'upstream'.",
-                        'To fix, run the command:',
-                        '',
-                        "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
-                    ]);
-
-                    return false;
-                }
-            }
-        }
-
         return true;
     }
 
