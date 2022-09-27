@@ -92,7 +92,6 @@ $packages = [
 
     // Mailer
     'mailer' => true,
-    'mailer-swiftmailer' => true,
     'mailer-symfony' => true,
 
     // Helpers and utilities
