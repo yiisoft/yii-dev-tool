@@ -6,17 +6,8 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 class ReplicationSet
 {
-    private string $sourcePackage;
-    private array $files;
-    private array $includedPackages;
-    private array $excludedPackages;
-
-    public function __construct(string $sourcePackage, array $files, array $includedPackages, array $excludedPackages)
+    public function __construct(private string $sourcePackage, private array $files, private array $includedPackages, private array $excludedPackages)
     {
-        $this->sourcePackage = $sourcePackage;
-        $this->files = $files;
-        $this->includedPackages = $includedPackages;
-        $this->excludedPackages = $excludedPackages;
     }
 
     public function getSourcePackage(): string

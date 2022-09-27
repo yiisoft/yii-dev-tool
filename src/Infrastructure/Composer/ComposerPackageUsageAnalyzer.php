@@ -57,7 +57,7 @@ class ComposerPackageUsageAnalyzer
         foreach ($this->packages as $package) {
             foreach ($package->getPSRNamespaces() as $packageNamespace) {
                 foreach ($this->namespaceUsages as $namespaceUsage) {
-                    if (strpos($namespaceUsage->getIdentifier(), "\\$packageNamespace") === 0) {
+                    if (str_starts_with($namespaceUsage->getIdentifier(), "\\$packageNamespace")) {
                         $this->registerPackageUsage($package->getName(), $namespaceUsage->getEnvironments());
                     }
                 }
@@ -66,8 +66,6 @@ class ComposerPackageUsageAnalyzer
     }
 
     /**
-     * @param string $environment
-     *
      * @return string[] array of package names.
      */
     public function getNamesOfPackagesUsedInSpecifiedEnvironment(string $environment): array
@@ -84,8 +82,6 @@ class ComposerPackageUsageAnalyzer
     }
 
     /**
-     * @param string $environment
-     *
      * @return string[] array of package names.
      */
     public function getNamesOfPackagesUsedOnlyInSpecifiedEnvironment(string $environment): array
@@ -151,7 +147,6 @@ class ComposerPackageUsageAnalyzer
     }
 
     /**
-     * @param string $packageName
      * @param string[] $environments
      */
     private function registerPackageUsage(string $packageName, array $environments): void

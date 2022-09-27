@@ -8,10 +8,7 @@ namespace Custom\NonPSRNamespace;
 
 class VarStorage
 {
-    private array $vars;
-
-    public function __construct(array $vars = [])
+    public function __construct(private array $vars = [])
     {
-        $this->vars = $vars;
     }
 }

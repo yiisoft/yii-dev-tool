@@ -17,11 +17,8 @@ final class InstallCommand extends PackageCommand
 
     private array $additionalComposerInstallOptions = [];
 
-    private PackageService $packageService;
-
-    public function __construct(PackageService $packageService, string $name = null)
+    public function __construct(private PackageService $packageService, string $name = null)
     {
-        $this->packageService = $packageService;
         parent::__construct($name);
     }
 

@@ -16,11 +16,8 @@ class ComposerConfig
     public const SECTION_REQUIRE = 'require';
     public const SECTION_REQUIRE_DEV = 'require-dev';
 
-    private array $data;
-
-    private function __construct(array $data)
+    private function __construct(private array $data)
     {
-        $this->data = $data;
     }
 
     public static function getAllDependencySections(): array
@@ -101,15 +98,15 @@ class ComposerConfig
         }
 
         if (isset($this->data['autoload-dev']['psr-4'])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data['autoload-dev']['psr-4']));
+            $namespaces = [...$namespaces, ...array_keys($this->data['autoload-dev']['psr-4'])];
         }
 
         if (isset($this->data['autoload']['psr-0'])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data['autoload']['psr-0']));
+            $namespaces = [...$namespaces, ...array_keys($this->data['autoload']['psr-0'])];
         }
 
         if (isset($this->data['autoload-dev']['psr-0'])) {
-            $namespaces = array_merge($namespaces, array_keys($this->data['autoload-dev']['psr-0']));
+            $namespaces = [...$namespaces, ...array_keys($this->data['autoload-dev']['psr-0'])];
         }
 
         return $namespaces;

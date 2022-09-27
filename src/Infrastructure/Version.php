@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
-final class Version
+final class Version implements \Stringable
 {
     public const TYPE_MAJOR = 'Major - Incompatible API changes.';
     public const TYPE_MINOR = 'Minor - Add functionality (backwards-compatible).';
@@ -12,11 +12,8 @@ final class Version
 
     public const TYPES = [self::TYPE_PATCH, self::TYPE_MINOR, self::TYPE_MAJOR];
 
-    private string $version;
-
-    public function __construct(string $version)
+    public function __construct(private string $version)
     {
-        $this->version = $version;
     }
 
     public function __toString(): string

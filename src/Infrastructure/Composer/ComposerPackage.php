@@ -9,14 +9,10 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
 class ComposerPackage
 {
-    private string $name;
-    private string $path;
     private ?ComposerConfig $config = null;
 
-    public function __construct(string $name, string $path)
+    public function __construct(private string $name, private string $path)
     {
-        $this->name = $name;
-        $this->path = $path;
     }
 
     public function getName(): string

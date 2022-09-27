@@ -15,7 +15,7 @@ final class TestCommand extends PackageCommand
     protected static $defaultName = 'test';
     protected static $defaultDescription = 'Test packages';
 
-    private ?string $filter;
+    private ?string $filter = null;
 
     protected function configure(): void
     {
@@ -82,6 +82,6 @@ final class TestCommand extends PackageCommand
 
     private function isComposerTestNotImplemented(Process $process): bool
     {
-        return strpos($process->getErrorOutput(), 'Command "test" is not defined') !== false;
+        return str_contains($process->getErrorOutput(), 'Command "test" is not defined');
     }
 }

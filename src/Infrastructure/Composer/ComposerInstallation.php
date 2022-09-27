@@ -8,13 +8,11 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
 class ComposerInstallation
 {
-    private ComposerPackage $rootPackage;
     private array $installedDependencies;
     private array $notInstalledDependencies;
 
-    public function __construct(ComposerPackage $rootPackage)
+    public function __construct(private ComposerPackage $rootPackage)
     {
-        $this->rootPackage = $rootPackage;
         $this->analyzeDependencies();
     }
 
@@ -40,8 +38,6 @@ class ComposerInstallation
     }
 
     /**
-     * @param string $section
-     *
      * @return ComposerPackage[]
      */
     public function getDependencyPackages(string $section): array
