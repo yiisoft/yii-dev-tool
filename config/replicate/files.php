@@ -167,4 +167,20 @@ return [
             'psalm.xml',
         ],
     ],
+    'rector' => [
+        'source' => 'package-template',
+        'packages' => [
+            'include' => ['*'],
+            'exclude' => [
+                'docs',
+                'yii-docker',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
+            ],
+        ],
+        'files' => [
+            '.github/workflows/rector.yml',
+            'rector.php',
+        ],
+    ],
 ];
