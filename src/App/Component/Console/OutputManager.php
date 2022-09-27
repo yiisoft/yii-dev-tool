@@ -48,6 +48,7 @@ class OutputManager
      *
      * @param string $header A detailed version of header.
      * Substring '{package}' will be replaced by the name of the package.
+     *
      * @return $this
      */
     public function preparePackageHeader(Package $package, string $header): self
