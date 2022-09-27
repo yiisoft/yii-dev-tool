@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ProtectBranchCommand extends PackageCommand
 {
-    private ?string $branch;
+    private ?string $branch = null;
 
     protected function configure()
     {

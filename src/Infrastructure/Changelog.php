@@ -11,11 +11,8 @@ use function is_array;
 
 final class Changelog
 {
-    private string $path;
-
-    public function __construct(string $path)
+    public function __construct(private string $path)
     {
-        $this->path = $path;
     }
 
     public function resort(Version $version): void
@@ -67,8 +64,6 @@ final class Changelog
     }
 
     /**
-     * @param Version $version
-     *
      * @return string[]
      */
     public function getReleaseNotes(Version $version): array
@@ -108,13 +103,12 @@ final class Changelog
             ) {
                 $state = 'changelog';
             }
-            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && strncmp($lines[$lineNumber + 1], '## ', 3) === 0) {
+            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with($lines[$lineNumber + 1], '## ')) {
                 $state = 'end';
             }
             // add continued lines to the last item to keep them together
-            if (!empty(${$state}) && trim($line) !== '' && strncmp($line, '- ', 2) !== 0) {
-                end(${$state});
-                ${$state}[key(${$state})] .= "\n" . $line;
+            if (!empty(${$state}) && trim($line) !== '' && !str_starts_with($line, '- ')) {
+                ${$state}[array_key_last(${$state})] .= "\n" . $line;
             } else {
                 ${$state}[] = $line;
             }
@@ -141,7 +135,7 @@ final class Changelog
      * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */
-    private function multisort(&$array, $key, $direction = SORT_ASC, $sortFlag = SORT_REGULAR): void
+    private function multisort(&$array, array|\Closure|string $key, array|int $direction = SORT_ASC, array|int $sortFlag = SORT_REGULAR): void
     {
         $keys = is_array($key) ? $key : [$key];
         if (empty($keys) || empty($array)) {

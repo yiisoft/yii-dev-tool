@@ -23,8 +23,8 @@ use function array_key_exists;
 
 final class WhatCommand extends Command
 {
-    private ?OutputManager $io;
-    private ?PackageList $packageList;
+    private ?OutputManager $io = null;
+    private ?PackageList $packageList = null;
 
     protected function configure()
     {

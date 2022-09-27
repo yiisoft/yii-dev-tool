@@ -17,7 +17,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 
 final class ForksRepositoriesCommand extends Command
 {
-    private ?OutputManager $io;
+    private ?OutputManager $io = null;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {

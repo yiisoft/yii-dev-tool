@@ -8,14 +8,8 @@ use InvalidArgumentException;
 
 class ComposerConfigDependenciesModifier
 {
-    /**
-     * @var ComposerConfig
-     */
-    private ComposerConfig $config;
-
-    public function __construct(ComposerConfig $config)
+    public function __construct(private ComposerConfig $config)
     {
-        $this->config = $config;
     }
 
     /**

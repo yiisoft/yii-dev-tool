@@ -14,10 +14,9 @@ class Package
 {
     private static ?GitWrapper $gitWrapper = null;
     private string $id;
-    private ?string $configuredRepositoryUrl;
+    private ?string $configuredRepositoryUrl = null;
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
-    private string $owner;
 
     private static function getGitWrapper(): GitWrapper
     {
@@ -30,14 +29,13 @@ class Package
         return static::$gitWrapper;
     }
 
-    public function __construct(string $id, $config, string $owner, string $packagesRootDir)
+    public function __construct(string $id, $config, private string $owner, string $packagesRootDir)
     {
         if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
             throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
         }
 
         $this->id = $id;
-        $this->owner = $owner;
 
         if (!is_bool($config) && !is_string($config)) {
             throw new InvalidArgumentException('Package config must contain a boolean or a string.');

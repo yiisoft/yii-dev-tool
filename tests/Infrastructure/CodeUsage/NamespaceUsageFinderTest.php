@@ -31,15 +31,15 @@ final class NamespaceUsageFinderTest extends TestCase
 
         $expectedResults = [
             // Used in custom environment only
-            '\Custom\NonPSRNamespace\VarStorage' => ['custom-environment'],
-            '\Custom\Storage\VarStorage' => ['custom-environment'],
-            '\SplStack' => ['custom-environment'],
+            '\\' . \Custom\NonPSRNamespace\VarStorage::class => ['custom-environment'],
+            '\\' . \Custom\Storage\VarStorage::class => ['custom-environment'],
+            '\\' . \SplStack::class => ['custom-environment'],
 
             // Used in production environment only
-            '\Production\Config\Config' => [CodeUsageEnvironment::PRODUCTION],
-            '\Production\NonPSRNamespace\Config' => [CodeUsageEnvironment::PRODUCTION],
-            '\Production\Spl\SplFixedArray' => [CodeUsageEnvironment::PRODUCTION],
-            '\SplFixedArray' => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . \Production\Config\Config::class => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . \Production\NonPSRNamespace\Config::class => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . \Production\Spl\SplFixedArray::class => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . \SplFixedArray::class => [CodeUsageEnvironment::PRODUCTION],
 
             // Used in both environments
             '\time' => [CodeUsageEnvironment::PRODUCTION, 'custom-environment'],

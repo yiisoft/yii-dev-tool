@@ -8,8 +8,6 @@ use InvalidArgumentException;
 
 class CodeUsage
 {
-    private string $identifier;
-
     /**
      * @var string[]
      */
@@ -19,7 +17,7 @@ class CodeUsage
      * @param string $identifier Unique identifier of code usage: namespace, package name, etc.
      * @param string|string[] $environments Environment(s) in which the code is used.
      */
-    public function __construct(string $identifier, $environments)
+    public function __construct(private string $identifier, $environments)
     {
         $environments = (array) $environments;
 
@@ -28,8 +26,6 @@ class CodeUsage
                 throw new InvalidArgumentException('Each environment must be a string.');
             }
         }
-
-        $this->identifier = $identifier;
         $this->environments = $environments;
     }
 
