@@ -41,6 +41,8 @@ final class InstallCommand extends PackageCommand
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
+        $this->checkSSHConnection();
+
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerInstallOptions[] = '--no-plugins';
         }
