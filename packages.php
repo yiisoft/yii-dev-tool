@@ -9,6 +9,7 @@ declare(strict_types=1);
  * packages.local.php using file packages.local.php.example as example.
  */
 $packages = [
+    'actions' => true,
     'docs' => true,
 
     // Config plugin
