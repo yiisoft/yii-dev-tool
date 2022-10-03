@@ -10,18 +10,12 @@ use PhpParser\NodeVisitor\NameResolver;
 
 class NamespaceUsageFinderNameResolver extends NameResolver
 {
-    protected string $environment;
-    protected NamespaceUsageFinder $namespaceUsageFinder;
-
     public function __construct(
-        NamespaceUsageFinder $namespaceUsageFinder,
-        string $environment,
+        protected NamespaceUsageFinder $namespaceUsageFinder,
+        protected string $environment,
         ErrorHandler $errorHandler = null,
         array $options = []
     ) {
-        $this->environment = $environment;
-        $this->namespaceUsageFinder = $namespaceUsageFinder;
-
         parent::__construct($errorHandler, $options);
     }
 

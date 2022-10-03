@@ -20,13 +20,11 @@ function count($array)
 
 class Config extends \Production\NonPSRNamespace\Config
 {
-    private array $data;
     private int $size;
     private int $readTime;
 
-    public function __construct(array $data = [])
+    public function __construct(private array $data = [])
     {
-        $this->data = $data;
         $this->size = count($data);
 
         /** @noinspection PhpFullyQualifiedNameUsageInspection */

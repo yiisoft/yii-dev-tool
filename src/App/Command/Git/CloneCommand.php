@@ -15,11 +15,8 @@ final class CloneCommand extends PackageCommand
     protected static $defaultName = 'git/clone';
     protected static $defaultDescription = 'Package repositories cloning';
 
-    private PackageService $packageService;
-
-    public function __construct(PackageService $packageService, string $name = null)
+    public function __construct(private PackageService $packageService, string $name = null)
     {
-        $this->packageService = $packageService;
         parent::__construct($name);
     }
 

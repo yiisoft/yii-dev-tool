@@ -21,10 +21,10 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
  */
 class PackageCommand extends Command
 {
-    private ?OutputManager $io;
-    private ?PackageList $packageList;
-    private ?PackageErrorList $errorList;
-    private ?bool $targetPackagesSpecifiedExplicitly;
+    private ?OutputManager $io = null;
+    private ?PackageList $packageList = null;
+    private ?PackageErrorList $errorList = null;
+    private ?bool $targetPackagesSpecifiedExplicitly = null;
 
     /** @var Package[]|null */
     private ?array $targetPackages;
@@ -314,7 +314,7 @@ class PackageCommand extends Command
     {
         $io = $this->getIO();
 
-        if (count($this->errorList) > 0) {
+        if (($this->errorList === null ? 0 : count($this->errorList)) > 0) {
             $io
                 ->important()
                 ->info([

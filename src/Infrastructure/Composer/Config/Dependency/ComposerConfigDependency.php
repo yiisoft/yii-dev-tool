@@ -11,13 +11,8 @@ class ComposerConfigDependency
      */
     private const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[a-z0-9](?:[_.-]?[a-z0-9]+)*|composer-(?:plugin|runtime)-api)$}iD';
 
-    private string $packageName;
-    private string $constraint;
-
-    public function __construct(string $packageName, string $constraint)
+    public function __construct(private string $packageName, private string $constraint)
     {
-        $this->packageName = $packageName;
-        $this->constraint = $constraint;
     }
 
     public function getPackageName(): string
@@ -32,13 +27,11 @@ class ComposerConfigDependency
 
     /**
      * @param string[] $flags
-     *
-     * @return bool
      */
     public function constraintContainsAnyOfStabilityFlags(array $flags): bool
     {
         foreach ($flags as $flag) {
-            if (strpos($this->constraint, $flag) !== false) {
+            if (str_contains($this->constraint, $flag)) {
                 return true;
             }
         }
@@ -62,7 +55,7 @@ class ComposerConfigDependency
             return 0;
         }
 
-        if (strpos($name, 'ext-') === 0) {
+        if (str_starts_with($name, 'ext-')) {
             return 1;
         }
 

@@ -22,7 +22,7 @@ use function in_array;
 
 final class MakeCommand extends PackageCommand
 {
-    private ?string $tag;
+    private ?string $tag = null;
 
     private const MAIN_BRANCHES = ['master', 'main'];
 

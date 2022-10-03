@@ -13,14 +13,12 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
  */
 class OutputManager
 {
-    private YiiDevToolStyle $io;
     private ?string $preparedPackageHeader = null;
     private bool $nextMessageIsImportant = false;
     private bool $outputDone = false;
 
-    public function __construct(YiiDevToolStyle $io)
+    public function __construct(private YiiDevToolStyle $io)
     {
-        $this->io = $io;
     }
 
     public function hasColorSupport(): bool
@@ -48,7 +46,6 @@ class OutputManager
      * The header will be automatically displayed later before the first message that will require output.
      * If a console command operates in a verbose mode, a detailed header will be prepared, otherwise a short one.
      *
-     * @param Package $package
      * @param string $header A detailed version of header.
      * Substring '{package}' will be replaced by the name of the package.
      *
