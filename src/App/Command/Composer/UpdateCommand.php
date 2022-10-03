@@ -55,11 +55,6 @@ final class UpdateCommand extends PackageCommand
         }
     }
 
-    protected function afterProcessingPackages(): void
-    {
-        $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
-    }
-
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
@@ -82,6 +77,8 @@ final class UpdateCommand extends PackageCommand
             $this->getErrorsList(),
             $io
         );
+
+        $this->packageService->createSymbolicLinks($package, $this->getPackageList(), $this->getIO());
 
         if (!$io->isVerbose()) {
             $io
