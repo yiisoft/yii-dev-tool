@@ -9,6 +9,9 @@ use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
 use RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
@@ -17,10 +20,25 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     protected static $defaultName = 'github/sync';
     protected static $defaultDescription = 'Sync forks from upstream repositories';
 
+    private InputInterface $input;
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->input = $input;
+        parent::initialize($input, $output);
+    }
+
     protected function configure()
     {
         $this
-            ->setAliases(['sync']);
+            ->setAliases(['sync'])
+            ->addOption(
+                'branch',
+                'b',
+                InputOption::VALUE_REQUIRED,
+                'Name of the branch to be synchronized',
+                'master'
+            );
 
         parent::configure();
     }
@@ -28,19 +46,20 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $repository = $this->getGithubApiRepository();
+        $branchName = $this->input->getOption('branch');
 
         try {
             preg_match('|^[a-z0-9-]+/([a-z0-9_.-]+)$|i', $package->getName(), $repoMatches);
             if (isset($repoMatches[1])) {
-                $repository->mergeUpstream($package->getVendor(), $repoMatches[1]);
-                $this->getIO()->write("<success>Repository successfully synced: {$package->getName()}</success>" . PHP_EOL);
+                $repository->mergeUpstream($package->getVendor(), $repoMatches[1], $branchName);
+                $this->getIO()->important()->success("Repository successfully synced: {$package->getName()}");
             } else {
                 $this->getIO()->error(
                     $this->errorMessage($package->getName())
                 );
             }
         } catch (GithubRuntimeException $e) {
-            $this->getIO()->write(
+            $this->getIO()->error(
                 $this->errorMessage($package->getName(), $e->getMessage())
             );
         }
@@ -50,8 +69,8 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     {
         $error = $message ? "{$packageName}: {$message}" : $packageName;
         return [
-            "<error>Error when syncing a repository $error </error>",
-            '<error>Check if the nickname of the owner and the name of the repository are correct</error>' . PHP_EOL,
+            "Error when syncing a repository $error ",
+            'Check if the nickname of the owner and the name of the repository are correct',
         ];
     }
 
