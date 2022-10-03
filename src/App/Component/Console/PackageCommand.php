@@ -10,6 +10,7 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
@@ -345,5 +346,28 @@ class PackageCommand extends Command
         $shell = getenv('SHELL');
         $isBash = ($shell && stripos($shell, 'bash')) !== false;
         return $isBash ? './' : '';
+    }
+
+    protected function checkSSHConnection(): bool
+    {
+        $process = new Process(['ssh', '-T', 'git@github.com']);
+        $process
+            ->setTimeout(null)
+            ->run();
+
+        if ($process->getExitCode() !== 1) {
+            $this
+                ->getIO()
+                ->error([
+                    'Checking access to github.com ... DENIED',
+                    'Error: ' . $process->getErrorOutput(),
+                    'Seems like you have not installed SSH key to you Github account.',
+                    'Key is required to work with repository via SSH.',
+                    'See here for instructions: https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account',
+                ]);
+            return false;
+        }
+
+        return true;
     }
 }
