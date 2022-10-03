@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
@@ -41,7 +42,9 @@ final class InstallCommand extends PackageCommand
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->checkSSHConnection();
+        if (!$this->checkSSHConnection()) {
+            exit(Command::FAILURE);
+        }
 
         if ($input->getOption('no-plugins') !== false) {
             $this->additionalComposerInstallOptions[] = '--no-plugins';

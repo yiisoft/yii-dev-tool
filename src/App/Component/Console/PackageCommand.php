@@ -348,7 +348,7 @@ class PackageCommand extends Command
         return $isBash ? './' : '';
     }
 
-    protected function checkSSHConnection(): void
+    protected function checkSSHConnection(): bool
     {
         $process = new Process(['ssh', '-T', 'git@github.com']);
         $process
@@ -360,10 +360,14 @@ class PackageCommand extends Command
                 ->getIO()
                 ->error([
                     'Checking access to github.com ... DENIED',
+                    'Error: ' . $process->getErrorOutput(),
                     'Seems like you have not installed SSH key to you Github account.',
                     'Key is required to work with repository via SSH.',
                     'See here for instructions: https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account',
                 ]);
+            return false;
         }
+
+        return true;
     }
 }

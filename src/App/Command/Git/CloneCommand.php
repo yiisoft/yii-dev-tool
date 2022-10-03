@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
@@ -31,7 +32,9 @@ final class CloneCommand extends PackageCommand
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->checkSSHConnection();
+        if (!$this->checkSSHConnection()) {
+            exit(Command::FAILURE);
+        }
     }
 
     protected function processPackage(Package $package): void
