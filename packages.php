@@ -149,8 +149,6 @@ $packages = [
     'yii-widgets' => true,
     'form' => true,
     'assets' => true,
-    'yii-jquery' => true,
-    'yii-masked-input' => true,
 
     // Data abstractions and widgets
     'data' => true,
