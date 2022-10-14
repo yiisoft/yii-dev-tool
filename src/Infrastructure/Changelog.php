@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
+use Closure;
 use InvalidArgumentException;
 use Yiisoft\Arrays\ArrayHelper;
 
@@ -11,11 +12,17 @@ use function is_array;
 
 final class Changelog
 {
+    public const TYPES = [
+        'Chg',
+        'Bug',
+        'New',
+        'Enh',
+    ];
     public function __construct(private string $path)
     {
     }
 
-    public function resort(Version $version): void
+    public function resort(): void
     {
         // split the file into relevant parts
         [$start, $changelog, $end] = $this->splitChangelog();
@@ -52,6 +59,18 @@ final class Changelog
         array_unshift($lines, $headline);
 
         file_put_contents($this->path, implode("\n", array_merge($hl, $lines)));
+    }
+
+    public function addEntry(string $text): void
+    {
+        $this->replaceInFile(
+            '/^(##\s\d+\.\d+\.\d+\sunder\sdevelopment\n)$/m',
+            <<<MARKDOWN
+            $1
+            - $text
+            MARKDOWN,
+            $this->path
+        );
     }
 
     public function close(Version $version): void
@@ -121,7 +140,7 @@ final class Changelog
      * Sorts an array of objects or arrays (with the same structure) by one or several keys.
      *
      * @param array $array the array to be sorted. The array will be modified after calling this method.
-     * @param array|\Closure|string $key the key(s) to be sorted by. This refers to a key name of the sub-array
+     * @param array|Closure|string $key the key(s) to be sorted by. This refers to a key name of the sub-array
      * elements, a property name of the objects, or an anonymous function returning the values for comparison
      * purpose. The anonymous function signature should be: `function($item)`.
      * To sort by multiple keys, provide an array of keys here.
@@ -135,7 +154,7 @@ final class Changelog
      * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */
-    private function multisort(&$array, array|\Closure|string $key, array|int $direction = SORT_ASC, array|int $sortFlag = SORT_REGULAR): void
+    private function multisort(&$array, array|Closure|string $key, array|int $direction = SORT_ASC, array|int $sortFlag = SORT_REGULAR): void
     {
         $keys = is_array($key) ? $key : [$key];
         if (empty($keys) || empty($array)) {

@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\ListCommand as ListCommandsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+use Yiisoft\YiiDevTool\App\Command\AddChangelogCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\DisableCommand;
@@ -110,6 +111,7 @@ final class YiiDevToolApplication extends Application
             new ContributorsCommand(),
             new EnableCommand(),
             new DisableCommand(),
+            new AddChangelogCommand(),
         ];
     }
 

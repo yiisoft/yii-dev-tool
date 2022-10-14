@@ -153,7 +153,7 @@ final class MakeCommand extends PackageCommand
         $changelog = new Changelog($changelogPath);
 
         $io->info("Sorting $changelogPath for $versionToRelease.");
-        $changelog->resort($versionToRelease);
+        $changelog->resort();
 
         $io->info("Closing $changelogPath for $versionToRelease.");
         $changelog->close($versionToRelease);
