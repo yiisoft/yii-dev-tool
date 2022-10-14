@@ -42,6 +42,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'requirements',
@@ -56,6 +57,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'access',
@@ -75,6 +77,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'requirements',
@@ -91,6 +94,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'access',
@@ -119,6 +123,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'yii-debug-frontend',
@@ -134,6 +139,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'yii-debug-frontend',
@@ -156,6 +162,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'yii-debug-frontend',
@@ -172,6 +179,7 @@ return [
         'packages' => [
             'include' => ['*'],
             'exclude' => [
+                'actions',
                 'docs',
                 'yii-docker',
                 'yii-debug-frontend',
@@ -181,6 +189,22 @@ return [
         'files' => [
             '.github/workflows/rector.yml',
             'rector.php',
+        ],
+    ],
+    'composer-require-checker' => [
+        'source' => 'package-template',
+        'packages' => [
+            'include' => ['*'],
+            'exclude' => [
+                'actions',
+                'docs',
+                'yii-docker',
+                'yii-debug-frontend',
+                'yii-gii-frontend',
+            ],
+        ],
+        'files' => [
+            '.github/workflows/composer-require-checker.yml',
         ],
     ],
 ];
