@@ -4,28 +4,19 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
-use Github\Api\Repository\Releases;
-use Github\AuthMethod;
-use Github\Client;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symplify\GitWrapper\GitWorkingCopy;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
-use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
-use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
-
-use function in_array;
 
 final class AddChangelogCommand extends PackageCommand
 {
-    private string $message='';
-    private string $type='';
-    private string $prId='';
+    private string $message = '';
+    private string $type = '';
+    private string $prId = '';
 
     protected function configure()
     {
@@ -46,8 +37,8 @@ final class AddChangelogCommand extends PackageCommand
         $this->message = $input->getArgument('message');
         $this->type = $input->getArgument('type');
         $this->prId = $input->getArgument('pull-request-id');
-
     }
+
     protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
         return '<success>✔ Done</success>';

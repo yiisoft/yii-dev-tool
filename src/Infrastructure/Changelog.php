@@ -18,6 +18,7 @@ final class Changelog
         'New',
         'Enh',
     ];
+
     public function __construct(private string $path)
     {
     }
