@@ -50,9 +50,7 @@ final class InstallCommand extends PackageCommand
 
     protected function afterProcessingPackages(): void
     {
-        foreach ($this->getTargetPackages() as $targetPackage) {
-            $this->packageService->createSymbolicLinks($targetPackage, $this->getPackageList(), $this->getIO());
-        }
+        $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
     }
 
     protected function processPackage(Package $package): void
