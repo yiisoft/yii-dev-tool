@@ -23,7 +23,7 @@ final class AddChangelogCommand extends PackageCommand
         $this
             ->setName('changelog/add')
             ->setDescription('Add an changelog entry')
-            ->addArgument('type', InputArgument::REQUIRED, 'Change type', null, Changelog::TYPES)
+            ->addArgument('type', InputArgument::REQUIRED, 'Change type', null)
             ->addArgument('message', InputArgument::REQUIRED, 'Entry text')
             ->addOption('pull-request-id', 'pr', InputArgument::OPTIONAL, 'Pull request ID', null)
         ;

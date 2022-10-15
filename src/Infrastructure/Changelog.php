@@ -105,6 +105,7 @@ final class Changelog
 
     private function replaceInFile(string $pattern, string $replace, string $file): int
     {
+        $replaces = null;
         if (!file_exists($file)) {
             throw new InvalidArgumentException(
                 sprintf(
