@@ -4,38 +4,28 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
-use Github\Api\Repository\Releases;
-use Github\AuthMethod;
-use Github\Client;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
 use Symplify\GitWrapper\GitWorkingCopy;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
-use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
-use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
-
-use function in_array;
 
 final class AddChangelogCommand extends PackageCommand
 {
-    private string $message='';
-    private string $type='';
-    private string $prId='';
+    private string $message = '';
+    private string $type = '';
+    private ?string $prId = '';
 
     protected function configure()
     {
         $this
             ->setName('changelog/add')
             ->setDescription('Add an changelog entry')
-            ->addArgument('type', InputArgument::REQUIRED, 'Entry text', null, Changelog::TYPES)
-            ->addArgument('pull-request-id', InputArgument::REQUIRED, 'Entry text')
+            ->addArgument('type', InputArgument::REQUIRED, 'Change type', null, Changelog::TYPES)
             ->addArgument('message', InputArgument::REQUIRED, 'Entry text')
-
+            ->addOption('pull-request-id', 'pr', InputArgument::OPTIONAL, 'Pull request ID', null)
         ;
 
         parent::configure();
@@ -45,9 +35,9 @@ final class AddChangelogCommand extends PackageCommand
     {
         $this->message = $input->getArgument('message');
         $this->type = $input->getArgument('type');
-        $this->prId = $input->getArgument('pull-request-id');
-
+        $this->prId = $input->getOption('pull-request-id');
     }
+
     protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
         return '<success>✔ Done</success>';
@@ -56,6 +46,18 @@ final class AddChangelogCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
+
+        $loweredTypes = array_map(fn (string $type) => strtolower($type), Changelog::TYPES);
+        if (!in_array(strtolower($this->type), $loweredTypes, true)) {
+            $io->error(
+                sprintf(
+                    'The type argument value must be one of the following: %s. "%s" given',
+                    implode(', ', Changelog::TYPES),
+                    $this->type
+                )
+            );
+            return;
+        }
 
         $io->preparePackageHeader($package, 'Adding the changelog entry to {package}');
         $git = $package->getGitWorkingCopy();
@@ -67,16 +69,25 @@ final class AddChangelogCommand extends PackageCommand
             $io->info("Current version is $currentVersion.");
         }
 
+        $messageParts = [];
+        $messageParts[] = ucfirst($this->type);
+        if ($this->prId) {
+            $messageParts[] = ' #' . $this->prId;
+        }
+        $messageParts[] = ': ';
+        $messageParts[] = $this->message;
+
+        $text = implode('', $messageParts);
+
         $changelogPath = $package->getPath() . '/CHANGELOG.md';
         $changelog = new Changelog($changelogPath);
 
-        $io->info("Sorting \"$changelogPath\".");
-        $changelog->resort();
-
-        $io->info("Adding the entry into \"$changelogPath\".");
-        $type = ucfirst($this->type);
-        $message = "{$type} #{$this->prId}: {$this->message}";
-        $changelog->addEntry($message);
+        $io->info(sprintf(
+            'Adding the entry "%s" into "%s".',
+            $text,
+            $changelogPath,
+        ));
+        $changelog->addEntry($text);
     }
 
     private function getCurrentVersion(GitWorkingCopy $git): Version
