@@ -64,14 +64,24 @@ final class Changelog
 
     public function addEntry(string $text): void
     {
-        $this->replaceInFile(
-            '/^(##\s\d+\.\d+\.\d+\sunder\sdevelopment\n)$/m',
+        $replaces = $this->replaceInFile(
+            '/^(## \d+\.\d+\.\d+ under development\n)\n- no changes in this release\.$/m',
             <<<MARKDOWN
             $1
             - $text
             MARKDOWN,
             $this->path
         );
+        if ($replaces === 0) {
+            $this->replaceInFile(
+                '/^(##\s\d+\.\d+\.\d+\sunder\sdevelopment\n)$/m',
+                <<<MARKDOWN
+            $1
+            - $text
+            MARKDOWN,
+                $this->path
+            );
+        }
     }
 
     public function close(Version $version): void
@@ -93,9 +103,18 @@ final class Changelog
         return $changelog;
     }
 
-    private function replaceInFile($pattern, $replace, $file): void
+    private function replaceInFile(string $pattern, string $replace, string $file): int
     {
-        file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file)));
+        if (!file_exists($file)) {
+            throw new InvalidArgumentException(
+                sprintf(
+                    'File path "%s" is incorrect. The file does not exist.',
+                    $file,
+                )
+            );
+        }
+        file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file), count: $replaces));
+        return $replaces;
     }
 
     /**
@@ -123,7 +142,10 @@ final class Changelog
             ) {
                 $state = 'changelog';
             }
-            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with($lines[$lineNumber + 1], '## ')) {
+            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with(
+                    $lines[$lineNumber + 1],
+                    '## '
+                )) {
                 $state = 'end';
             }
             // add continued lines to the last item to keep them together
@@ -155,8 +177,12 @@ final class Changelog
      * @throws InvalidArgumentException if the $direction or $sortFlag parameters do not have
      * correct number of elements as that of $key.
      */
-    private function multisort(&$array, array|Closure|string $key, array|int $direction = SORT_ASC, array|int $sortFlag = SORT_REGULAR): void
-    {
+    private function multisort(
+        &$array,
+        array|Closure|string $key,
+        array|int $direction = SORT_ASC,
+        array|int $sortFlag = SORT_REGULAR
+    ): void {
         $keys = is_array($key) ? $key : [$key];
         if (empty($keys) || empty($array)) {
             return;
