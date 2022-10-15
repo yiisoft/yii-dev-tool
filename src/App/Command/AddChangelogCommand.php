@@ -92,6 +92,8 @@ final class AddChangelogCommand extends PackageCommand
             $changelog->addEntry($text);
         } catch (\InvalidArgumentException $e) {
             $io->error($e);
+
+            $this->registerPackageError($package, $e->getMessage(), 'adding an changelog entry');
         }
     }
 
