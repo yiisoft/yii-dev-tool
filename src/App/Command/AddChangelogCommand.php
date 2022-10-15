@@ -7,7 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symplify\GitWrapper\GitWorkingCopy;
-use Yiisoft\Injector\InvalidArgumentException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
@@ -24,7 +23,7 @@ final class AddChangelogCommand extends PackageCommand
         $this
             ->setName('changelog/add')
             ->setDescription('Add an changelog entry')
-            ->addArgument('type', InputArgument::REQUIRED, 'Change type', null, Changelog::TYPES)
+            ->addArgument('type', InputArgument::REQUIRED, 'Change type', null)
             ->addArgument('message', InputArgument::REQUIRED, 'Entry text')
             ->addOption('pull-request-id', 'pr', InputArgument::OPTIONAL, 'Pull request ID', null)
         ;
