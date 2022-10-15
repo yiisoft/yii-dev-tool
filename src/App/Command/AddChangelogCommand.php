@@ -7,7 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symplify\GitWrapper\GitWorkingCopy;
-use Yiisoft\Injector\InvalidArgumentException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;

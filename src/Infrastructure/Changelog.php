@@ -143,9 +143,9 @@ final class Changelog
                 $state = 'changelog';
             }
             if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with(
-                    $lines[$lineNumber + 1],
-                    '## '
-                )) {
+                $lines[$lineNumber + 1],
+                '## '
+            )) {
                 $state = 'end';
             }
             // add continued lines to the last item to keep them together
