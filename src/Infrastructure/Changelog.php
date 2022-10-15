@@ -65,7 +65,7 @@ final class Changelog
     public function addEntry(string $text): void
     {
         $replaces = $this->replaceInFile(
-            '/^(## \d+\.\d+\.\d+ under development\n)\n- no changes in this release\.$/m',
+            '/^(## \d+\.\d+\.\d+ under development\n)\n(?:- no changes in this release\.|- Initial release\.)$/m',
             <<<MARKDOWN
             $1
             - $text
