@@ -1,0 +1,12 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
+
+require __DIR__ . '/../vendor/autoload.php';
+
+(new YiiDevToolApplication())
+    ->setRootDir(getcwd())
+    ->run();
