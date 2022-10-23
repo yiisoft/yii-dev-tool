@@ -35,7 +35,7 @@ final class LintCommand extends PackageCommand
             $io->hasColorSupport() ? '--colors' : '--no-colors',
             '--standard=PSR12',
             '--ignore=*/vendor/*,*/docs/*',
-        ], $this->getAppRootDir());
+        ], $this->getApplication()->getRootDir());
 
         $process->run();
 
