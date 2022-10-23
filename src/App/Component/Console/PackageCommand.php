@@ -11,6 +11,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Config;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
@@ -21,6 +22,8 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
  */
 class PackageCommand extends Command
 {
+    protected Config $config;
+
     private ?OutputManager $io = null;
     private ?PackageList $packageList = null;
     private ?PackageErrorList $errorList = null;
@@ -99,7 +102,13 @@ class PackageCommand extends Command
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
+        $this->config = $this->getApplication()->getConfig();
         $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
+    }
+
+    protected function getConfig(): Config
+    {
+        return $this->config;
     }
 
     protected function getIO(): OutputManager
@@ -118,32 +127,12 @@ class PackageCommand extends Command
 
     private function initPackageList(): void
     {
-        $io = $this->getIO();
-
         try {
-            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
-            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
-                $io->error([
-                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
-                    'See <file>owner-packages.php</file> to set the packages owner.',
-                ]);
-
-                exit(1);
-            }
-
-            $this->packageList = new PackageList(
-                $ownerPackages,
-                $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
-            );
+            $this->packageList = new PackageList($this->getConfig());
 
             $this->errorList = new PackageErrorList();
         } catch (InvalidArgumentException $e) {
-            $io->error([
-                'Invalid local package configuration <file>packages.local.php</file>',
-                $e->getMessage(),
-                'See <file>packages.local.php.example</file> for configuration examples.',
-            ]);
+            $this->io->error($e->getMessage());
 
             exit(1);
         }

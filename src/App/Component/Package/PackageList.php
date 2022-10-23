@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
+use Yiisoft\YiiDevTool\App\Component\Config;
 use function array_key_exists;
 
 class PackageList
@@ -17,13 +18,13 @@ class PackageList
     /** @var Package[]|null */
     private ?array $installedAndEnabledList = null;
 
-    public function __construct(string $ownerPackages, string $configFile, string $packagesRootDir)
+    public function __construct(Config $config)
     {
-        /** @noinspection PhpIncludeInspection */
-        $config = require $configFile;
-
-        foreach ($config as $packageId => $packageConfig) {
-            $this->list[$packageId] = new Package($packageId, $packageConfig, $ownerPackages, $packagesRootDir);
+        $ownerPackages = $config->getOwner();
+        $packagesRootDir = $config->getPackagesRootDir();
+        $gitRepository = $config->getGitRepository();
+        foreach ($config->getPackages() as $packageId => $packageConfig) {
+            $this->list[$packageId] = new Package($packageId, $packageConfig, $ownerPackages, $packagesRootDir, $gitRepository);
         }
     }
 

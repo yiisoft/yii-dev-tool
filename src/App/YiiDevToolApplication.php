@@ -37,11 +37,14 @@ use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
+use Yiisoft\YiiDevTool\App\Command\Tool\Init;
 use Yiisoft\YiiDevTool\App\Command\UpdateCommand;
+use Yiisoft\YiiDevTool\App\Component\Config;
 
 final class YiiDevToolApplication extends Application
 {
     private ?string $rootDir = null;
+    private string $configFile = 'devtool.php';
 
     private string $header = <<<HEADER
     <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
@@ -61,7 +64,7 @@ final class YiiDevToolApplication extends Application
 
     public function setRootDir(string $path): self
     {
-        $this->rootDir = $path;
+        $this->rootDir = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         return $this;
     }
@@ -73,6 +76,23 @@ final class YiiDevToolApplication extends Application
         }
 
         return $this->rootDir;
+    }
+
+    public function setConfigFile(string $configFile): self
+    {
+        $this->configFile = ltrim($configFile, DIRECTORY_SEPARATOR);
+
+        return $this;
+    }
+
+    public function getConfigFile(): string
+    {
+        return $this->configFile;
+    }
+
+    public function getConfig(): Config
+    {
+        return new Config($this->getRootDir(), $this->getConfigFile());
     }
 
     protected function getDefaultCommands(): array
@@ -110,6 +130,7 @@ final class YiiDevToolApplication extends Application
             new ContributorsCommand(),
             new EnableCommand(),
             new DisableCommand(),
+            new Init(),
         ];
     }
 
