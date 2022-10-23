@@ -40,17 +40,15 @@ final class SettingsCommand extends PackageCommand
 
     private function getSettings(): array
     {
-        /** @noinspection PhpIncludeInspection */
-        return require $this->getAppRootDir() . 'config/settings.php';
+        $settingsFile = $this->getConfig()->getConfigDir() . 'settings.php';
+        if (!file_exists($settingsFile)) {
+            throw new RuntimeException("There's no file settings.php in config directory");
+        }
+        return require $settingsFile;
     }
 
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
+        return $this->getConfig()->getApiToken();
     }
 }

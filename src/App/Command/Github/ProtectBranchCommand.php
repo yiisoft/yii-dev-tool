@@ -6,7 +6,6 @@ namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Protection;
 use Github\Client;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
@@ -56,11 +55,6 @@ final class ProtectBranchCommand extends PackageCommand
 
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
+        return $this->getConfig()->getApiToken();
     }
 }

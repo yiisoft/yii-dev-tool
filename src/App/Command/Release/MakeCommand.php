@@ -83,17 +83,7 @@ final class MakeCommand extends PackageCommand
             return;
         }
 
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            $io->warning([
-                "There's no $tokenFile. Please create one and put your GitHub token there.",
-                'Token is required to create release on GitHub.',
-                "You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.",
-                'Release cancelled.',
-            ]);
-
-            return;
-        }
+        $token = $this->getConfig()->getApiToken();
 
         $dependencyList = $composerConfig->getDependencyList(ComposerConfig::SECTION_REQUIRE);
         foreach ($dependencyList->getDependencies() as $dependency) {
@@ -267,11 +257,6 @@ final class MakeCommand extends PackageCommand
 
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
+        return $this->getConfig()->getApiToken();
     }
 }

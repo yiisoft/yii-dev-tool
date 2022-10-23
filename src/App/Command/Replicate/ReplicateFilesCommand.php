@@ -22,7 +22,7 @@ final class ReplicateFilesCommand extends PackageCommand
         $this
             ->setName('replicate/files')
             ->addOption('sets', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Sets to replicate')
-            ->setDescription('Copy files specified in <fg=blue;options=bold>config/replicate/files.php</> into each package');
+            ->setDescription('Copy files specified in <fg=blue;options=bold>`config-dir`/replicate/files.php</> into each package');
 
         parent::configure();
     }
@@ -30,8 +30,7 @@ final class ReplicateFilesCommand extends PackageCommand
     private function getReplicationSet(string $name): ?ReplicationSet
     {
         if ($this->replicationConfig === null) {
-            /** @noinspection PhpIncludeInspection */
-            $this->replicationConfig = require $this->getAppRootDir() . 'config/replicate/files.php';
+            $this->replicationConfig = require $this->getConfig()->getConfigDir() . 'replicate/files.php';
         }
 
         if (!array_key_exists($name, $this->replicationConfig)) {

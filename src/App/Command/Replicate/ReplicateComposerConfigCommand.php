@@ -15,7 +15,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     {
         $this
             ->setName('replicate/composer-config')
-            ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
+            ->setDescription('Merge <fg=blue;options=bold>`config-dir`/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
         ;
 
         parent::configure();
@@ -29,7 +29,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, 'Merging <file>config/replicate/composer.json</file> to package {package}');
+        $io->preparePackageHeader($package, 'Merging <file>`config-dir`/replicate/composer.json</file> to package {package}');
 
         $targetPath = "{$package->getPath()}/composer.json";
         if (!file_exists($targetPath)) {
@@ -46,7 +46,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
         try {
             $mergedConfig = $merger->merge(
                 ComposerConfig::createByFilePath($targetPath),
-                ComposerConfig::createByFilePath($this->getAppRootDir() . 'config/replicate/composer.json'),
+                ComposerConfig::createByFilePath($this->getConfig()->getConfigDir() . 'replicate/composer.json'),
             );
         } catch (\Throwable $e) {
             $io->error([

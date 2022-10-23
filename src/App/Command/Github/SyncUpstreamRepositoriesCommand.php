@@ -8,7 +8,6 @@ use Github\Api\Repo;
 use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -94,11 +93,6 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
 
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
+        return $this->getConfig()->getApiToken();
     }
 }

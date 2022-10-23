@@ -9,8 +9,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
+/** @method YiiDevToolApplication getApplication()  **/
 final class DisableCommand extends Command
 {
     protected static $defaultName = 'disable';
@@ -34,7 +37,12 @@ final class DisableCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
-        $packages = require dirname(__DIR__, 3) . '/packages.php';
+        $configs = require $this->getApplication()->getConfigFile();
+        if (empty($configs['packages'])) {
+            $io->error('There is no list of packages in the configs, or it is empty.');
+            return Command::FAILURE;
+        }
+        $packages = $configs['packages'];
 
         $disableAll = $input->getOption('all');
         if ($disableAll) {
@@ -63,14 +71,9 @@ final class DisableCommand extends Command
             }
         }
 
-        $handle = fopen(dirname(__DIR__, 3) . '/packages.local.php', 'w+');
-        fwrite($handle, '<?php' . "\n\n");
-        fwrite($handle, 'return [' . "\n");
-        foreach ($packages as $packageId => $enabled) {
-            fwrite($handle, '    \'' . $packageId . '\' => ' . ($enabled ? 'true' : 'false') . ',' . "\n");
-        }
-        fwrite($handle, '];' . "\n");
-        fclose($handle);
+        $configs['packages'] = $packages;
+        $exportArray = VarDumper::create($configs)->export();
+        file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
 
         if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
             $io->info('Packages not found.');

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Stats;
 
-use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -13,7 +12,9 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
+/** @method YiiDevToolApplication getApplication() **/
 final class ContributorsCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -48,27 +49,13 @@ final class ContributorsCommand extends Command
         $io = $this->getIO();
 
         try {
-            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
-            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
-                $io->error([
-                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
-                    'See <file>owner-packages.php</file> to set the packages owner.',
-                ]);
-
-                exit(1);
-            }
-
             $this->packageList = new PackageList(
-                $ownerPackages,
-                $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
+                $this
+                    ->getApplication()
+                    ->getConfig()
             );
-        } catch (InvalidArgumentException $e) {
-            $io->error([
-                'Invalid local package configuration <file>packages.local.php</file>',
-                $e->getMessage(),
-                'See <file>packages.local.php.example</file> for configuration examples.',
-            ]);
+        } catch (RuntimeException $e) {
+            $io->error($e->getMessage());
 
             exit(1);
         }
@@ -118,20 +105,5 @@ final class ContributorsCommand extends Command
     private function getPackageList(): PackageList
     {
         return $this->packageList;
-    }
-
-    /**
-     * Use this method to get a root directory of the tool.
-     *
-     * Commands and components can be moved as a result of refactoring,
-     * so you should not rely on their location in the file system.
-     *
-     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
-     */
-    protected function getAppRootDir(): string
-    {
-        return rtrim($this
-                ->getApplication()
-                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 }
