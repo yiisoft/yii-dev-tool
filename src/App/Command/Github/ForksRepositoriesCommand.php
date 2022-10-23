@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Forks;
+use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
 use RuntimeException;
@@ -55,7 +56,7 @@ final class ForksRepositoriesCommand extends Command
         $targetRepositories = array_unique(explode(',', $repositories));
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
         $forks = (new Forks($client));
 
         foreach ($targetRepositories as $repository) {

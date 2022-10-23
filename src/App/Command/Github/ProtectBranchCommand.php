@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Protection;
+use Github\AuthMethod;
 use Github\Client;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -41,7 +42,7 @@ final class ProtectBranchCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Protecting {package}');
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
         $protectionApi = (new Protection($client));
 
         // See https://docs.github.com/en/rest/reference/repos#update-branch-protection
