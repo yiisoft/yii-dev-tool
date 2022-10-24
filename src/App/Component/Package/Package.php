@@ -29,31 +29,23 @@ class Package
         return static::$gitWrapper;
     }
 
-    public function __construct(string $id, $config, private string $owner, string $packagesRootDir)
+    public function __construct(string $id, bool|string $config, private string $owner, string $packagesRootDir, string $gitRepository)
     {
-        if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
-            throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
-        }
-
         $this->id = $id;
-
-        if (!is_bool($config) && !is_string($config)) {
-            throw new InvalidArgumentException('Package config must contain a boolean or a string.');
-        }
 
         if ($config === false) {
             $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {
-            $this->configuredRepositoryUrl = "git@github.com:$this->owner/$id.git";
+            $this->configuredRepositoryUrl = "git@$gitRepository:$this->owner/$id.git";
         } elseif ($config === 'https') {
-            $this->configuredRepositoryUrl = "https://github.com/$this->owner/$id.git";
+            $this->configuredRepositoryUrl = "https://$gitRepository/$this->owner/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
             preg_match('|^([a-z0-9-]+)/[a-z0-9_.-]+$|i', $config, $ownerMatches);
             $this->owner = $ownerMatches[1] ?? $owner;
-            $this->configuredRepositoryUrl = "git@github.com:$config.git";
+            $this->configuredRepositoryUrl = "git@$gitRepository:$config.git";
         } else {
-            preg_match('|^git@github.com:([a-z0-9-]+)/[a-z0-9_.-]+$|i', $config, $ownerMatches);
-            $this->owner = $ownerMatches[1] ?? $owner;
+            preg_match('#^(git@|https://)(github.com|gitlab.com|bitbucket.org)([:/])([a-z0-9-]+)/([a-z0-9_.-]+)(.git)$#i', $config, $ownerMatches);
+            $this->owner = $ownerMatches[4] ?? $owner;
             $this->configuredRepositoryUrl = $config;
         }
 
