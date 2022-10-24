@@ -146,13 +146,13 @@ class PackageCommand extends Command
             $package = $this->packageList->getPackage($targetPackageId);
 
             if ($package === null) {
-                $io->error("Package <package>$targetPackageId</package> not found in <file>packages.php</file>");
+                $io->error("Package <package>$targetPackageId</package> not found in <file>{$this->getApplication()->getConfigFile()}</file>");
                 $problemsFound = true;
                 continue;
             }
 
             if ($package->disabled()) {
-                $io->error("Package <package>$targetPackageId</package> disabled in <file>packages.local.php</file>");
+                $io->error("Package <package>$targetPackageId</package> disabled in <file>{$this->getApplication()->getConfigFile()}</file>");
                 $problemsFound = true;
                 continue;
             }
@@ -187,8 +187,9 @@ class PackageCommand extends Command
 
             if (!$this->areTargetPackagesSpecifiedExplicitly()) {
                 $io->error([
-                    'You can also disable the package in <file>packages.local.php</file>',
-                    'See <file>packages.local.php.example</file> for configuration examples.',
+                    "You can also disable the package in <file>{$this->getApplication()->getConfigFile()}</file>",
+                    "Package {$package->getId()} config maybe contain a boolean, a variant of the string `https`,
+                     `ownerName/repositoryName` or a link to the repository.",
                 ]);
             }
 
@@ -205,8 +206,9 @@ class PackageCommand extends Command
                 "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
                 '',
                 'Before deleting, make sure that you do not have local changes, branches and tags that are not sent to remote repository.',
-                'You can also reconfigure the package repository url in <file>packages.local.php</file>',
-                'See <file>packages.local.php.example</file> for configuration examples.',
+                "You can also reconfigure the package repository url in <file>{$this->getApplication()->getConfigFile()}</file>",
+                "Package {$package->getId()} config maybe contain a boolean, a variant of the string `https`,
+                 `ownerName/repositoryName` or a link to the repository.",
             ]);
 
             return false;
