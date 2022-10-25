@@ -29,7 +29,8 @@ use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
-use Yiisoft\YiiDevTool\App\Command\ListCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\AddCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\RemoveCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
@@ -130,6 +131,8 @@ final class YiiDevToolApplication extends Application
             new ContributorsCommand(),
             new EnableCommand(),
             new DisableCommand(),
+            new AddCommand(),
+            new RemoveCommand(),
             new Init(),
         ];
     }
