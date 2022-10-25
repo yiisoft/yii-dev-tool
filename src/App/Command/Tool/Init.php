@@ -27,7 +27,8 @@ class Init extends Command
     protected function configure()
     {
         $this
-            ->setName('init')
+            ->setName('tool/init')
+            ->setAliases(['init'])
             ->setDescription('Initiate the creation of a config file for the DevTool tool')
             ->setDefinition([
                 new InputOption('owner-packages', null, InputOption::VALUE_REQUIRED, 'Package owner nickname'),

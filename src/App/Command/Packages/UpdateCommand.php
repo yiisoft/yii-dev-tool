@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Packages;
 
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -14,9 +14,6 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 final class UpdateCommand extends PackageCommand
 {
-    protected static $defaultName = 'update';
-    protected static $defaultDescription = 'Pull changes from packages repositories and update composer dependencies';
-
     private array $additionalComposerUpdateOptions = [];
 
     public function __construct(private PackageService $packageService, string $name = null)
@@ -27,7 +24,9 @@ final class UpdateCommand extends PackageCommand
     protected function configure(): void
     {
         $this
+            ->setName('packages/update')
             ->setAliases(['u'])
+            ->setDescription('Pull changes from packages repositories and update composer dependencies')
             ->addOption(
                 'no-plugins',
                 null,

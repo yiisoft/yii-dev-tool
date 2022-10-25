@@ -188,8 +188,7 @@ class PackageCommand extends Command
             if (!$this->areTargetPackagesSpecifiedExplicitly()) {
                 $io->error([
                     "You can also disable the package in <file>{$this->getApplication()->getConfigFile()}</file>",
-                    "Package {$package->getId()} config maybe contain a boolean, a variant of the string `https`,
-                     `ownerName/repositoryName` or a link to the repository.",
+                    "Package {$package->getId()} config maybe contain a boolean, a variant of the string `https`, `ownerName/repositoryName` or a link to the repository.",
                 ]);
             }
 

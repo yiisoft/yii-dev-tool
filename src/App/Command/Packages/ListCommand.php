@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Packages;
 
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ListCommand extends PackageCommand
 {
-    protected static $defaultName = 'list';
-    protected static $defaultDescription = 'List all packages';
-
     protected function configure()
     {
-        $this->setAliases(['l']);
+        $this
+            ->setName('packages/list')
+            ->setAliases(['l'])
+            ->setDescription('List all packages');
 
         parent::configure();
     }

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Packages;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -13,9 +13,6 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 final class InstallCommand extends PackageCommand
 {
-    protected static $defaultName = 'install';
-    protected static $defaultDescription = 'Clone packages repositories and install composer dependencies';
-
     private array $additionalComposerInstallOptions = [];
 
     public function __construct(private PackageService $packageService, string $name = null)
@@ -26,7 +23,9 @@ final class InstallCommand extends PackageCommand
     protected function configure(): void
     {
         $this
+            ->setName('packages/install')
             ->setAliases(['i'])
+            ->setDescription('Clone packages repositories and install composer dependencies')
             ->addOption(
                 'no-plugins',
                 null,

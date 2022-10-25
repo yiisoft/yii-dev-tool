@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Packages;
 
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -16,21 +16,21 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 /** @method YiiDevToolApplication getApplication()  **/
 final class DisableCommand extends Command
 {
-    protected static $defaultName = 'disable';
-    protected static $defaultDescription = 'Disable packages';
-
     protected function configure()
     {
-        $this->addArgument(
-            'packages',
-            InputArgument::OPTIONAL,
-            <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
-            Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
-            If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
-            DESCRIPTION
-        );
-        $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Disable all packages');
+        $this
+            ->setName('packages/disable')
+            ->setAliases(['disable'])
+            ->setDescription('Disable packages')
+            ->addArgument(
+                'packages',
+                InputArgument::OPTIONAL,
+                <<<DESCRIPTION
+                Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
+                Array keys from configuration can be specified.</>
+                DESCRIPTION
+            )
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Disable all packages');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
