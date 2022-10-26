@@ -43,10 +43,10 @@ class Config
                 $this->config['owner-packages']
             )
         ) {
-            $configError .=
-                "Error: Not config owner packages or packages owner name wrong.\n
-                 The packages owner can only contain the characters [a-z0-9-],
-                 \n and the character \'-\' cannot appear at the beginning or at the end." . '\n';
+            $configError .= <<<ERROR
+            Config error: Not config `owner-packages` or packages owner name wrong.
+            The packages owner can only contain the characters [a-z0-9-], and the character '-' cannot specified at the beginning or at the end.\n
+            ERROR;
         }
 
         if (
@@ -56,25 +56,25 @@ class Config
                 $this->config['git-repository']
             )
         ) {
-            $configError .= 'Invalid git repository domain name.' . '\n';
+            $configError .= "Config error: An invalid git repository domain name was specified for `git-repository` config.\n";
         }
 
         if (!isset($this->config['api-token']) || !is_string($this->config['api-token'])){
-            $configError .= 'No specified api git repository token. You can create a github.com token here: https://github.com/settings/tokens for other repositories, read the docs. Choose \'repo\' rights.' . '\n';
+            $configError .= "Config error: `api-token` not specified to access git repository API. You can create a github.com token here: https://github.com/settings/tokens for other repositories, read the docs. Choose 'repo' rights.\n";
         }
 
         $configDir = 'config-dir';
         if (!isset($this->config[$configDir])) {
-            $configError .= 'The directory name for work files is not specified.';
+            $configError .= "Config error: The folder name for the `config-dir` config with working files was not specified.\n";
         } else if (!file_exists($this->getConfigDir()) && !is_dir($this->getConfigDir())) {
-            $configError .= 'The configuration directory with working files does not exist.';
+            $configError .= "Config error: The specified folder for config `config-dir` does not exist.\n";
         }
 
         $packagesDir = 'packages-dir';
         if (!isset($this->config[$packagesDir])) {
-            $configError .= 'There is no configuration for the packages directory.';
+            $configError .= "Config error: No folder name specified for config `packages-dir`\n";
         } else if (!file_exists($this->getPackagesRootDir()) && !is_dir($this->getPackagesRootDir())) {
-            $configError .= 'The packages directory does not exist.';
+            $configError .= "Config error: The specified folder for config `packages-dir` does not exist.\n";
         }
 
         $packagesError = $this->validatePackages();
@@ -89,11 +89,12 @@ class Config
     {
         $packagesErrors = '';
         if (!isset($this->config['packages']) || !is_array($this->config['packages'])) {
-            throw new RuntimeException('No settings specified for packages in config or this is not an array with packages settings.');
+            return 'Config error: No settings specified for packages in config or this is not an array with packages settings.';
         }
+
         foreach ($this->config['packages'] as $packageName => $packageConfig) {
             if (!preg_match('|^[a-z0-9_.-]+$|i', $packageName)) {
-                $packagesErrors .= "$packageName Package ID can contain only symbols [a-z0-9_.-].\n";
+                $packagesErrors .= "Config error: Package `$packageName` Package ID can contain only symbols [a-z0-9_.-].\n";
             }
 
             if (
@@ -105,7 +106,7 @@ class Config
                 continue;
             }
 
-            $packagesErrors .= "Package $packageName config must contain a boolean or a variant of the string `https`, `ownerName/repositoryName` or a link to the repository.\n";
+            $packagesErrors .= "Config error: Package `$packageName` config must contain a boolean or a variant of the string `https`, `ownerName/repositoryName` or a link to the repository.\n";
         }
 
         return $packagesErrors;
