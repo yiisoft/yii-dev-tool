@@ -70,18 +70,7 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     {
         $client = new Client();
         $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
-        // Remove anonymous class when method is added to github-api package
-        // https://github.com/KnpLabs/php-github-api/issues/1083
-        return new class ($client) extends Repo {
-            public function mergeUpstream($username, $repository, $branchName = null)
-            {
-                return $this->post(
-                    '/repos/' . rawurlencode($username) . '/' . rawurlencode($repository) . '/merge-upstream',
-                    ['branch' => $branchName ?? 'main']
-                );
-            }
-        };
-        // return (new Repo($client));
+        return (new Repo($client));
     }
 
     private function getToken(): string

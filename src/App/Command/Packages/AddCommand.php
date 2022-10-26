@@ -94,7 +94,10 @@ final class AddCommand extends Command
 
     private function getOwner(): string
     {
-        return $this->getApplication()->getConfig()->getOwner();
+        return $this
+            ->getApplication()
+            ->getConfig()
+            ->getOwner();
     }
 
     private function getRepositories($page = 1, $perPage = 30): array
