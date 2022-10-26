@@ -48,15 +48,8 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
         $branchName = $this->input->getOption('branch');
 
         try {
-            preg_match('|^[a-z0-9-]+/([a-z0-9_.-]+)$|i', $package->getName(), $repoMatches);
-            if (isset($repoMatches[1])) {
-                $repository->mergeUpstream($package->getVendor(), $repoMatches[1], $branchName);
-                $this->getIO()->important()->success("Repository successfully synced: {$package->getName()}");
-            } else {
-                $this->getIO()->error(
-                    $this->errorMessage($package->getName())
-                );
-            }
+            $repository->mergeUpstream($package->getVendor(), $package->getId(), $branchName);
+            $this->getIO()->important()->success("Repository successfully synced: {$package->getName()}");
         } catch (GithubRuntimeException $e) {
             $this->getIO()->error(
                 $this->errorMessage($package->getName(), $e->getMessage())
