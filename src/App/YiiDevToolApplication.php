@@ -47,6 +47,7 @@ final class YiiDevToolApplication extends Application
 {
     private ?string $rootDir = null;
     private string $configFile = 'devtool.php';
+    private ?Config $config = null;
 
     private string $header = <<<HEADER
     <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
@@ -94,7 +95,16 @@ final class YiiDevToolApplication extends Application
 
     public function getConfig(): Config
     {
-        return new Config($this->getRootDir(), $this->getConfigFile());
+        if ($this->config === null){
+            try {
+                $this->config =  new Config($this->getRootDir(), $this->getConfigFile());
+            } catch (RuntimeException $e) {
+                echo "\033[31;1m{$e->getMessage()}\033[39;22m";
+                exit(1);
+            }
+        }
+
+        return $this->config;
     }
 
     protected function getDefaultCommands(): array

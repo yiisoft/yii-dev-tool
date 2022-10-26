@@ -52,19 +52,11 @@ final class WhatCommand extends Command
 
     private function initPackageList(): void
     {
-        $io = $this->getIO();
-
-        try {
-            $this->packageList = new PackageList(
-                $this
-                    ->getApplication()
-                    ->getConfig()
-            );
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
-
-            exit(1);
-        }
+        $this->packageList = new PackageList(
+            $this
+                ->getApplication()
+                ->getConfig()
+        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)

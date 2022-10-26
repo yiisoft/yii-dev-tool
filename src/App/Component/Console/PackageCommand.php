@@ -112,15 +112,8 @@ class PackageCommand extends Command
 
     private function initPackageList(): void
     {
-        try {
-            $this->packageList = new PackageList($this->getConfig());
-
-            $this->errorList = new PackageErrorList();
-        } catch (InvalidArgumentException $e) {
-            $this->io->error($e->getMessage());
-
-            exit(1);
-        }
+        $this->packageList = new PackageList($this->getConfig());
+        $this->errorList = new PackageErrorList();
     }
 
     private function initTargetPackages(InputInterface $input): void
