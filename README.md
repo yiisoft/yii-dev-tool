@@ -235,6 +235,7 @@ Remember that **yii-dev-tool** contains many other commands:
 
 | Command                   | Aliases   | Description                                                                  |
 |---------------------------|-----------|------------------------------------------------------------------------------|
+| changelog/add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
 | exec                      | e         | Executes the specified console command in each package.                      |
 | composer/update           | cu        | Update composer dependencies in packages.                                    |
 | git/checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
