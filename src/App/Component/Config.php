@@ -14,19 +14,19 @@ class Config
         $this->appRootDir = $applicationRootDir;
         if (!file_exists($this->appRootDir) && !is_dir($this->appRootDir)) {
             throw new RuntimeException(
-                'The root directory does not exist.',
+                'Config Error: The root directory does not exist.',
             );
         }
         if (!file_exists($this->appRootDir . $configFile)) {
             throw new RuntimeException(
-                'DevTool tool settings file does not exist.',
+                'Config Error: DevTool tool config file does not exist.',
             );
         }
         $config = require $this->appRootDir . $configFile;
 
         if (!is_array($config)) {
             throw new RuntimeException(
-                'Configuration data must be an array.',
+                'Config Error: Configuration data must be an array.',
             );
         }
         $this->config = $config;
