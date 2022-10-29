@@ -32,6 +32,7 @@ final class AddCommand extends Command
             Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             DESCRIPTION
         )
+        ->addOption('owner', null, InputOption::VALUE_REQUIRED, 'Packages Owner')
         ->addOption('all', 'a', InputOption::VALUE_NONE, 'Add all packages')
         ->addOption('perPage', null, InputOption::VALUE_REQUIRED, 'Number of requested repositories. Default 30 (мax: 100) ')
         ->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page number of the requested repositories list');
@@ -47,10 +48,16 @@ final class AddCommand extends Command
         $allPackages = $input->getOption('all');
         $addPackages = [];
         if ($allPackages) {
-            $perPage = $input->getOption('perPage');
-            $page = $input->getOption('page');
+            $owner = $input->getOption('owner');
+            $perPage = (int)$input->getOption('perPage');
+            $page = (int)$input->getOption('page');
 
-            $repositories = $this->getRepositories($page ?? 1, $perPage ?? 30);
+            $repositories = $this
+                ->getRepositories(
+                    $owner ?? $this->getOwner(),
+                    $page ?? 1,
+                    $perPage ?? 30
+                );
             if (empty($repositories)) {
                 $io->error('Repository list empty.');
 
@@ -84,23 +91,7 @@ final class AddCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function getToken(): string
-    {
-        return $this
-            ->getApplication()
-            ->getConfig()
-            ->getApiToken();
-    }
-
-    private function getOwner(): string
-    {
-        return $this
-            ->getApplication()
-            ->getConfig()
-            ->getOwner();
-    }
-
-    private function getRepositories($page = 1, $perPage = 30): array
+    private function getRepositories(string $owner, int $page = 1, int $perPage = 30): array
     {
         $client = new Client();
         $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
@@ -124,9 +115,25 @@ final class AddCommand extends Command
         };
 
         return $user->userRepositories(
-            $this->getOwner(),
-            $perPage,
-            $page
+            $owner,
+            perPage: $perPage,
+            page: $page
         );
+    }
+
+    private function getToken(): string
+    {
+        return $this
+            ->getApplication()
+            ->getConfig()
+            ->getApiToken();
+    }
+
+    private function getOwner(): string
+    {
+        return $this
+            ->getApplication()
+            ->getConfig()
+            ->getOwner();
     }
 }
