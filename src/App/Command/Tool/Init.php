@@ -76,7 +76,8 @@ class Init extends Command
         }
 
         $packagesArray = [];
-        foreach (explode(',', $packages) as $value) {
+        $packages = $packages ? explode(',', $packages) : [];
+        foreach ($packages as $value) {
             $packagesArray[$value] = true;
         }
         ksort($packagesArray);
@@ -102,11 +103,11 @@ class Init extends Command
 
             if ($helper->ask($this->input, $this->output, $question)) {
                 $errorCreateDirectory = '';
-                if (!mkdir($configDir, 0750) && !is_dir($configDir)) {
+                if (!mkdir($configDir) && !is_dir($configDir)) {
                     $errorCreateDirectory .= sprintf('Directory "%s" was not created\n', $configDir);
                 }
 
-                if (!mkdir($packagesDir, 0750) && !is_dir($packagesDir)) {
+                if (!mkdir($packagesDir) && !is_dir($packagesDir)) {
                     $errorCreateDirectory .= sprintf('Directory "%s" was not created\n', $packagesDir);
                 }
                 if ($errorCreateDirectory !== '') {
