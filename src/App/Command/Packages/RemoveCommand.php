@@ -36,21 +36,25 @@ final class RemoveCommand extends Command
 
         $configs = require $this->getApplication()->getConfigFile();
         if (empty($configs['packages'])) {
-            $io->error('There is no list of packages in the configs, or it is empty.');
+            $io->error('List of packages in configs is empty.');
             return Command::FAILURE;
         }
         $packages = $configs['packages'];
 
         $commaSeparatedPackageIds = $input->getArgument('packages');
         if ($commaSeparatedPackageIds === null) {
-            $io->error('Please, specify packages separated by commas or use flag "--all".');
+            $io->error('Please, specify packages separated by commas.');
             return Command::FAILURE;
         }
-        $removePackages = array_unique(explode(',', $commaSeparatedPackageIds));
+        $removePackagesIds = array_unique(explode(',', $commaSeparatedPackageIds));
 
-        foreach ($removePackages as $package) {
+        $removePackages = [];
+        foreach ($removePackagesIds as $package) {
             if (isset($packages[$package])){
+                $removePackages[] = $package;
                 unset($packages[$package]);
+            } else {
+                $io->error("Package `$package` is not in the list of packages in the config.");
             }
         }
         ksort($packages);
@@ -59,7 +63,10 @@ final class RemoveCommand extends Command
         $exportArray = VarDumper::create($configs)->export();
         file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
 
-        $io->success('Packages removed: ' . implode(', ', $removePackages));
+        if (!empty($removePackages)) {
+            $io->success('Packages removed: ' . implode(', ', $removePackages));
+        }
+
         return Command::SUCCESS;
     }
 }

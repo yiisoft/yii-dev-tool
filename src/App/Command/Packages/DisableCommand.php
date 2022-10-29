@@ -39,7 +39,7 @@ final class DisableCommand extends Command
 
         $configs = require $this->getApplication()->getConfigFile();
         if (empty($configs['packages'])) {
-            $io->error('There is no list of packages in the configs, or it is empty.');
+            $io->error('List of packages in configs is empty.');
             return Command::FAILURE;
         }
         $packages = $configs['packages'];
