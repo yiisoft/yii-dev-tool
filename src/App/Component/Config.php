@@ -7,11 +7,9 @@ use RuntimeException;
 class Config
 {
     private array $config;
-    private string $appRootDir;
 
-    public function __construct(string $applicationRootDir, string $configFile)
+    public function __construct(private string $appRootDir, string $configFile)
     {
-        $this->appRootDir = $applicationRootDir;
         if (!file_exists($this->appRootDir) && !is_dir($this->appRootDir)) {
             throw new RuntimeException(
                 'Config Error: The root directory does not exist.',

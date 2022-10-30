@@ -13,7 +13,6 @@ use RuntimeException;
 class Package
 {
     private static ?GitWrapper $gitWrapper = null;
-    private string $id;
     private ?string $configuredRepositoryUrl = null;
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
@@ -29,10 +28,8 @@ class Package
         return static::$gitWrapper;
     }
 
-    public function __construct(string $id, bool|string $config, private string $owner, string $packagesRootDir, string $gitRepository)
+    public function __construct(private string $id, bool|string $config, private string $owner, string $packagesRootDir, string $gitRepository)
     {
-        $this->id = $id;
-
         if ($config === false) {
             $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {

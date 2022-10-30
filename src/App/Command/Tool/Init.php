@@ -201,9 +201,7 @@ class Init extends Command
         $this->askQuestion(
             'Specify a list of Packages',
             'packages',
-            static function ($value) use ($packages) {
-                return $value ?? $packages;
-            }
+            static fn($value) => $value ?? $packages
         );
 
         return Command::SUCCESS;
