@@ -37,6 +37,10 @@ final class EnableCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
+        if (!file_exists($this->getApplication()->getConfigFile())) {
+            $io->error('The config file does not exist. Initialize the dev tool.');
+            exit(1);
+        }
         $configs = require $this->getApplication()->getConfigFile();
         if (empty($configs['packages'])) {
             $io->error('There is no list of packages in the configs, or it is empty.');

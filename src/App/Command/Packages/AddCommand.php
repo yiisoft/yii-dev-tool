@@ -47,6 +47,10 @@ final class AddCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
+        if (!file_exists($this->getApplication()->getConfigFile())) {
+            $io->error('The config file does not exist. Initialize the dev tool.');
+            exit(1);
+        }
         $configs = require $this->getApplication()->getConfigFile();
         $packages = $configs['packages'];
 

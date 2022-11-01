@@ -34,6 +34,10 @@ final class RemoveCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
+        if (!file_exists($this->getApplication()->getConfigFile())) {
+            $io->error('The config file does not exist. Initialize the dev tool.');
+            exit(1);
+        }
         $configs = require $this->getApplication()->getConfigFile();
         if (empty($configs['packages'])) {
             $io->error('List of packages in configs is empty.');
