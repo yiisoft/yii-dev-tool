@@ -22,8 +22,7 @@ final class CommitCommand extends PackageCommand
     {
         $this
             ->setAliases(['commit'])
-            ->addArgument('message', InputArgument::REQUIRED, 'Commit message')
-        ;
+            ->addArgument('message', InputArgument::REQUIRED, 'Commit message');
 
         parent::configure();
     }

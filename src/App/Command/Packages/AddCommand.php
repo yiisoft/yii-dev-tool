@@ -16,7 +16,7 @@ use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication()  **/
+/** @method YiiDevToolApplication getApplication() */
 final class AddCommand extends Command
 {
     protected function configure()
@@ -26,16 +26,21 @@ final class AddCommand extends Command
             ->setAliases(['add'])
             ->setDescription('Add packages')
             ->addArgument(
-            'packages',
-            InputArgument::OPTIONAL,
-            <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
-            DESCRIPTION
-        )
-        ->addOption('owner', null, InputOption::VALUE_REQUIRED, 'Packages Owner')
-        ->addOption('all', 'a', InputOption::VALUE_NONE, 'Add all packages')
-        ->addOption('perPage', null, InputOption::VALUE_REQUIRED, 'Number of requested repositories. Default 30 (мax: 100) ')
-        ->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page number of the requested repositories list');
+                'packages',
+                InputArgument::OPTIONAL,
+                <<<DESCRIPTION
+                Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
+                DESCRIPTION
+            )
+            ->addOption('owner', null, InputOption::VALUE_REQUIRED, 'Packages Owner')
+            ->addOption('all', 'a', InputOption::VALUE_NONE, 'Add all packages')
+            ->addOption(
+                'perPage',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Number of requested repositories. Default 30 (мax: 100) '
+            )
+            ->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page number of the requested repositories list');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -95,7 +100,7 @@ final class AddCommand extends Command
     {
         $client = new Client();
         $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
-        $user =  new class ($client) extends User {
+        $user = new class ($client) extends User {
             public function userRepositories(
                 string $username,
                 string $type = 'owner',
@@ -104,7 +109,7 @@ final class AddCommand extends Command
                 int $perPage = 30,
                 int $page = 1
             ) {
-                return $this->get('/users/'.rawurlencode($username).'/repos', [
+                return $this->get('/users/' . rawurlencode($username) . '/repos', [
                     'type' => $type,
                     'sort' => $sort,
                     'direction' => $direction,

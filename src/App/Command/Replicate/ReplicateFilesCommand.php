@@ -22,29 +22,11 @@ final class ReplicateFilesCommand extends PackageCommand
         $this
             ->setName('replicate/files')
             ->addOption('sets', null, InputOption::VALUE_IS_ARRAY | InputOption::VALUE_REQUIRED, 'Sets to replicate')
-            ->setDescription('Copy files specified in <fg=blue;options=bold>`config-dir`/replicate/files.php</> into each package');
+            ->setDescription(
+                'Copy files specified in <fg=blue;options=bold>`config-dir`/replicate/files.php</> into each package'
+            );
 
         parent::configure();
-    }
-
-    private function getReplicationSet(string $name): ?ReplicationSet
-    {
-        if ($this->replicationConfig === null) {
-            $this->replicationConfig = require $this->getConfig()->getConfigDir() . 'replicate/files.php';
-        }
-
-        if (!array_key_exists($name, $this->replicationConfig)) {
-            return null;
-        }
-
-        $setConfig = $this->replicationConfig[$name];
-
-        return new ReplicationSet(
-            $setConfig['source'],
-            $setConfig['files'],
-            $setConfig['packages']['include'],
-            $setConfig['packages']['exclude'],
-        );
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
@@ -58,47 +40,6 @@ final class ReplicateFilesCommand extends PackageCommand
     protected function getMessageWhenNothingHasBeenOutput(): ?string
     {
         return '<success>✔ Done</success>';
-    }
-
-    private function checkReplicationSet(string $set): void
-    {
-        $replicationSet = $this->getReplicationSet($set);
-
-        $io = $this->getIO();
-
-        if ($replicationSet === null) {
-            $io->error("There is no \"$set\" replication set.");
-
-            exit(1);
-        }
-
-        $packageList = $this->getPackageList();
-        $replicationSourcePackageId = $replicationSet->getSourcePackage();
-
-        if (!$packageList->hasPackage($replicationSourcePackageId)) {
-            $io->error([
-                "Package <package>$replicationSourcePackageId</package> is configured as replication source.",
-                'But such a package is not declared in packages configuration.',
-                'Replication aborted.',
-            ]);
-
-            exit(1);
-        }
-
-        $replicationSourcePackage = $packageList->getPackage($replicationSourcePackageId);
-        if (!$replicationSourcePackage->isGitRepositoryCloned()) {
-            $io->error([
-                "Package <package>$replicationSourcePackageId</package> is configured as replication source.",
-                'But such a package is not installed.',
-                'To fix, run the following command:',
-                '',
-                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install $replicationSourcePackageId</cmd>",
-                '',
-                'Replication aborted.',
-            ]);
-
-            exit(1);
-        }
     }
 
     protected function processPackage(Package $package): void
@@ -156,5 +97,66 @@ final class ReplicateFilesCommand extends PackageCommand
         }
 
         $io->done();
+    }
+
+    private function checkReplicationSet(string $set): void
+    {
+        $replicationSet = $this->getReplicationSet($set);
+
+        $io = $this->getIO();
+
+        if ($replicationSet === null) {
+            $io->error("There is no \"$set\" replication set.");
+
+            exit(1);
+        }
+
+        $packageList = $this->getPackageList();
+        $replicationSourcePackageId = $replicationSet->getSourcePackage();
+
+        if (!$packageList->hasPackage($replicationSourcePackageId)) {
+            $io->error([
+                "Package <package>$replicationSourcePackageId</package> is configured as replication source.",
+                'But such a package is not declared in packages configuration.',
+                'Replication aborted.',
+            ]);
+
+            exit(1);
+        }
+
+        $replicationSourcePackage = $packageList->getPackage($replicationSourcePackageId);
+        if (!$replicationSourcePackage->isGitRepositoryCloned()) {
+            $io->error([
+                "Package <package>$replicationSourcePackageId</package> is configured as replication source.",
+                'But such a package is not installed.',
+                'To fix, run the following command:',
+                '',
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install $replicationSourcePackageId</cmd>",
+                '',
+                'Replication aborted.',
+            ]);
+
+            exit(1);
+        }
+    }
+
+    private function getReplicationSet(string $name): ?ReplicationSet
+    {
+        if ($this->replicationConfig === null) {
+            $this->replicationConfig = require $this->getConfig()->getConfigDir() . 'replicate/files.php';
+        }
+
+        if (!array_key_exists($name, $this->replicationConfig)) {
+            return null;
+        }
+
+        $setConfig = $this->replicationConfig[$name];
+
+        return new ReplicationSet(
+            $setConfig['source'],
+            $setConfig['files'],
+            $setConfig['packages']['include'],
+            $setConfig['packages']['exclude'],
+        );
     }
 }

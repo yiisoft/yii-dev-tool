@@ -65,11 +65,18 @@ final class YiiDevToolApplication extends Application
         $this->setDefaultCommand('list-commands');
     }
 
-    public function setRootDir(string $path): self
+    public function getConfig(): Config
     {
-        $this->rootDir = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        if ($this->config === null) {
+            try {
+                $this->config = new Config($this->getRootDir(), $this->getConfigFile());
+            } catch (RuntimeException $e) {
+                echo "\033[31;1m{$e->getMessage()}\033[39;22m";
+                exit(1);
+            }
+        }
 
-        return $this;
+        return $this->config;
     }
 
     public function getRootDir(): string
@@ -81,9 +88,9 @@ final class YiiDevToolApplication extends Application
         return $this->rootDir;
     }
 
-    public function setConfigFile(string $configFile): self
+    public function setRootDir(string $path): self
     {
-        $this->configFile = ltrim($configFile, DIRECTORY_SEPARATOR);
+        $this->rootDir = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
         return $this;
     }
@@ -93,18 +100,11 @@ final class YiiDevToolApplication extends Application
         return $this->configFile;
     }
 
-    public function getConfig(): Config
+    public function setConfigFile(string $configFile): self
     {
-        if ($this->config === null){
-            try {
-                $this->config =  new Config($this->getRootDir(), $this->getConfigFile());
-            } catch (RuntimeException $e) {
-                echo "\033[31;1m{$e->getMessage()}\033[39;22m";
-                exit(1);
-            }
-        }
+        $this->configFile = ltrim($configFile, DIRECTORY_SEPARATOR);
 
-        return $this->config;
+        return $this;
     }
 
     protected function getDefaultCommands(): array

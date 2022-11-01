@@ -8,23 +8,24 @@ use Github\Api\Repository\Releases;
 use Github\AuthMethod;
 use Github\Client;
 use RuntimeException;
-use Symplify\GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symplify\GitWrapper\GitWorkingCopy;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
+
 use function in_array;
 
 final class MakeCommand extends PackageCommand
 {
-    private ?string $tag = null;
-
     private const MAIN_BRANCHES = ['master', 'main'];
+
+    private ?string $tag = null;
 
     protected function configure()
     {
@@ -131,7 +132,9 @@ final class MakeCommand extends PackageCommand
                 if (!$this->confirm("You are going to release from \"$currentBranch\" branch. OK?")) {
                     return;
                 }
-            } elseif ($this->confirm("You are going to release from \"$currentBranch\" branch. Want to switch to \"$mainBranch\"?")) {
+            } elseif ($this->confirm(
+                "You are going to release from \"$currentBranch\" branch. Want to switch to \"$mainBranch\"?"
+            )) {
                 $git->checkout($mainBranch);
             }
         }
@@ -157,8 +160,8 @@ final class MakeCommand extends PackageCommand
 
         $io->info("Adding a tag for $versionToRelease.");
         $git->tag([
-            's' => (string) $versionToRelease,
-            'm' => (string) $versionToRelease,
+            's' => (string)$versionToRelease,
+            'm' => (string)$versionToRelease,
         ]);
 
         $nextVersion = $versionToRelease->getNext(Version::TYPE_PATCH);
@@ -180,31 +183,11 @@ final class MakeCommand extends PackageCommand
             $io->done();
 
             $io->info('The following steps are left to do manually:');
-            $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
+            $io->info(
+                "- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion."
+            );
             $io->info('- Release news and announcement.');
         }
-    }
-
-    private function confirm(string $message): bool
-    {
-        return $this
-            ->getIO()
-            ->confirm($message, false);
-    }
-
-    private function getCurrentBranch(GitWorkingCopy $git): string
-    {
-        return trim($git->branch(['show-current' => true]));
-    }
-
-    private function getMainBranch(GitWorkingCopy $git): ?string
-    {
-        foreach ($git->getBranches() as $branch) {
-            if (in_array($branch, self::MAIN_BRANCHES, true)) {
-                return $branch;
-            }
-        }
-        return null;
     }
 
     private function getCurrentVersion(GitWorkingCopy $git): Version
@@ -227,6 +210,28 @@ final class MakeCommand extends PackageCommand
             $nextVersion = new Version($this->tag);
         }
         return $nextVersion;
+    }
+
+    private function confirm(string $message): bool
+    {
+        return $this
+            ->getIO()
+            ->confirm($message, false);
+    }
+
+    private function getCurrentBranch(GitWorkingCopy $git): string
+    {
+        return trim($git->branch(['show-current' => true]));
+    }
+
+    private function getMainBranch(GitWorkingCopy $git): ?string
+    {
+        foreach ($git->getBranches() as $branch) {
+            if (in_array($branch, self::MAIN_BRANCHES, true)) {
+                return $branch;
+            }
+        }
+        return null;
     }
 
     private function releaseOnGithub(Package $package, Version $versionToRelease): void

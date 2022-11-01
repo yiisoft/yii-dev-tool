@@ -39,6 +39,11 @@ final class SettingsCommand extends PackageCommand
         $repoApi->update($package->getVendor(), $package->getId(), $this->getSettings());
     }
 
+    private function getToken(): string
+    {
+        return $this->getConfig()->getApiToken();
+    }
+
     private function getSettings(): array
     {
         $settingsFile = $this->getConfig()->getConfigDir() . 'settings.php';
@@ -46,10 +51,5 @@ final class SettingsCommand extends PackageCommand
             throw new RuntimeException("There's no file settings.php in config directory");
         }
         return require $settingsFile;
-    }
-
-    private function getToken(): string
-    {
-        return $this->getConfig()->getApiToken();
     }
 }

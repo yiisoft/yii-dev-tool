@@ -28,17 +28,16 @@ final class RequestPullCommand extends PackageCommand
             ->setAliases(['pr'])
             ->addArgument('title', InputArgument::REQUIRED, 'Title of a pull request.')
             ->addOption('body', 'b', InputOption::VALUE_REQUIRED, 'Description of a pull request.')
-            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make a non-draft pull request.')
-        ;
+            ->addOption('no-draft', null, InputOption::VALUE_NONE, 'Make a non-draft pull request.');
 
         parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->title = trim((string) $input->getArgument('title'));
-        $this->body = trim((string) $input->getOption('body'));
-        $this->isDraft = !(bool) $input->getOption('no-draft');
+        $this->title = trim((string)$input->getArgument('title'));
+        $this->body = trim((string)$input->getOption('body'));
+        $this->isDraft = !(bool)$input->getOption('no-draft');
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

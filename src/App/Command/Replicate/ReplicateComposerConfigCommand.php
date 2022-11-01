@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Replicate;
 
+use Throwable;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
@@ -15,8 +16,9 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     {
         $this
             ->setName('replicate/composer-config')
-            ->setDescription('Merge <fg=blue;options=bold>`config-dir`/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
-        ;
+            ->setDescription(
+                'Merge <fg=blue;options=bold>`config-dir`/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package'
+            );
 
         parent::configure();
     }
@@ -29,7 +31,10 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     protected function processPackage(Package $package): void
     {
         $io = $this->getIO();
-        $io->preparePackageHeader($package, 'Merging <file>`config-dir`/replicate/composer.json</file> to package {package}');
+        $io->preparePackageHeader(
+            $package,
+            'Merging <file>`config-dir`/replicate/composer.json</file> to package {package}'
+        );
 
         $targetPath = "{$package->getPath()}/composer.json";
         if (!file_exists($targetPath)) {
@@ -48,7 +53,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
                 ComposerConfig::createByFilePath($targetPath),
                 ComposerConfig::createByFilePath($this->getConfig()->getConfigDir() . 'replicate/composer.json'),
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $io->error([
                 "An error occurred while working on package \"{$package->getId()}\"",
                 $e->getMessage(),

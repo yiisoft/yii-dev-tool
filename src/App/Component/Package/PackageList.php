@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use Yiisoft\YiiDevTool\App\Component\Config;
+
 use function array_key_exists;
 
 class PackageList
@@ -24,7 +25,13 @@ class PackageList
         $packagesRootDir = $config->getPackagesRootDir();
         $gitRepository = $config->getGitRepository();
         foreach ($config->getPackages() as $packageId => $packageConfig) {
-            $this->list[$packageId] = new Package($packageId, $packageConfig, $ownerPackages, $packagesRootDir, $gitRepository);
+            $this->list[$packageId] = new Package(
+                $packageId,
+                $packageConfig,
+                $ownerPackages,
+                $packagesRootDir,
+                $gitRepository
+            );
         }
     }
 
@@ -36,14 +43,29 @@ class PackageList
         return $this->list;
     }
 
+    public function getPackage(string $packageId): ?Package
+    {
+        return $this->hasPackage($packageId) ? $this->list[$packageId] : null;
+    }
+
     public function hasPackage(string $packageId): bool
     {
         return array_key_exists($packageId, $this->list);
     }
 
-    public function getPackage(string $packageId): ?Package
+    /**
+     * @return Package[]
+     */
+    public function getInstalledAndEnabledPackages(): array
     {
-        return $this->hasPackage($packageId) ? $this->list[$packageId] : null;
+        if ($this->installedAndEnabledList === null) {
+            $this->installedAndEnabledList = array_filter(
+                $this->getInstalledPackages(),
+                static fn (Package $package) => $package->enabled(),
+            );
+        }
+
+        return $this->installedAndEnabledList;
     }
 
     /**
@@ -62,21 +84,6 @@ class PackageList
         }
 
         return $this->installedList;
-    }
-
-    /**
-     * @return Package[]
-     */
-    public function getInstalledAndEnabledPackages(): array
-    {
-        if ($this->installedAndEnabledList === null) {
-            $this->installedAndEnabledList = array_filter(
-                $this->getInstalledPackages(),
-                static fn (Package $package) => $package->enabled(),
-            );
-        }
-
-        return $this->installedAndEnabledList;
     }
 
     /**

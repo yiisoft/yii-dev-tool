@@ -25,7 +25,7 @@ $finder = new Finder();
 $finder->files()
     ->ignoreVCS(true)
     ->name('*.php')
-    ->in(__DIR__.'/../src')
+    ->in(__DIR__ . '/../src')
     ->sort($finderSort);
 
 foreach ($finder as $file) {
@@ -36,7 +36,9 @@ foreach ($finder as $file) {
 $finder = new Finder();
 $finder->files()
     ->ignoreVCS(true)
-    ->notPath('/\/(composer\.(json|lock)|[A-Z]+\.md(?:own)?|\.gitignore|appveyor.yml|phpunit\.xml\.dist|phpstan\.neon\.dist|phpstan-config\.neon|phpstan-baseline\.neon)$/')
+    ->notPath(
+        '/\/(composer\.(json|lock)|[A-Z]+\.md(?:own)?|\.gitignore|appveyor.yml|phpunit\.xml\.dist|phpstan\.neon\.dist|phpstan-config\.neon|phpstan-baseline\.neon)$/'
+    )
     ->notPath('/bin\/(jsonlint|validate-json|simple-phpunit|phpstan|phpstan\.phar)(\.bat)?$/')
     ->notPath('composer/installed.json')
     ->notPath('composer/LICENSE')
@@ -47,15 +49,14 @@ $finder->files()
     ->exclude('Tests')
     ->exclude('tests')
     ->exclude('docs')
-    ->in(__DIR__.'/../vendor/')
-    ->sort($finderSort)
-;
+    ->in(__DIR__ . '/../vendor/')
+    ->sort($finderSort);
 
 foreach ($finder as $file) {
     $phar->addFromString(getRelativeFilePath($file), $file->getContents());
 }
 
-$content = file_get_contents(__DIR__.'/dev-tool');
+$content = file_get_contents(__DIR__ . '/dev-tool');
 $content = str_replace('{^#!/usr/bin/env php\s*}', '', $content);
 $phar->addFromString('bin/dev-tool', $content);
 
@@ -92,7 +93,7 @@ unset($phar);
 function getRelativeFilePath(SplFileInfo $file): string
 {
     $realPath = $file->getRealPath();
-    $pathPrefix = dirname(__DIR__).DIRECTORY_SEPARATOR;
+    $pathPrefix = dirname(__DIR__) . DIRECTORY_SEPARATOR;
 
     $pos = strpos($realPath, $pathPrefix);
     $relativePath = ($pos !== false) ? substr_replace($realPath, '', $pos, strlen($pathPrefix)) : $realPath;

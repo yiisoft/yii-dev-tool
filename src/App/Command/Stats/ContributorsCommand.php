@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication() **/
+/** @method YiiDevToolApplication getApplication() */
 final class ContributorsCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -44,15 +44,6 @@ final class ContributorsCommand extends Command
         return $this->io;
     }
 
-    private function initPackageList(): void
-    {
-        $this->packageList = new PackageList(
-            $this
-                ->getApplication()
-                ->getConfig()
-        );
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $since = $input->getOption('since');
@@ -73,7 +64,10 @@ final class ContributorsCommand extends Command
             $git = $installedPackage
                 ->getGitWorkingCopy()
                 ->getWrapper();
-            $out = $git->git("shortlog -s -e --group=author --group=trailer:co-authored-by$sinceCommand HEAD", $installedPackage->getPath());
+            $out = $git->git(
+                "shortlog -s -e --group=author --group=trailer:co-authored-by$sinceCommand HEAD",
+                $installedPackage->getPath()
+            );
             foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
                 [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
 
@@ -92,6 +86,15 @@ final class ContributorsCommand extends Command
         }
 
         return Command::SUCCESS;
+    }
+
+    private function initPackageList(): void
+    {
+        $this->packageList = new PackageList(
+            $this
+                ->getApplication()
+                ->getConfig()
+        );
     }
 
     private function getPackageList(): PackageList

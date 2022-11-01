@@ -13,7 +13,7 @@ use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication()**/
+/** @method YiiDevToolApplication getApplication() */
 final class EnableCommand extends Command
 {
     protected function configure()

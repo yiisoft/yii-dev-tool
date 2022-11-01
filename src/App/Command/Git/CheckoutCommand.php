@@ -21,15 +21,14 @@ final class CheckoutCommand extends PackageCommand
     {
         $this
             ->setAliases(['checkout'])
-            ->addArgument('branch', InputArgument::REQUIRED, 'Branch name')
-        ;
+            ->addArgument('branch', InputArgument::REQUIRED, 'Branch name');
 
         parent::configure();
     }
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->branch = (string) $input->getArgument('branch');
+        $this->branch = (string)$input->getArgument('branch');
     }
 
     protected function getMessageWhenNothingHasBeenOutput(): ?string

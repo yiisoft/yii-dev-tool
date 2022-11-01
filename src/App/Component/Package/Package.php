@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
+use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Symplify\GitWrapper\GitWorkingCopy;
 use Symplify\GitWrapper\GitWrapper;
-use InvalidArgumentException;
-use RuntimeException;
 
 class Package
 {
@@ -17,19 +16,13 @@ class Package
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
 
-    private static function getGitWrapper(): GitWrapper
-    {
-        if (static::$gitWrapper === null) {
-            $finder = new ExecutableFinder();
-            $gitBinary = $finder->find('git');
-            static::$gitWrapper = new GitWrapper($gitBinary);
-        }
-
-        return static::$gitWrapper;
-    }
-
-    public function __construct(private string $id, bool|string $config, private string $owner, string $packagesRootDir, string $gitRepository)
-    {
+    public function __construct(
+        private string $id,
+        bool|string $config,
+        private string $owner,
+        string $packagesRootDir,
+        string $gitRepository
+    ) {
         if ($config === false) {
             $this->configuredRepositoryUrl = null;
         } elseif ($config === true) {
@@ -41,17 +34,16 @@ class Package
             $this->owner = $ownerMatches[1] ?? $owner;
             $this->configuredRepositoryUrl = "git@$gitRepository:$config.git";
         } else {
-            preg_match('#^(git@|https://)(github.com|gitlab.com|bitbucket.org)([:/])([a-z0-9-]+)/([a-z0-9_.-]+)(.git)$#i', $config, $ownerMatches);
+            preg_match(
+                '#^(git@|https://)(github.com|gitlab.com|bitbucket.org)([:/])([a-z0-9-]+)/([a-z0-9_.-]+)(.git)$#i',
+                $config,
+                $ownerMatches
+            );
             $this->owner = $ownerMatches[4] ?? $owner;
             $this->configuredRepositoryUrl = $config;
         }
 
         $this->path = rtrim($packagesRootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $id;
-    }
-
-    public function getId(): string
-    {
-        return $this->id;
     }
 
     public function getName(): string
@@ -64,6 +56,11 @@ class Package
         return $this->owner;
     }
 
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
     public function getConfiguredRepositoryUrl(): string
     {
         if ($this->configuredRepositoryUrl === null) {
@@ -73,14 +70,14 @@ class Package
         return $this->configuredRepositoryUrl;
     }
 
-    public function disabled(): bool
-    {
-        return $this->configuredRepositoryUrl === null;
-    }
-
     public function enabled(): bool
     {
         return !$this->disabled();
+    }
+
+    public function disabled(): bool
+    {
+        return $this->configuredRepositoryUrl === null;
     }
 
     public function getPath(): string
@@ -93,19 +90,14 @@ class Package
         return file_exists($this->path);
     }
 
-    public function getComposerConfigPath(): string
-    {
-        return "{$this->path}/composer.json";
-    }
-
     public function composerConfigFileExists(): bool
     {
         return file_exists($this->getComposerConfigPath());
     }
 
-    public function isGitRepositoryCloned(): bool
+    public function getComposerConfigPath(): string
     {
-        return file_exists("{$this->path}/.git");
+        return "{$this->path}/composer.json";
     }
 
     // TODO: Call all git commands through this interface
@@ -120,5 +112,21 @@ class Package
         }
 
         return $this->gitWorkingCopy;
+    }
+
+    public function isGitRepositoryCloned(): bool
+    {
+        return file_exists("{$this->path}/.git");
+    }
+
+    private static function getGitWrapper(): GitWrapper
+    {
+        if (static::$gitWrapper === null) {
+            $finder = new ExecutableFinder();
+            $gitBinary = $finder->find('git');
+            static::$gitWrapper = new GitWrapper($gitBinary);
+        }
+
+        return static::$gitWrapper;
     }
 }

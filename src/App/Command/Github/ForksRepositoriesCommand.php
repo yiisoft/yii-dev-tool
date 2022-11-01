@@ -17,7 +17,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication()  **/
+/** @method YiiDevToolApplication getApplication() */
 final class ForksRepositoriesCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -80,8 +80,8 @@ final class ForksRepositoriesCommand extends Command
     private function getToken(): string
     {
         return $this
-                ->getApplication()
-                ->getConfig()
-                ->getApiToken();
+            ->getApplication()
+            ->getConfig()
+            ->getApiToken();
     }
 }

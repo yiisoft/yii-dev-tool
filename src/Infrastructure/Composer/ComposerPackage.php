@@ -25,14 +25,11 @@ class ComposerPackage
         return $this->path;
     }
 
-    public function getComposerConfigPath(): string
+    public function isComposerPlugin(): bool
     {
-        return "{$this->path}/composer.json";
-    }
-
-    public function composerConfigFileExists(): bool
-    {
-        return file_exists($this->getComposerConfigPath());
+        return $this
+                ->getComposerConfig()
+                ->getSection('type') === 'composer-plugin';
     }
 
     public function getComposerConfig(): ComposerConfig
@@ -48,11 +45,14 @@ class ComposerPackage
         return $this->config;
     }
 
-    public function isComposerPlugin(): bool
+    public function composerConfigFileExists(): bool
     {
-        return $this
-                ->getComposerConfig()
-                ->getSection('type') === 'composer-plugin';
+        return file_exists($this->getComposerConfigPath());
+    }
+
+    public function getComposerConfigPath(): string
+    {
+        return "{$this->path}/composer.json";
     }
 
     public function getPSRNamespaces(): array
@@ -76,6 +76,11 @@ class ComposerPackage
             ->hasSection('bin');
     }
 
+    public function doesProvidePackage(string $packageName): bool
+    {
+        return array_key_exists($packageName, $this->getProvidedPackagesAsArray());
+    }
+
     public function getProvidedPackagesAsArray(): array
     {
         $provideSectionData = $this
@@ -83,10 +88,5 @@ class ComposerPackage
             ->getSection(ComposerConfig::SECTION_PROVIDE);
 
         return $provideSectionData ?? [];
-    }
-
-    public function doesProvidePackage(string $packageName): bool
-    {
-        return array_key_exists($packageName, $this->getProvidedPackagesAsArray());
     }
 }

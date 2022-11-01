@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Component;
 
 use RuntimeException;
@@ -57,21 +59,21 @@ class Config
             $configError .= "Config error: An invalid git repository domain name was specified for `git-repository` config.\n";
         }
 
-        if (!isset($this->config['api-token']) || !is_string($this->config['api-token'])){
+        if (!isset($this->config['api-token']) || !is_string($this->config['api-token'])) {
             $configError .= "Config error: `api-token` not specified to access git repository API. You can create a github.com token here: https://github.com/settings/tokens for other repositories, read the docs. Choose 'repo' rights.\n";
         }
 
         $configDir = 'config-dir';
         if (!isset($this->config[$configDir])) {
             $configError .= "Config error: The folder name for the `config-dir` config with working files was not specified.\n";
-        } else if (!file_exists($this->getConfigDir()) && !is_dir($this->getConfigDir())) {
+        } elseif (!file_exists($this->getConfigDir()) && !is_dir($this->getConfigDir())) {
             $configError .= "Config error: The specified folder for config `config-dir` does not exist.\n";
         }
 
         $packagesDir = 'packages-dir';
         if (!isset($this->config[$packagesDir])) {
             $configError .= "Config error: No folder name specified for config `packages-dir`\n";
-        } else if (!file_exists($this->getPackagesRootDir()) && !is_dir($this->getPackagesRootDir())) {
+        } elseif (!file_exists($this->getPackagesRootDir()) && !is_dir($this->getPackagesRootDir())) {
             $configError .= "Config error: The specified folder for config `packages-dir` does not exist.\n";
         }
 
@@ -81,6 +83,16 @@ class Config
         if (!empty($configError)) {
             throw new RuntimeException($configError);
         }
+    }
+
+    public function getConfigDir(): string
+    {
+        return $this->appRootDir . $this->config['config-dir'];
+    }
+
+    public function getPackagesRootDir(): string
+    {
+        return $this->appRootDir . $this->config['packages-dir'];
     }
 
     private function validatePackages(): string
@@ -99,7 +111,10 @@ class Config
                 is_bool($packageConfig)
                 || $packageConfig === 'https'
                 || preg_match('#^[a-z0-9][a-z0-9-]*[a-z0-9]/[a-z0-9_.-]+$#i', $packageConfig)
-                || preg_match('#^(git@|https://)(github.com|gitlab.com|bitbucket.org)([:/])([a-z0-9-]+)/([a-z0-9_.-]+)(.git)$#i', $packageConfig)
+                || preg_match(
+                    '#^(git@|https://)(github.com|gitlab.com|bitbucket.org)([:/])([a-z0-9-]+)/([a-z0-9_.-]+)(.git)$#i',
+                    $packageConfig
+                )
             ) {
                 continue;
             }
@@ -116,16 +131,6 @@ class Config
             throw new RuntimeException("There is no given `$configName` setting in the configuration.");
         }
         return $this->config[$configName];
-    }
-
-    public function getConfigDir(): string
-    {
-        return $this->appRootDir . $this->config['config-dir'];
-    }
-
-    public function getPackagesRootDir(): string
-    {
-        return $this->appRootDir . $this->config['packages-dir'];
     }
 
     public function getOwner(): string
@@ -147,5 +152,4 @@ class Config
     {
         return $this->config['packages'];
     }
-
 }

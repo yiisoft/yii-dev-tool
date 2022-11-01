@@ -17,7 +17,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication() **/
+/** @method YiiDevToolApplication getApplication() */
 class Init extends Command
 {
     private ?OutputManager $io = null;
@@ -32,8 +32,18 @@ class Init extends Command
             ->setDescription('Initiate the creation of a config file for the DevTool tool')
             ->setDefinition([
                 new InputOption('owner-packages', null, InputOption::VALUE_REQUIRED, 'Package owner nickname'),
-                new InputOption('git-repository', null, InputOption::VALUE_REQUIRED, 'The domain of the git repository'),
-                new InputOption('api-token', null, InputOption::VALUE_REQUIRED, 'Token for access to api git repository'),
+                new InputOption(
+                    'git-repository',
+                    null,
+                    InputOption::VALUE_REQUIRED,
+                    'The domain of the git repository'
+                ),
+                new InputOption(
+                    'api-token',
+                    null,
+                    InputOption::VALUE_REQUIRED,
+                    'Token for access to api git repository'
+                ),
                 new InputOption('config-dir', null, InputOption::VALUE_REQUIRED, 'Path to the configuration folder'),
                 new InputOption('packages-dir', null, InputOption::VALUE_REQUIRED, 'Path to the packages root folder'),
                 new InputOption('packages', null, InputOption::VALUE_REQUIRED, 'List packages'),
@@ -96,9 +106,14 @@ class Init extends Command
         $exportArray = VarDumper::create($devToolConfig)->export();
         file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
 
-        if ((!file_exists($configDir) && !is_dir($configDir)) && (!file_exists($packagesDir) && !is_dir($packagesDir))) {
+        if (
+            (!file_exists($configDir) && !is_dir($configDir))
+            && (!file_exists($packagesDir) && !is_dir($packagesDir))
+        ) {
             $helper = $this->getHelper('question');
-            $question = new ConfirmationQuestion("<question>Create directories for configs and root for packages?</question> [<comment>config-dir</comment>] [<comment>packages-dir</comment>]");
+            $question = new ConfirmationQuestion(
+                '<question>Create directories for configs and root for packages?</question> [<comment>config-dir</comment>] [<comment>packages-dir</comment>]'
+            );
             $question->setMaxAttempts(3);
 
             if ($helper->ask($this->input, $this->output, $question)) {
@@ -158,7 +173,9 @@ class Init extends Command
             static function ($value) use ($githubToken) {
                 if ($value === null) {
                     if ($githubToken === null) {
-                        throw new InvalidArgumentException('No specified api git repository token. You can create a github.com token here: https://github.com/settings/tokens for other repositories, read the docs. Choose \'repo\' rights.');
+                        throw new InvalidArgumentException(
+                            'No specified api git repository token. You can create a github.com token here: https://github.com/settings/tokens for other repositories, read the docs. Choose \'repo\' rights.'
+                        );
                     }
                     return $githubToken;
                 }
@@ -173,7 +190,9 @@ class Init extends Command
             static function ($value) use ($configDir) {
                 if ($value === null) {
                     if ($configDir === null) {
-                        throw new InvalidArgumentException('The configuration directory with working files no specified.');
+                        throw new InvalidArgumentException(
+                            'The configuration directory with working files no specified.'
+                        );
                     }
                     return $configDir;
                 }
@@ -201,7 +220,7 @@ class Init extends Command
         $this->askQuestion(
             'Specify a list of Packages',
             'packages',
-            static fn($value) => $value ?? $packages
+            static fn ($value) => $value ?? $packages
         );
 
         return Command::SUCCESS;

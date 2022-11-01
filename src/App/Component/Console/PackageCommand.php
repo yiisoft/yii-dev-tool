@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Console;
 
-use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
@@ -32,6 +31,77 @@ class PackageCommand extends Command
     /** @var Package[]|null */
     private ?array $targetPackages;
 
+    protected function configure()
+    {
+        $this->addArgument(
+            'packages',
+            InputArgument::OPTIONAL,
+            <<<DESCRIPTION
+            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
+            Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
+            If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
+            DESCRIPTION
+        );
+    }
+
+    protected function initialize(InputInterface $input, OutputInterface $output)
+    {
+        $this->config = $this->getApplication()->getConfig();
+        $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
+    }
+
+    protected function getConfig(): Config
+    {
+        return $this->config;
+    }
+
+    protected function getErrorsList(): PackageErrorList
+    {
+        return $this->errorList;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $this->initPackageList();
+        $this->initTargetPackages($input);
+
+        $io = $this->getIO();
+
+        $this->beforeProcessingPackages($input);
+        $packages = $this->getTargetPackages();
+        sort($packages);
+        foreach ($packages as $package) {
+            if ($this->isCurrentInstallationValid($package)) {
+                $this->processPackage($package);
+            }
+        }
+
+        $io->clearPreparedPackageHeader();
+        $this->afterProcessingPackages();
+
+        $this->showPackageErrors();
+
+        if ($io->nothingHasBeenOutput()) {
+            $message = $this->getMessageWhenNothingHasBeenOutput();
+            if ($message !== null) {
+                $io
+                    ->important()
+                    ->info($message);
+            }
+        }
+
+        return Command::SUCCESS;
+    }
+
+    protected function getIO(): OutputManager
+    {
+        if ($this->io === null) {
+            throw new RuntimeException('IO is not initialized.');
+        }
+
+        return $this->io;
+    }
+
     /**
      * Override this method in a subclass if you want to do something before processing the packages.
      * For example, check the input arguments.
@@ -40,6 +110,37 @@ class PackageCommand extends Command
      */
     protected function beforeProcessingPackages(InputInterface $input): void
     {
+    }
+
+    /**
+     * @return Package[]
+     */
+    protected function getTargetPackages(): array
+    {
+        if ($this->targetPackages === null) {
+            throw new RuntimeException('Target packages are not initialized.');
+        }
+
+        return $this->targetPackages;
+    }
+
+    /**
+     * @return string Console command prefix that works in current environment.
+     */
+    protected function getExampleCommandPrefix(): string
+    {
+        $shell = getenv('SHELL');
+        $isBash = ($shell && stripos($shell, 'bash')) !== false;
+        return $isBash ? './' : '';
+    }
+
+    protected function areTargetPackagesSpecifiedExplicitly(): bool
+    {
+        if ($this->targetPackagesSpecifiedExplicitly === null) {
+            throw new RuntimeException('Target packages are not initialized.');
+        }
+
+        return $this->targetPackagesSpecifiedExplicitly;
     }
 
     /**
@@ -72,42 +173,42 @@ class PackageCommand extends Command
         return null;
     }
 
-    protected function configure()
+    protected function getPackageList(): PackageList
     {
-        $this->addArgument(
-            'packages',
-            InputArgument::OPTIONAL,
-            <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
-            Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
-            If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
-            DESCRIPTION
-        );
+        return $this->packageList;
     }
 
-    protected function initialize(InputInterface $input, OutputInterface $output)
+    protected function registerPackageError(Package $package, string $message, string $during): void
     {
-        $this->config = $this->getApplication()->getConfig();
-        $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
+        $this->errorList->set($package, $message, $during);
     }
 
-    protected function getConfig(): Config
+    protected function doesPackageContainErrors(Package $package): bool
     {
-        return $this->config;
+        return $this->errorList->has($package);
     }
 
-    protected function getIO(): OutputManager
+    protected function checkSSHConnection(): bool
     {
-        if ($this->io === null) {
-            throw new RuntimeException('IO is not initialized.');
+        $process = new Process(['ssh', '-T', 'git@github.com']);
+        $process
+            ->setTimeout(null)
+            ->run();
+
+        if ($process->getExitCode() !== 1) {
+            $this
+                ->getIO()
+                ->error([
+                    'Checking access to github.com ... DENIED',
+                    'Error: ' . $process->getErrorOutput(),
+                    'Seems like you have not installed SSH key to you Github account.',
+                    'Key is required to work with repository via SSH.',
+                    'See here for instructions: https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account',
+                ]);
+            return false;
         }
 
-        return $this->io;
-    }
-
-    protected function getErrorsList(): PackageErrorList
-    {
-        return $this->errorList;
+        return true;
     }
 
     private function initPackageList(): void
@@ -139,13 +240,17 @@ class PackageCommand extends Command
             $package = $this->packageList->getPackage($targetPackageId);
 
             if ($package === null) {
-                $io->error("Package <package>$targetPackageId</package> not found in <file>{$this->getApplication()->getConfigFile()}</file>");
+                $io->error(
+                    "Package <package>$targetPackageId</package> not found in <file>{$this->getApplication()->getConfigFile()}</file>"
+                );
                 $problemsFound = true;
                 continue;
             }
 
             if ($package->disabled()) {
-                $io->error("Package <package>$targetPackageId</package> disabled in <file>{$this->getApplication()->getConfigFile()}</file>");
+                $io->error(
+                    "Package <package>$targetPackageId</package> disabled in <file>{$this->getApplication()->getConfigFile()}</file>"
+                );
                 $problemsFound = true;
                 continue;
             }
@@ -209,75 +314,6 @@ class PackageCommand extends Command
         return true;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $this->initPackageList();
-        $this->initTargetPackages($input);
-
-        $io = $this->getIO();
-
-        $this->beforeProcessingPackages($input);
-        $packages = $this->getTargetPackages();
-        sort($packages);
-        foreach ($packages as $package) {
-            if ($this->isCurrentInstallationValid($package)) {
-                $this->processPackage($package);
-            }
-        }
-
-        $io->clearPreparedPackageHeader();
-        $this->afterProcessingPackages();
-
-        $this->showPackageErrors();
-
-        if ($io->nothingHasBeenOutput()) {
-            $message = $this->getMessageWhenNothingHasBeenOutput();
-            if ($message !== null) {
-                $io
-                    ->important()
-                    ->info($message);
-            }
-        }
-
-        return Command::SUCCESS;
-    }
-
-    protected function getPackageList(): PackageList
-    {
-        return $this->packageList;
-    }
-
-    protected function areTargetPackagesSpecifiedExplicitly(): bool
-    {
-        if ($this->targetPackagesSpecifiedExplicitly === null) {
-            throw new RuntimeException('Target packages are not initialized.');
-        }
-
-        return $this->targetPackagesSpecifiedExplicitly;
-    }
-
-    /**
-     * @return Package[]
-     */
-    protected function getTargetPackages(): array
-    {
-        if ($this->targetPackages === null) {
-            throw new RuntimeException('Target packages are not initialized.');
-        }
-
-        return $this->targetPackages;
-    }
-
-    protected function registerPackageError(Package $package, string $message, string $during): void
-    {
-        $this->errorList->set($package, $message, $during);
-    }
-
-    protected function doesPackageContainErrors(Package $package): bool
-    {
-        return $this->errorList->has($package);
-    }
-
     private function showPackageErrors(): void
     {
         $io = $this->getIO();
@@ -304,38 +340,5 @@ class PackageCommand extends Command
                     ->info($packageError->getMessage());
             }
         }
-    }
-
-    /**
-     * @return string Console command prefix that works in current environment.
-     */
-    protected function getExampleCommandPrefix(): string
-    {
-        $shell = getenv('SHELL');
-        $isBash = ($shell && stripos($shell, 'bash')) !== false;
-        return $isBash ? './' : '';
-    }
-
-    protected function checkSSHConnection(): bool
-    {
-        $process = new Process(['ssh', '-T', 'git@github.com']);
-        $process
-            ->setTimeout(null)
-            ->run();
-
-        if ($process->getExitCode() !== 1) {
-            $this
-                ->getIO()
-                ->error([
-                    'Checking access to github.com ... DENIED',
-                    'Error: ' . $process->getErrorOutput(),
-                    'Seems like you have not installed SSH key to you Github account.',
-                    'Key is required to work with repository via SSH.',
-                    'See here for instructions: https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account',
-                ]);
-            return false;
-        }
-
-        return true;
     }
 }

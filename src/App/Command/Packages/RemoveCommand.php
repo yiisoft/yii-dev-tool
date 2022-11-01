@@ -12,7 +12,7 @@ use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
-/** @method YiiDevToolApplication getApplication()  **/
+/** @method YiiDevToolApplication getApplication() */
 final class RemoveCommand extends Command
 {
     protected function configure()
@@ -22,12 +22,12 @@ final class RemoveCommand extends Command
             ->setAliases(['remove'])
             ->setDescription('Remove packages')
             ->addArgument(
-            'packages',
-            InputArgument::OPTIONAL,
-            <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
-            DESCRIPTION
-        );
+                'packages',
+                InputArgument::OPTIONAL,
+                <<<DESCRIPTION
+                Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
+                DESCRIPTION
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -50,7 +50,7 @@ final class RemoveCommand extends Command
 
         $removePackages = [];
         foreach ($removePackagesIds as $package) {
-            if (isset($packages[$package])){
+            if (isset($packages[$package])) {
                 $removePackages[] = $package;
                 unset($packages[$package]);
             } else {

@@ -57,6 +57,18 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
         }
     }
 
+    private function getGithubApiRepository(): Repo
+    {
+        $client = new Client();
+        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
+        return new Repo($client);
+    }
+
+    private function getToken(): string
+    {
+        return $this->getConfig()->getApiToken();
+    }
+
     private function errorMessage($packageName, $message = ''): array
     {
         $error = $message ? "{$packageName}: {$message}" : $packageName;
@@ -64,17 +76,5 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
             "Error when syncing a repository $error ",
             'Check if the nickname of the owner and the name of the repository are correct',
         ];
-    }
-
-    private function getGithubApiRepository(): Repo
-    {
-        $client = new Client();
-        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
-        return (new Repo($client));
-    }
-
-    private function getToken(): string
-    {
-        return $this->getConfig()->getApiToken();
     }
 }

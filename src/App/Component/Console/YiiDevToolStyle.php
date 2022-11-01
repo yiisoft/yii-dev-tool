@@ -36,21 +36,6 @@ class YiiDevToolStyle extends SymfonyStyle
         return $this->hasColorSupport;
     }
 
-    protected function wrap($message, string $tag)
-    {
-        if (!is_array($message)) {
-            $message = [$message];
-        }
-
-        $count = count($message);
-        if ($count) {
-            $message[0] = "{$tag}{$message[0]}";
-            $message[$count-1] .= '</>';
-        }
-
-        return $message;
-    }
-
     public function error($message): void
     {
         $this->writeln($this->wrap($message, '<error>'));
@@ -63,15 +48,15 @@ class YiiDevToolStyle extends SymfonyStyle
         $this->newLine();
     }
 
+    public function done(): void
+    {
+        $this->success('✔ Done.');
+    }
+
     public function success($message): void
     {
         $this->writeln($this->wrap($message, '<success>'));
         $this->newLine();
-    }
-
-    public function done(): void
-    {
-        $this->success('✔ Done.');
     }
 
     public function header(string $message): void
@@ -81,5 +66,20 @@ class YiiDevToolStyle extends SymfonyStyle
         ]);
 
         $this->newLine();
+    }
+
+    protected function wrap($message, string $tag)
+    {
+        if (!is_array($message)) {
+            $message = [$message];
+        }
+
+        $count = count($message);
+        if ($count) {
+            $message[0] = "{$tag}{$message[0]}";
+            $message[$count - 1] .= '</>';
+        }
+
+        return $message;
     }
 }

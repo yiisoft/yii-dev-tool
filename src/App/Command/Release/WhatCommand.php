@@ -21,7 +21,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
 use function array_key_exists;
 
-/** @method YiiDevToolApplication getApplication()  **/
+/** @method YiiDevToolApplication getApplication() */
 final class WhatCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -39,24 +39,6 @@ final class WhatCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
-    }
-
-    protected function getIO(): OutputManager
-    {
-        if ($this->io === null) {
-            throw new RuntimeException('IO is not initialized.');
-        }
-
-        return $this->io;
-    }
-
-    private function initPackageList(): void
-    {
-        $this->packageList = new PackageList(
-            $this
-                ->getApplication()
-                ->getConfig()
-        );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -105,9 +87,13 @@ final class WhatCommand extends Command
                 }
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
-                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName($installedPackage->getName());
+                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName(
+                    $installedPackage->getName()
+                );
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
-                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName($dependencyName);
+                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName(
+                    $dependencyName
+                );
             }
         }
 
@@ -176,22 +162,42 @@ final class WhatCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function hasRelease(Package $package): bool
+    private function initPackageList(): void
     {
-        $gitWorkingCopy = $package->getGitWorkingCopy();
-        foreach ($gitWorkingCopy
-                     ->tags()
-                     ->all() as $tag) {
-            if ($tag !== '') {
-                return true;
-            }
+        $this->packageList = new PackageList(
+            $this
+                ->getApplication()
+                ->getConfig()
+        );
+    }
+
+    protected function getIO(): OutputManager
+    {
+        if ($this->io === null) {
+            throw new RuntimeException('IO is not initialized.');
         }
-        return false;
+
+        return $this->io;
     }
 
     private function getPackageList(): PackageList
     {
         return $this->packageList;
+    }
+
+    private function hasRelease(Package $package): bool
+    {
+        $gitWorkingCopy = $package->getGitWorkingCopy();
+        foreach (
+            $gitWorkingCopy
+                ->tags()
+                ->all() as $tag
+        ) {
+            if ($tag !== '') {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getDependencyNames(Package $package): array
