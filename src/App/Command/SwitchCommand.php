@@ -34,7 +34,7 @@ final class SwitchCommand extends Command
         $packages = require dirname(__DIR__, 3) . '/packages.php';
 
         $enablePackageIds = array_unique(explode(',', (string)$input->getArgument('packages')));
-        $enablePackageIds = array_filter($enablePackageIds, static fn($id) => !empty($id));
+        $enablePackageIds = array_filter($enablePackageIds, static fn ($id) => !empty($id));
         if (empty($enablePackageIds)) {
             $io->error('Please, specify packages separated by commas.');
             return Command::FAILURE;
