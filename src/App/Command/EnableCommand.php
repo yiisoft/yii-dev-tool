@@ -28,7 +28,6 @@ final class EnableCommand extends Command
             DESCRIPTION
         );
         $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Enable all packages');
-        $this->addOption('only', 'o', InputOption::VALUE_NONE, 'Disable all other packages');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
@@ -49,8 +48,6 @@ final class EnableCommand extends Command
             $enablePackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
         }
 
-        $disableOther = $input->getOption('only');
-
         $alreadyEnabledPackages = [];
         $enabledPackages = [];
         foreach ($enablePackageIds as $packageId) {
@@ -63,16 +60,6 @@ final class EnableCommand extends Command
             } else {
                 $packages[$packageId] = true;
                 $enabledPackages[] = $packageId;
-            }
-        }
-
-        $disabledPackages = [];
-        if ($disableOther) {
-            foreach ($packages as $packageId => $enabled) {
-                if ($enabled && !in_array($packageId, $enablePackageIds, true)) {
-                    $packages[$packageId] = false;
-                    $disabledPackages[] = $packageId;
-                }
             }
         }
 
@@ -95,9 +82,6 @@ final class EnableCommand extends Command
         }
         if (!empty($enabledPackages)) {
             $io->success("Enabled packages:\n — " . implode("\n — ", $enabledPackages));
-        }
-        if (!empty($disabledPackages)) {
-            $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
         }
 
         return Command::SUCCESS;
