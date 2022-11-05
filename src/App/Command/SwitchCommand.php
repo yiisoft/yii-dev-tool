@@ -12,8 +12,8 @@ use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 
 final class SwitchCommand extends Command
 {
-    protected static $defaultName = 'enable';
-    protected static $defaultDescription = 'Enable packages';
+    protected static $defaultName = 'switch';
+    protected static $defaultDescription = 'Enable specified packages and disable others';
 
     protected function configure(): void
     {
@@ -34,6 +34,7 @@ final class SwitchCommand extends Command
         $packages = require dirname(__DIR__, 3) . '/packages.php';
 
         $enablePackageIds = array_unique(explode(',', (string)$input->getArgument('packages')));
+        $enablePackageIds = array_filter($enablePackageIds, static fn($id) => !empty($id));
         if (empty($enablePackageIds)) {
             $io->error('Please, specify packages separated by commas.');
             return Command::FAILURE;
@@ -68,9 +69,7 @@ final class SwitchCommand extends Command
         fwrite($handle, '];' . "\n");
         fclose($handle);
 
-        if (!empty($enabledPackages)) {
-            $io->success("\n + " . implode("\n + ", $enabledPackages));
-        }
+        $io->success("\n + " . implode("\n + ", $enabledPackages));
         if (!empty($disabledPackages)) {
             $io->error("\n — " . implode("\n — ", $disabledPackages));
         }
