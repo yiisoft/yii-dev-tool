@@ -37,6 +37,7 @@ use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
+use Yiisoft\YiiDevTool\App\Command\SwitchCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
 use Yiisoft\YiiDevTool\App\Command\UpdateCommand;
 
@@ -112,6 +113,7 @@ final class YiiDevToolApplication extends Application
             new EnableCommand(),
             new DisableCommand(),
             new AddChangelogCommand(),
+            new SwitchCommand(),
         ];
     }
 

@@ -259,6 +259,7 @@ Remember that **yii-dev-tool** contains many other commands:
 | test                      | t         | Test packages.                                                               |
 | enable                    | -         | Enable packages.                                                             |
 | disable                   | -         | Disable packages.                                                            |
+| switch                    | -         | Enable specified packages and disable others.                                |
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.
