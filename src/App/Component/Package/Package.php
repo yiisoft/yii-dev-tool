@@ -171,7 +171,7 @@ class Package
         $this->enabled = $value;
     }
 
-    public function getRootPackage(): ?Package
+    public function getRootPackage(): ?self
     {
         return $this->rootPackage;
     }
