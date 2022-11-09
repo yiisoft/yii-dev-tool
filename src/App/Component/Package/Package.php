@@ -20,6 +20,7 @@ class Package
     private ?GitWorkingCopy $gitWorkingCopy = null;
     private bool $enabled = true;
     private ?Package $rootPackage = null;
+    private bool $isMonoRepository = false;
 
     public function __construct(string $id, $config, private string $owner, string $packagesRootDir, ?self $rootPackage)
     {
@@ -34,10 +35,14 @@ class Package
         }
 
         $enabled = false;
+        $isMonoRepository = false;
         $repositoryUrl = null;
         if (is_array($config)) {
             if (($config['enabled'] ?? false) === true) {
                 $enabled = true;
+            }
+            if (($config['monorepo'] ?? false) === true) {
+                $isMonoRepository = true;
             }
         } elseif (is_bool($config)) {
             $enabled = $config;
@@ -62,6 +67,7 @@ class Package
         $this->configuredRepositoryUrl = !$enabled ? null : $repositoryUrl;
 
         $this->enabled = $enabled;
+        $this->isMonoRepository = $isMonoRepository;
         $this->rootPackage = $rootPackage;
         $this->path = rtrim($packagesRootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $id;
     }
@@ -174,5 +180,10 @@ class Package
     public function getRootPackage(): ?Package
     {
         return $this->rootPackage;
+    }
+
+    public function isMonoRepository(): bool
+    {
+        return $this->isMonoRepository;
     }
 }

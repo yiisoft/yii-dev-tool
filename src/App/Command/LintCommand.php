@@ -29,6 +29,11 @@ final class LintCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Linting package {package}');
 
+        if ($package->isMonoRepository()) {
+            $io->info('The operation has been skipped because the package is monorepo.');
+            return;
+        }
+
         $process = new Process([
             './vendor/bin/phpcs',
             $package->getPath(),
