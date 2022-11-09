@@ -121,7 +121,7 @@ class PackageList
                             ],
                         ];
                     } elseif (is_array($config)) {
-                        $config['packages'][$package->getId()] =  $package->enabled();
+                        $config['packages'][$package->getId()] = $package->enabled();
                     }
 
                     $result[$rootPackage->getId()] = $config;
@@ -138,7 +138,6 @@ class PackageList
             }
 
             $result[$package->getId()] = $config;
-
         }
         return  $result;
     }

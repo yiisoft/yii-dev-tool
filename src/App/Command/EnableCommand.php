@@ -31,7 +31,6 @@ final class EnableCommand extends PackageCommand
         $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Enable all packages');
     }
 
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->initPackageList();
