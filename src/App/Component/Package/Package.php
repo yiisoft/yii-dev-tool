@@ -21,7 +21,7 @@ class Package
     private bool $enabled = true;
     private bool $isMonoRepository = false;
 
-    public function __construct(string $id, $config, private string $owner, string $packagesRootDir, private ?\Yiisoft\YiiDevTool\App\Component\Package\Package $rootPackage)
+    public function __construct(string $id, $config, private string $owner, string $packagesRootDir, private ?self $rootPackage)
     {
         if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
             throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
