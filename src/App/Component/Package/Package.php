@@ -19,9 +19,8 @@ class Package
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
     private bool $enabled = true;
-    private ?Package $rootPackage = null;
 
-    public function __construct(string $id, $config, private string $owner, string $packagesRootDir, ?self $rootPackage)
+    public function __construct(string $id, $config, private string $owner, string $packagesRootDir, private ?\Yiisoft\YiiDevTool\App\Component\Package\Package $rootPackage)
     {
         if (!preg_match('|^[a-z0-9_.-]+$|i', $id)) {
             throw new InvalidArgumentException('Package ID can contain only symbols [a-z0-9_.-].');
@@ -62,7 +61,6 @@ class Package
         $this->configuredRepositoryUrl = !$enabled ? null : $repositoryUrl;
 
         $this->enabled = $enabled;
-        $this->rootPackage = $rootPackage;
         $this->path = rtrim($packagesRootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $id;
     }
 
