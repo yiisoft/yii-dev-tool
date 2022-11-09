@@ -178,7 +178,14 @@ $packages = [
     'yii-runner-roadrunner' => true,
 
     // Demo
-    'demo' => true,
+    'demo' => [
+        'enabled' => true,
+        'monorepo' => true,
+        'packages' => [
+            'blog' => true,
+            'blog-api' => true,
+        ],
+    ],
     'demo-api' => true,
 
     // Application templates
