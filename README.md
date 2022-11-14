@@ -236,6 +236,7 @@ Remember that **yii-dev-tool** contains many other commands:
 | Command                   | Aliases   | Description                                                                  |
 |---------------------------|-----------|------------------------------------------------------------------------------|
 | tool/init                 | init      | Initiate the creation of a config file for the DevTool tool.                 |
+| changelog/add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
 | composer/update           | cu        | Update composer dependencies in packages.                                    |
 | composer/fix-dependencies | -         | Fix require and require-dev section in compose.json.                         |
 | git/checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
@@ -265,6 +266,7 @@ Remember that **yii-dev-tool** contains many other commands:
 | test                      | t         | Test packages.                                                               |
 | exec                      | e         | Executes the specified console command in each package.                      |
 | lint                      | -         | Check packages according to PSR-12 standard.                                 |
+| switch                    | -         | Enable specified packages and disable others.                                |
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.

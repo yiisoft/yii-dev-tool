@@ -11,6 +11,7 @@ use Symfony\Component\Console\Command\ListCommand as ListCommandsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputDefinition;
 use Symfony\Component\Console\Input\InputOption;
+use Yiisoft\YiiDevTool\App\Command\AddChangelogCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
@@ -39,6 +40,7 @@ use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
+use Yiisoft\YiiDevTool\App\Command\SwitchCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
 use Yiisoft\YiiDevTool\App\Command\Tool\Init;
 use Yiisoft\YiiDevTool\App\Component\Config;
@@ -145,6 +147,8 @@ final class YiiDevToolApplication extends Application
             new AddCommand(),
             new RemoveCommand(),
             new Init(),
+            new AddChangelogCommand(),
+            new SwitchCommand(),
         ];
     }
 
