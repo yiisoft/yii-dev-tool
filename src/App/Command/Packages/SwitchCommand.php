@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
@@ -22,29 +21,21 @@ final class SwitchCommand extends Command
             ->setAliases(['switch'])
             ->setDescription('Enable specified packages and disable others')
             ->addArgument(
-            'packages',
-            InputArgument::REQUIRED,
-            <<<DESCRIPTION
-            Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
-            Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.</>
-            DESCRIPTION
-        );
+                'packages',
+                InputArgument::REQUIRED,
+                <<<DESCRIPTION
+                Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
+                Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.</>
+                DESCRIPTION
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new YiiDevToolStyle($input, $output);
 
-        if (!file_exists($this->getApplication()->getConfigFile())) {
-            $io->error('The config file does not exist. Initialize the dev tool.');
-            exit(1);
-        }
-        $configs = require $this->getApplication()->getConfigFile();
-        if (empty($configs['packages'])) {
-            $io->error('There is no list of packages in the configs, or it is empty.');
-            return Command::FAILURE;
-        }
-        $packages = $configs['packages'];
+        $config = $this->getApplication()->getConfig();
+        $packages = $config->getPackages();
 
         $commaSeparatedPackageIds = $input->getArgument('packages');
         $enablePackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
@@ -78,9 +69,7 @@ final class SwitchCommand extends Command
             }
         }
 
-        $configs['packages'] = $packages;
-        $exportArray = VarDumper::create($configs)->export();
-        file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
+        $config->change('packages', $packages);
 
         if (!empty($enabledPackages)) {
             $io->success("Enable packages: \n + " . implode("\n + ", $enabledPackages));

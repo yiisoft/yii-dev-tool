@@ -9,7 +9,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
@@ -37,16 +36,8 @@ final class EnableCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
-        if (!file_exists($this->getApplication()->getConfigFile())) {
-            $io->error('The config file does not exist. Initialize the dev tool.');
-            exit(1);
-        }
-        $configs = require $this->getApplication()->getConfigFile();
-        if (empty($configs['packages'])) {
-            $io->error('There is no list of packages in the configs, or it is empty.');
-            return Command::FAILURE;
-        }
-        $packages = $configs['packages'];
+        $config = $this->getApplication()->getConfig();
+        $packages = $config->getPackages();
 
         $enableAll = $input->getOption('all');
         if ($enableAll) {
@@ -75,9 +66,7 @@ final class EnableCommand extends Command
             }
         }
 
-        $configs['packages'] = $packages;
-        $exportArray = VarDumper::create($configs)->export();
-        file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
+        $config->change('packages', $packages);
 
         if (empty($alreadyEnabledPackages) && empty($enabledPackages)) {
             $io->info('Packages not found.');

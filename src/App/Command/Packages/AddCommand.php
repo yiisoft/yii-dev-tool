@@ -12,7 +12,6 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
@@ -40,19 +39,20 @@ final class AddCommand extends Command
                 InputOption::VALUE_REQUIRED,
                 'Number of requested repositories. Default 30 (мax: 100) '
             )
-            ->addOption('page', null, InputOption::VALUE_REQUIRED, 'Page number of the requested repositories list');
+            ->addOption(
+                'page',
+                null,
+                InputOption::VALUE_REQUIRED,
+                'Page number of the requested repositories list'
+            );
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $io = new YiiDevToolStyle($input, $output);
 
-        if (!file_exists($this->getApplication()->getConfigFile())) {
-            $io->error('The config file does not exist. Initialize the dev tool.');
-            exit(1);
-        }
-        $configs = require $this->getApplication()->getConfigFile();
-        $packages = $configs['packages'];
+        $config = $this->getApplication()->getConfig();
+        $packages = $config->getPackages();
 
         $allPackages = $input->getOption('all');
         $addPackages = [];
@@ -92,9 +92,7 @@ final class AddCommand extends Command
         }
         ksort($packages);
 
-        $configs['packages'] = $packages;
-        $exportArray = VarDumper::create($configs)->export();
-        file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
+        $config->change('packages', $packages);
 
         $io->success('Packages added: ' . implode(', ', $addPackages));
         return Command::SUCCESS;

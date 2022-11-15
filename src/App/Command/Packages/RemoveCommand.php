@@ -8,7 +8,6 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
@@ -34,16 +33,8 @@ final class RemoveCommand extends Command
     {
         $io = new YiiDevToolStyle($input, $output);
 
-        if (!file_exists($this->getApplication()->getConfigFile())) {
-            $io->error('The config file does not exist. Initialize the dev tool.');
-            exit(1);
-        }
-        $configs = require $this->getApplication()->getConfigFile();
-        if (empty($configs['packages'])) {
-            $io->error('List of packages in configs is empty.');
-            return Command::FAILURE;
-        }
-        $packages = $configs['packages'];
+        $config = $this->getApplication()->getConfig();
+        $packages = $config->getPackages();
 
         $commaSeparatedPackageIds = $input->getArgument('packages');
         if ($commaSeparatedPackageIds === null) {
@@ -63,9 +54,7 @@ final class RemoveCommand extends Command
         }
         ksort($packages);
 
-        $configs['packages'] = $packages;
-        $exportArray = VarDumper::create($configs)->export();
-        file_put_contents($this->getApplication()->getConfigFile(), "<?php\n\nreturn $exportArray;\n");
+        $config->change('packages', $packages);
 
         if (!empty($removePackages)) {
             $io->success('Packages removed: ' . implode(', ', $removePackages));

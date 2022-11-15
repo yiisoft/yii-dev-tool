@@ -4,25 +4,29 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component;
 
+use InvalidArgumentException;
 use RuntimeException;
+use Yiisoft\VarDumper\VarDumper;
 
 class Config
 {
     private array $config;
 
-    public function __construct(private string $appRootDir, string $configFile)
-    {
+    public function __construct(
+        private string $appRootDir,
+        private string $configFile
+    ) {
         if (!file_exists($this->appRootDir) && !is_dir($this->appRootDir)) {
             throw new RuntimeException(
                 'Config Error: The root directory does not exist.',
             );
         }
-        if (!file_exists($this->appRootDir . $configFile)) {
+        if (!file_exists($this->appRootDir . $this->configFile)) {
             throw new RuntimeException(
-                'Config Error: DevTool tool config file does not exist.',
+                'Config Error: DevTool tool config file does not exist.  Initialize the dev tool.',
             );
         }
-        $config = require $this->appRootDir . $configFile;
+        $config = require $this->appRootDir . $this->configFile;
 
         if (!is_array($config)) {
             throw new RuntimeException(
@@ -31,6 +35,59 @@ class Config
         }
         $this->config = $config;
         $this->validateData();
+    }
+
+    public function change(string $key, array $configs): void
+    {
+        if (!isset($this->config[$key])) {
+            throw new InvalidArgumentException("The given config `$key` does not exist.");
+        }
+        $this->config[$key] = $configs;
+        $exportArray = VarDumper::create($this->config)->export();
+        file_put_contents($this->configFile, "<?php\n\nreturn $exportArray;\n");
+    }
+
+    public function get($configName): mixed
+    {
+        if (!isset($this->config[$configName])) {
+            throw new RuntimeException("There is no given `$configName` setting in the configuration.");
+        }
+        return $this->config[$configName];
+    }
+
+    public function getAll(): array
+    {
+        return $this->config;
+    }
+
+    public function getConfigDir(): string
+    {
+        return $this->appRootDir . $this->config['config-dir'];
+    }
+
+    public function getPackagesRootDir(): string
+    {
+        return $this->appRootDir . $this->config['packages-dir'];
+    }
+
+    public function getOwner(): string
+    {
+        return $this->config['owner-packages'];
+    }
+
+    public function getGitRepository(): string
+    {
+        return $this->config['git-repository'];
+    }
+
+    public function getApiToken(): string
+    {
+        return $this->config['api-token'];
+    }
+
+    public function getPackages(): array
+    {
+        return $this->config['packages'];
     }
 
     private function validateData(): void
@@ -85,16 +142,6 @@ class Config
         }
     }
 
-    public function getConfigDir(): string
-    {
-        return $this->appRootDir . $this->config['config-dir'];
-    }
-
-    public function getPackagesRootDir(): string
-    {
-        return $this->appRootDir . $this->config['packages-dir'];
-    }
-
     private function validatePackages(): string
     {
         $packagesErrors = '';
@@ -123,33 +170,5 @@ class Config
         }
 
         return $packagesErrors;
-    }
-
-    public function get($configName): mixed
-    {
-        if (!isset($this->config[$configName])) {
-            throw new RuntimeException("There is no given `$configName` setting in the configuration.");
-        }
-        return $this->config[$configName];
-    }
-
-    public function getOwner(): string
-    {
-        return $this->config['owner-packages'];
-    }
-
-    public function getGitRepository(): string
-    {
-        return $this->config['git-repository'];
-    }
-
-    public function getApiToken(): string
-    {
-        return $this->config['api-token'];
-    }
-
-    public function getPackages(): array
-    {
-        return $this->config['packages'];
     }
 }
