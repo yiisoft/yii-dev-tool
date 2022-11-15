@@ -251,6 +251,7 @@ Remember that **yii-dev-tool** contains many other commands:
 | github/settings           | -         | Change settings of a GitHub repository.                                      |
 | github/protect-branch     | -         | Protect specified branch for specified GitHub repositories.                  |
 | packages/list             | l         | List enabled packages.                                                       |
+| packages/switch           | switch    | Enable specified packages and disable others.                                |
 | packages/install          | i         | Clone packages repositories and install composer dependencies.               |
 | packages/update           | u         | Pull changes from packages repositories and update composer dependencies.    |
 | packages/add              | add       | Add packages. Specify a list of packages or options --all --perPage --page   |
@@ -266,7 +267,6 @@ Remember that **yii-dev-tool** contains many other commands:
 | test                      | t         | Test packages.                                                               |
 | exec                      | e         | Executes the specified console command in each package.                      |
 | lint                      | -         | Check packages according to PSR-12 standard.                                 |
-| switch                    | -         | Enable specified packages and disable others.                                |
 
 If you encounter any problems, [create an issue](https://github.com/yiisoft/yii-dev-tool/issues/new) – 
 and we'll try to help you.
