@@ -37,12 +37,8 @@ class Package
         $isMonoRepository = false;
         $repositoryUrl = null;
         if (is_array($config)) {
-            if (($config['enabled'] ?? false) === true) {
-                $enabled = true;
-            }
-            if (($config['monorepo'] ?? false) === true) {
-                $isMonoRepository = true;
-            }
+            $enabled = (bool) ($config['enabled'] ?? false);
+            $isMonoRepository = (bool) ($config['monorepo'] ?? false);
         } elseif (is_bool($config)) {
             $enabled = $config;
         } elseif (is_string($config)) {

@@ -251,8 +251,6 @@ class PackageCommand extends Command
         $this->beforeProcessingPackages($input);
         $packages = $this->getTargetPackages();
 
-//        var_dump($packages);
-//        exit();
         sort($packages);
         foreach ($packages as $package) {
             if ($this->isCurrentInstallationValid($package)) {
