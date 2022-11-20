@@ -186,7 +186,6 @@ $packages = [
             'blog-api' => true,
         ],
     ],
-    'demo-api' => true,
 
     // Application templates
     'app' => true,
