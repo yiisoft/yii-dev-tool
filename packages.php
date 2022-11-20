@@ -191,6 +191,7 @@ $packages = [
     // Application templates
     'app' => true,
     'app-api' => true,
+    'app-console' => true,
 
     // Docker
     'yii-docker' => true,
