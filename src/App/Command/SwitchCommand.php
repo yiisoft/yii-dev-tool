@@ -8,9 +8,10 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\VarDumper\VarDumper;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
-final class SwitchCommand extends Command
+final class SwitchCommand extends PackageCommand
 {
     protected static $defaultName = 'switch';
     protected static $defaultDescription = 'Enable specified packages and disable others';
@@ -29,44 +30,43 @@ final class SwitchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new YiiDevToolStyle($input, $output);
+        $this->initPackageList();
+        $io = $this->getIO();
+        $packageList = $this->getPackageList();
 
-        $packages = require dirname(__DIR__, 3) . '/packages.php';
-
-        $enablePackageIds = array_unique(explode(',', (string)$input->getArgument('packages')));
+        $enablePackageIds = array_unique(explode(',', (string) $input->getArgument('packages')));
         $enablePackageIds = array_filter($enablePackageIds, static fn ($id) => !empty($id));
         if (empty($enablePackageIds)) {
             $io->error('Please, specify packages separated by commas.');
             return Command::FAILURE;
         }
         foreach ($enablePackageIds as $packageId) {
-            if (!array_key_exists($packageId, $packages)) {
+            if (!$packageList->hasPackage($packageId)) {
                 $io->error('Package "' . $packageId . '" not found.');
                 return Command::FAILURE;
             }
         }
 
         $enabledPackages = [];
-        foreach ($enablePackageIds as $packageId) {
-            $packages[$packageId] = true;
-            $enabledPackages[] = $packageId;
-        }
-
         $disabledPackages = [];
-        foreach ($packages as $packageId => $enabled) {
-            if ($enabled && !in_array($packageId, $enablePackageIds, true)) {
-                $packages[$packageId] = false;
+
+        foreach ($packageList->getAllPackages() as $packageId => $package) {
+            if (in_array($packageId, $enablePackageIds, true)) {
+                $package->setEnabled(true);
+                $enabledPackages[] = $packageId;
+            } else {
+                $package->setEnabled(false);
                 $disabledPackages[] = $packageId;
             }
         }
 
+        $tree = $packageList->getTree();
+
+        $dump = VarDumper::create($tree)->export();
+
         $handle = fopen(dirname(__DIR__, 3) . '/packages.local.php', 'w+');
         fwrite($handle, '<?php' . "\n\n");
-        fwrite($handle, 'return [' . "\n");
-        foreach ($packages as $packageId => $enabled) {
-            fwrite($handle, '    \'' . $packageId . '\' => ' . ($enabled ? 'true' : 'false') . ',' . "\n");
-        }
-        fwrite($handle, '];' . "\n");
+        fwrite($handle, 'return ' . $dump . ';');
         fclose($handle);
 
         $io->success("\n + " . implode("\n + ", $enabledPackages));

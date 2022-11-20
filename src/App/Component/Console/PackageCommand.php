@@ -116,7 +116,7 @@ class PackageCommand extends Command
         return $this->errorList;
     }
 
-    private function initPackageList(): void
+    protected function initPackageList(): void
     {
         $io = $this->getIO();
 
@@ -149,7 +149,7 @@ class PackageCommand extends Command
         }
     }
 
-    private function initTargetPackages(InputInterface $input): void
+    protected function initTargetPackages(InputInterface $input): void
     {
         if ($this->packageList === null) {
             throw new RuntimeException('Package list is not initialized.');
@@ -250,6 +250,7 @@ class PackageCommand extends Command
 
         $this->beforeProcessingPackages($input);
         $packages = $this->getTargetPackages();
+
         sort($packages);
         foreach ($packages as $package) {
             if ($this->isCurrentInstallationValid($package)) {

@@ -22,8 +22,18 @@ class PackageList
         /** @noinspection PhpIncludeInspection */
         $config = require $configFile;
 
-        foreach ($config as $packageId => $packageConfig) {
-            $this->list[$packageId] = new Package($packageId, $packageConfig, $ownerPackages, $packagesRootDir);
+        foreach ($config as $rootPackageId => $packageConfig) {
+            $this->list[$rootPackageId] = new Package($rootPackageId, $packageConfig, $ownerPackages, $packagesRootDir, null);
+
+            if (is_array($packageConfig)) {
+                $isPackageMonorepo = (bool) ($packageConfig['monorepo'] ?? false);
+                if ($isPackageMonorepo) {
+                    foreach ($packageConfig['packages'] as $packageId => $packageConfig) {
+                        $index = "{$rootPackageId}__{$packageId}";
+                        $this->list[$index] = new Package($packageId, $packageConfig, $ownerPackages, $packagesRootDir, $this->list[$rootPackageId]);
+                    }
+                }
+            }
         }
     }
 
@@ -92,5 +102,43 @@ class PackageList
         }
 
         return $packages;
+    }
+
+    public function getTree(): array
+    {
+        $result = [];
+        foreach ($this->list as $package) {
+            if ($package->isVirtual()) {
+                $rootPackage = $package->getRootPackage();
+                if ($rootPackage !== null) {
+                    $config = $result[$rootPackage->getId()] ?? true;
+                    if (is_bool($config)) {
+                        $config = [
+                            'enabled' => $config,
+                            'monorepo' => true,
+                            'packages' => [
+                                $package->getId() => $package->enabled(),
+                            ],
+                        ];
+                    } elseif (is_array($config)) {
+                        $config['packages'][$package->getId()] = $package->enabled();
+                    }
+
+                    $result[$rootPackage->getId()] = $config;
+                    continue;
+                }
+            }
+            $config = $result[$package->getId()] ?? $package->enabled();
+            if (is_array($config)) {
+                $config = array_merge([
+                    'enabled' => $package->enabled(),
+                    'monorepo' => true,
+                    'packages' => [],
+                ], $config);
+            }
+
+            $result[$package->getId()] = $config;
+        }
+        return  $result;
     }
 }

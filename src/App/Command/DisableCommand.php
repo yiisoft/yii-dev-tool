@@ -9,9 +9,10 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\VarDumper\VarDumper;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
-final class DisableCommand extends Command
+final class DisableCommand extends PackageCommand
 {
     protected static $defaultName = 'disable';
     protected static $defaultDescription = 'Disable packages';
@@ -32,13 +33,14 @@ final class DisableCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new YiiDevToolStyle($input, $output);
+        $this->initPackageList();
+        $io = $this->getIO();
 
-        $packages = require dirname(__DIR__, 3) . '/packages.php';
+        $packageList = $this->getPackageList();
 
         $disableAll = $input->getOption('all');
         if ($disableAll) {
-            $disablePackageIds = array_keys($packages);
+            $disablePackageIds = array_keys($packageList->getAllPackages());
         } else {
             $commaSeparatedPackageIds = $input->getArgument('packages');
             if ($commaSeparatedPackageIds === null) {
@@ -51,26 +53,28 @@ final class DisableCommand extends Command
         $alreadyDisabledPackages = [];
         $disabledPackages = [];
         foreach ($disablePackageIds as $packageId) {
-            if (!isset($packages[$packageId])) {
+            $package = $packageList->getPackage($packageId);
+
+            if ($package === null) {
                 continue;
             }
-
-            if ($packages[$packageId]) {
-                $packages[$packageId] = false;
+            if ($package->enabled()) {
+                $package->setEnabled(false);
                 $disabledPackages[] = $packageId;
             } else {
                 $alreadyDisabledPackages[] = $packageId;
             }
         }
 
+        $tree = $packageList->getTree();
+
+        $dump = VarDumper::create($tree)->export();
+
         $handle = fopen(dirname(__DIR__, 3) . '/packages.local.php', 'w+');
         fwrite($handle, '<?php' . "\n\n");
-        fwrite($handle, 'return [' . "\n");
-        foreach ($packages as $packageId => $enabled) {
-            fwrite($handle, '    \'' . $packageId . '\' => ' . ($enabled ? 'true' : 'false') . ',' . "\n");
-        }
-        fwrite($handle, '];' . "\n");
+        fwrite($handle, 'return ' . $dump . ';');
         fclose($handle);
+
 
         if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
             $io->info('Packages not found.');
@@ -78,7 +82,7 @@ final class DisableCommand extends Command
         }
 
         if (!empty($alreadyDisabledPackages)) {
-            $io->text("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
+            $io->write("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
         }
         if (!empty($disabledPackages)) {
             $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
