@@ -154,6 +154,7 @@ class PackageList
 
             $result[$package->getId()] = $config;
         }
+        ksort($result);
         return $result;
     }
 }
