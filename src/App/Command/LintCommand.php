@@ -32,6 +32,11 @@ final class LintCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Linting package {package}');
 
+        if ($package->isMonoRepository()) {
+            $io->info('The operation has been skipped because the package is monorepo.');
+            return;
+        }
+
         $pharFile = 'phar://' . $this->getApplication()->getRootDir() . 'devtool.phar';
         if (is_file($pharFile . '/vendor/squizlabs/php_codesniffer/autoload.php') === true) {
             include_once $pharFile . '/vendor/squizlabs/php_codesniffer/autoload.php';

@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use Yiisoft\YiiDevTool\App\Component\Config;
-
 use function array_key_exists;
 
 class PackageList
@@ -24,14 +23,32 @@ class PackageList
         $ownerPackages = $config->getOwner();
         $packagesRootDir = $config->getPackagesRootDir();
         $gitRepository = $config->getGitRepository();
-        foreach ($config->getPackages() as $packageId => $packageConfig) {
-            $this->list[$packageId] = new Package(
-                $packageId,
-                $packageConfig,
+        foreach ($config->getPackages() as $rootPackageId => $rootPackageConfig) {
+            $this->list[$rootPackageId] = new Package(
+                $rootPackageId,
+                $rootPackageConfig,
                 $ownerPackages,
                 $packagesRootDir,
-                $gitRepository
+                $gitRepository,
+                null
             );
+
+            if (is_array($rootPackageConfig)) {
+                $isPackageMonorepo = (bool)($rootPackageConfig['monorepo'] ?? false);
+                if ($isPackageMonorepo) {
+                    foreach ($rootPackageConfig['packages'] as $packageId => $packageConfig) {
+                        $index = "{$rootPackageId}__{$packageId}";
+                        $this->list[$index] = new Package(
+                            $packageId,
+                            $packageConfig,
+                            $ownerPackages,
+                            $packagesRootDir,
+                            $gitRepository,
+                            $this->list[$rootPackageId]
+                        );
+                    }
+                }
+            }
         }
     }
 
@@ -100,5 +117,43 @@ class PackageList
         }
 
         return $packages;
+    }
+
+    public function getTree(): array
+    {
+        $result = [];
+        foreach ($this->list as $package) {
+            if ($package->isVirtual()) {
+                $rootPackage = $package->getRootPackage();
+                if ($rootPackage !== null) {
+                    $config = $result[$rootPackage->getId()] ?? true;
+                    if (is_bool($config)) {
+                        $config = [
+                            'enabled' => $config,
+                            'monorepo' => true,
+                            'packages' => [
+                                $package->getId() => $package->enabled(),
+                            ],
+                        ];
+                    } elseif (is_array($config)) {
+                        $config['packages'][$package->getId()] = $package->enabled();
+                    }
+
+                    $result[$rootPackage->getId()] = $config;
+                    continue;
+                }
+            }
+            $config = $result[$package->getId()] ?? $package->enabled();
+            if (is_array($config)) {
+                $config = array_merge([
+                    'enabled' => $package->enabled(),
+                    'monorepo' => true,
+                    'packages' => [],
+                ], $config);
+            }
+
+            $result[$package->getId()] = $config;
+        }
+        return $result;
     }
 }

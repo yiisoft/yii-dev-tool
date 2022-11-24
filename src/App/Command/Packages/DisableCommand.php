@@ -9,11 +9,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 /** @method YiiDevToolApplication getApplication() */
-final class DisableCommand extends Command
+final class DisableCommand extends PackageCommand
 {
     protected function configure()
     {
@@ -34,14 +34,15 @@ final class DisableCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new YiiDevToolStyle($input, $output);
+        $this->initPackageList();
+        $io = $this->getIO();
 
-        $config = $this->getApplication()->getConfig();
-        $packages = $config->getPackages();
+        $config = $this->getConfig();
+        $packageList = $this->getPackageList();
 
         $disableAll = $input->getOption('all');
         if ($disableAll) {
-            $disablePackageIds = array_keys($packages);
+            $disablePackageIds = array_keys($packageList->getAllPackages());
         } else {
             $commaSeparatedPackageIds = $input->getArgument('packages');
             if ($commaSeparatedPackageIds === null) {
@@ -54,30 +55,32 @@ final class DisableCommand extends Command
         $alreadyDisabledPackages = [];
         $disabledPackages = [];
         foreach ($disablePackageIds as $packageId) {
-            if (!isset($packages[$packageId])) {
+            $package = $packageList->getPackage($packageId);
+
+            if ($package === null) {
                 continue;
             }
-
-            if ($packages[$packageId]) {
-                $packages[$packageId] = false;
+            if ($package->enabled()) {
+                $package->setEnabled(false);
                 $disabledPackages[] = $packageId;
             } else {
                 $alreadyDisabledPackages[] = $packageId;
             }
         }
 
+        $packages = $packageList->getTree();
         $config->change('packages', $packages);
 
         if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
-            $io->info('Packages not found.');
+            $io->important()->info('Packages not found.');
             return Command::SUCCESS;
         }
 
         if (!empty($alreadyDisabledPackages)) {
-            $io->text("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
+            $io->important()->info("Already disabled packages:\n — " . implode("\n — ", $alreadyDisabledPackages) . "\n");
         }
         if (!empty($disabledPackages)) {
-            $io->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
+            $io->important()->success("Disabled packages:\n — " . implode("\n — ", $disabledPackages));
         }
 
         return Command::SUCCESS;

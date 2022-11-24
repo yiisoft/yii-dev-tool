@@ -8,11 +8,11 @@ use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 /** @method YiiDevToolApplication getApplication() */
-final class SwitchCommand extends Command
+final class SwitchCommand extends PackageCommand
 {
     protected function configure(): void
     {
@@ -32,10 +32,11 @@ final class SwitchCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new YiiDevToolStyle($input, $output);
+        $this->initPackageList();
 
-        $config = $this->getApplication()->getConfig();
-        $packages = $config->getPackages();
+        $io = $this->getIO();
+        $config = $this->getConfig();
+        $packagesList = $this->getPackageList();
 
         $commaSeparatedPackageIds = $input->getArgument('packages');
         $enablePackageIds = array_unique(explode(',', $commaSeparatedPackageIds));
@@ -47,7 +48,8 @@ final class SwitchCommand extends Command
 
         $notFoundPackages = [];
         foreach ($enablePackageIds as $packageId) {
-            if (!isset($packages[$packageId])) {
+            $package = $packagesList->getPackage($packageId);
+            if ($package === null) {
                 $notFoundPackages[] = $packageId;
             }
         }
@@ -59,20 +61,21 @@ final class SwitchCommand extends Command
 
         $disabledPackages = [];
         $enabledPackages = [];
-        foreach ($packages as $packageId => $packageValue) {
+        foreach ($packagesList->getAllPackages() as $packageId => $package) {
             if (in_array($packageId, $enablePackageIds, true)) {
-                $packages[$packageId] = true;
+                $package->setEnabled(true);
                 $enabledPackages[] = $packageId;
             } else {
-                $packages[$packageId] = false;
+                $package->setEnabled(false);
                 $disabledPackages[] = $packageId;
             }
         }
 
-        $config->change('packages', $packages);
+        $tree = $packagesList->getTree();
+        $config->change('packages', $tree);
 
         if (!empty($enabledPackages)) {
-            $io->success("Enable packages: \n + " . implode("\n + ", $enabledPackages));
+            $io->important()->success("Enable packages: \n + " . implode("\n + ", $enabledPackages));
         }
 
         if (!empty($disabledPackages)) {

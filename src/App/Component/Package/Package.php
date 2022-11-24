@@ -15,18 +15,31 @@ class Package
     private ?string $configuredRepositoryUrl = null;
     private string $path;
     private ?GitWorkingCopy $gitWorkingCopy = null;
+    private bool $enabled = true;
+    private bool $isMonoRepository = false;
 
     public function __construct(
         private string $id,
-        bool|string $config,
+        $config,
         private string $owner,
         string $packagesRootDir,
-        string $gitRepository
+        string $gitRepository,
+        private ?self $rootPackage
     ) {
-        if ($config === false) {
-            $this->configuredRepositoryUrl = null;
-        } elseif ($config === true) {
-            $this->configuredRepositoryUrl = "git@$gitRepository:$this->owner/$id.git";
+        $enabled = false;
+        $isMonoRepository = false;
+        $repositoryUrl = null;
+        if (is_array($config)) {
+            $enabled = (bool)($config['enabled'] ?? false);
+            $isMonoRepository = (bool)($config['monorepo'] ?? false);
+            if ($enabled === true) {
+                $this->configuredRepositoryUrl = "git@$gitRepository:$this->owner/$id.git";
+            }
+        } elseif (is_bool($config)) {
+            $enabled = $config;
+            if ($enabled === true) {
+                $this->configuredRepositoryUrl = "git@$gitRepository:$this->owner/$id.git";
+            }
         } elseif ($config === 'https') {
             $this->configuredRepositoryUrl = "https://$gitRepository/$this->owner/$id.git";
         } elseif (preg_match('|^[a-z0-9-]+/[a-z0-9_.-]+$|i', $config)) {
@@ -43,7 +56,20 @@ class Package
             $this->configuredRepositoryUrl = $config;
         }
 
+        $this->enabled = $enabled;
+        $this->isMonoRepository = $isMonoRepository;
         $this->path = rtrim($packagesRootDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $id;
+    }
+
+    private static function getGitWrapper(): GitWrapper
+    {
+        if (static::$gitWrapper === null) {
+            $finder = new ExecutableFinder();
+            $gitBinary = $finder->find('git');
+            static::$gitWrapper = new GitWrapper($gitBinary);
+        }
+
+        return static::$gitWrapper;
     }
 
     public function getName(): string
@@ -63,6 +89,10 @@ class Package
 
     public function getConfiguredRepositoryUrl(): string
     {
+        if ($this->isVirtual()) {
+            return $this->rootPackage->getConfiguredRepositoryUrl();
+        }
+
         if ($this->configuredRepositoryUrl === null) {
             throw new RuntimeException('Package does not have repository url.');
         }
@@ -70,24 +100,23 @@ class Package
         return $this->configuredRepositoryUrl;
     }
 
-    public function enabled(): bool
-    {
-        return !$this->disabled();
-    }
-
     public function disabled(): bool
     {
-        return $this->configuredRepositoryUrl === null;
+        return !$this->enabled;
+    }
+
+    public function enabled(): bool
+    {
+        return $this->enabled;
     }
 
     public function getPath(): string
     {
-        return $this->path;
-    }
+        if ($this->isVirtual()) {
+            return $this->rootPackage->getPath() . DIRECTORY_SEPARATOR . $this->id;
+        }
 
-    public function doesPackageDirectoryExist(): bool
-    {
-        return file_exists($this->path);
+        return $this->path;
     }
 
     public function composerConfigFileExists(): bool
@@ -100,6 +129,11 @@ class Package
         return "{$this->path}/composer.json";
     }
 
+    public function isVirtual(): bool
+    {
+        return $this->rootPackage !== null;
+    }
+
     // TODO: Call all git commands through this interface
     public function getGitWorkingCopy(): GitWorkingCopy
     {
@@ -108,7 +142,11 @@ class Package
         }
 
         if ($this->gitWorkingCopy === null) {
-            $this->gitWorkingCopy = static::getGitWrapper()->workingCopy($this->path);
+            $path = $this->path;
+            if ($this->isVirtual()) {
+                $path = $this->rootPackage->getPath();
+            }
+            $this->gitWorkingCopy = static::getGitWrapper()->workingCopy($path);
         }
 
         return $this->gitWorkingCopy;
@@ -116,17 +154,25 @@ class Package
 
     public function isGitRepositoryCloned(): bool
     {
+        if ($this->isVirtual()) {
+            return $this->rootPackage->isGitRepositoryCloned();
+        }
+
         return file_exists("{$this->path}/.git");
     }
 
-    private static function getGitWrapper(): GitWrapper
+    public function setEnabled(bool $value): void
     {
-        if (static::$gitWrapper === null) {
-            $finder = new ExecutableFinder();
-            $gitBinary = $finder->find('git');
-            static::$gitWrapper = new GitWrapper($gitBinary);
-        }
+        $this->enabled = $value;
+    }
 
-        return static::$gitWrapper;
+    public function getRootPackage(): ?self
+    {
+        return $this->rootPackage;
+    }
+
+    public function isMonoRepository(): bool
+    {
+        return $this->isMonoRepository;
     }
 }

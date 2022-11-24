@@ -148,9 +148,7 @@ final class PackageService
             if (is_dir($installedPackagePath)) {
                 $fs->remove($installedPackagePath);
 
-                $originalPath = DIRECTORY_SEPARATOR === '\\' ?
-                    $installedPackage->getPath() :
-                    "../../../{$installedPackage->getId()}";
+                $originalPath = $installedPackage->getPath();
                 $fs->symlink($originalPath, $installedPackagePath);
             }
         }

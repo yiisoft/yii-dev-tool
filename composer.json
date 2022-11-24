@@ -30,7 +30,7 @@
         "symplify/git-wrapper": "^10.2.0",
         "yiisoft/arrays": "^2.0",
         "yiisoft/files": "^2.0",
-        "yiisoft/var-dumper": "^1.3"
+        "yiisoft/var-dumper": "^1.4"
     },
     "require-dev": {
         "phpunit/phpunit": "^9.5",

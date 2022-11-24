@@ -9,11 +9,11 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
-use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 /** @method YiiDevToolApplication getApplication() */
-final class EnableCommand extends Command
+final class EnableCommand extends PackageCommand
 {
     protected function configure()
     {
@@ -34,14 +34,14 @@ final class EnableCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $io = new YiiDevToolStyle($input, $output);
-
-        $config = $this->getApplication()->getConfig();
-        $packages = $config->getPackages();
+        $this->initPackageList();
+        $io = $this->getIO();
+        $packageList = $this->getPackageList();
+        $config = $this->getConfig();
 
         $enableAll = $input->getOption('all');
         if ($enableAll) {
-            $enablePackageIds = array_keys($packages);
+            $enablePackageIds = array_keys($packageList->getAllPackages());
         } else {
             $commaSeparatedPackageIds = $input->getArgument('packages');
             if ($commaSeparatedPackageIds === null) {
@@ -54,19 +54,22 @@ final class EnableCommand extends Command
         $alreadyEnabledPackages = [];
         $enabledPackages = [];
         foreach ($enablePackageIds as $packageId) {
-            if (!isset($packages[$packageId])) {
+            $package = $packageList->getPackage($packageId);
+
+            if ($package === null) {
                 continue;
             }
 
-            if ($packages[$packageId]) {
+            if ($package->enabled()) {
                 $alreadyEnabledPackages[] = $packageId;
             } else {
-                $packages[$packageId] = true;
+                $package->setEnabled(true);
                 $enabledPackages[] = $packageId;
             }
         }
 
-        $config->change('packages', $packages);
+        $tree = $packageList->getTree();
+        $config->change('packages', $tree);
 
         if (empty($alreadyEnabledPackages) && empty($enabledPackages)) {
             $io->info('Packages not found.');
@@ -74,10 +77,10 @@ final class EnableCommand extends Command
         }
 
         if (!empty($alreadyEnabledPackages)) {
-            $io->text("Already enabled packages:\n — " . implode("\n — ", $alreadyEnabledPackages) . "\n");
+            $io->important()->info("Already enabled packages:\n — " . implode("\n — ", $alreadyEnabledPackages) . "\n");
         }
         if (!empty($enabledPackages)) {
-            $io->success("Enabled packages:\n — " . implode("\n — ", $enabledPackages));
+            $io->important()->success("Enabled packages:\n — " . implode("\n — ", $enabledPackages));
         }
 
         return Command::SUCCESS;

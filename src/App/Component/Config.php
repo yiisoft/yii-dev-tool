@@ -156,6 +156,7 @@ class Config
 
             if (
                 is_bool($packageConfig)
+                || is_array($packageConfig)
                 || $packageConfig === 'https'
                 || preg_match('#^[a-z0-9][a-z0-9-]*[a-z0-9]/[a-z0-9_.-]+$#i', $packageConfig)
                 || preg_match(

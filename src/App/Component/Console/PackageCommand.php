@@ -211,13 +211,13 @@ class PackageCommand extends Command
         return true;
     }
 
-    private function initPackageList(): void
+    protected function initPackageList(): void
     {
         $this->packageList = new PackageList($this->getConfig());
         $this->errorList = new PackageErrorList();
     }
 
-    private function initTargetPackages(InputInterface $input): void
+    protected function initTargetPackages(InputInterface $input): void
     {
         if ($this->packageList === null) {
             throw new RuntimeException('Package list is not initialized.');
