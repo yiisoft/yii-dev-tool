@@ -159,10 +159,10 @@ final class MissingCommand extends Command
     protected function getAppRootDir(): string
     {
         return rtrim(
-                $this
+            $this
                     ->getApplication()
                     ->getRootDir(),
-                DIRECTORY_SEPARATOR
-            ) . DIRECTORY_SEPARATOR;
+            DIRECTORY_SEPARATOR
+        ) . DIRECTORY_SEPARATOR;
     }
 }
