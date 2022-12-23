@@ -103,6 +103,14 @@ final class Changelog
         return $changelog;
     }
 
+    /**
+     * @return string[]
+     */
+    public function getReleaseLog(?Version $version = null): array
+    {
+        return $this->splitChangelog($version?->asString());
+    }
+
     private function replaceInFile(string $pattern, string $replace, string $file): int
     {
         $replaces = null;
