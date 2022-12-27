@@ -14,8 +14,6 @@ use Symfony\Component\Console\Input\InputOption;
 use Yiisoft\YiiDevTool\App\Command\AddChangelogCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\ComposerFixDependenciesCommand;
 use Yiisoft\YiiDevTool\App\Command\Composer\UpdateCommand as ComposerUpdateCommand;
-use Yiisoft\YiiDevTool\App\Command\DisableCommand;
-use Yiisoft\YiiDevTool\App\Command\EnableCommand;
 use Yiisoft\YiiDevTool\App\Command\ExecCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CheckoutCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\CloneCommand;
@@ -25,12 +23,18 @@ use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\StatusCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ForksRepositoriesCommand;
-use Yiisoft\YiiDevTool\App\Command\Github\SyncUpstreamRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
-use Yiisoft\YiiDevTool\App\Command\InstallCommand;
+use Yiisoft\YiiDevTool\App\Command\Github\SyncUpstreamRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
-use Yiisoft\YiiDevTool\App\Command\ListCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\AddCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\DisableCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\EnableCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\InstallCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\ListCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\RemoveCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\SwitchCommand;
+use Yiisoft\YiiDevTool\App\Command\Packages\UpdateCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MissingCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
@@ -38,13 +42,15 @@ use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateFilesCommand;
 use Yiisoft\YiiDevTool\App\Command\Stats\ContributorsCommand;
-use Yiisoft\YiiDevTool\App\Command\SwitchCommand;
 use Yiisoft\YiiDevTool\App\Command\TestCommand;
-use Yiisoft\YiiDevTool\App\Command\UpdateCommand;
+use Yiisoft\YiiDevTool\App\Command\Tool\Init;
+use Yiisoft\YiiDevTool\App\Component\Config;
 
 final class YiiDevToolApplication extends Application
 {
     private ?string $rootDir = null;
+    private string $configFile = 'devtool.php';
+    private ?Config $config = null;
 
     private string $header = <<<HEADER
     <fg=cyan;options=bold> _   _ </><fg=red;options=bold> _ </><fg=green;options=bold> _ </>
@@ -62,11 +68,18 @@ final class YiiDevToolApplication extends Application
         $this->setDefaultCommand('list-commands');
     }
 
-    public function setRootDir(string $path): self
+    public function getConfig(): Config
     {
-        $this->rootDir = $path;
+        if ($this->config === null) {
+            try {
+                $this->config = new Config($this->getRootDir(), $this->getConfigFile());
+            } catch (RuntimeException $e) {
+                echo "\033[31;1m{$e->getMessage()}\033[39;22m";
+                exit(1);
+            }
+        }
 
-        return $this;
+        return $this->config;
     }
 
     public function getRootDir(): string
@@ -76,6 +89,25 @@ final class YiiDevToolApplication extends Application
         }
 
         return $this->rootDir;
+    }
+
+    public function setRootDir(string $path): self
+    {
+        $this->rootDir = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+
+        return $this;
+    }
+
+    public function getConfigFile(): string
+    {
+        return $this->configFile;
+    }
+
+    public function setConfigFile(string $configFile): self
+    {
+        $this->configFile = ltrim($configFile, DIRECTORY_SEPARATOR);
+
+        return $this;
     }
 
     protected function getDefaultCommands(): array
@@ -114,6 +146,9 @@ final class YiiDevToolApplication extends Application
             new ContributorsCommand(),
             new EnableCommand(),
             new DisableCommand(),
+            new AddCommand(),
+            new RemoveCommand(),
+            new Init(),
             new AddChangelogCommand(),
             new SwitchCommand(),
         ];

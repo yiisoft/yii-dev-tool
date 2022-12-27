@@ -39,7 +39,7 @@ class ComposerConfigMerger
 
     private function sortDependencies(array $config): array
     {
-        if (!(bool) ($config['config']['sort-packages'] ?? false)) {
+        if (!(bool)($config['config']['sort-packages'] ?? false)) {
             return $config;
         }
 

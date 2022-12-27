@@ -9,6 +9,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
+
 use function array_key_exists;
 use function is_string;
 
@@ -61,6 +62,15 @@ class NamespaceUsageFinder
         return $this->usages;
     }
 
+    public function registerNamespaceUsage(string $namespace, string $environment): void
+    {
+        if (!array_key_exists($namespace, $this->usages)) {
+            $this->usages[$namespace] = new CodeUsage($namespace, $environment);
+        } else {
+            $this->usages[$namespace]->registerUsageInEnvironment($environment);
+        }
+    }
+
     private function find(): void
     {
         $this->usages = [];
@@ -82,19 +92,6 @@ class NamespaceUsageFinder
         }
     }
 
-    private function pathAlreadyUsedInAnotherEnvironment(string $path, array $foundFiles): bool
-    {
-        foreach ($foundFiles as $files) {
-            foreach ($files as $file) {
-                if ($file === $path) {
-                    return true;
-                }
-            }
-        }
-
-        return false;
-    }
-
     private function getExistingPHPFilePaths(string $environment): array
     {
         $files = [];
@@ -112,14 +109,29 @@ class NamespaceUsageFinder
                 continue;
             }
 
-            foreach ((new Finder())
-                         ->in($absolutePath)
-                         ->name('*.php') as $finderFile) {
+            foreach (
+                (new Finder())
+                    ->in($absolutePath)
+                    ->name('*.php') as $finderFile
+            ) {
                 $files[] = $finderFile->getRealPath();
             }
         }
 
         return $files;
+    }
+
+    private function pathAlreadyUsedInAnotherEnvironment(string $path, array $foundFiles): bool
+    {
+        foreach ($foundFiles as $files) {
+            foreach ($files as $file) {
+                if ($file === $path) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private function findNamespaceUsagesInFiles(array $files, string $environment): void
@@ -143,14 +155,5 @@ class NamespaceUsageFinder
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NamespaceUsageFinderNameResolver($this, $environment));
         $nodeTraverser->traverse($stmts);
-    }
-
-    public function registerNamespaceUsage(string $namespace, string $environment): void
-    {
-        if (!array_key_exists($namespace, $this->usages)) {
-            $this->usages[$namespace] = new CodeUsage($namespace, $environment);
-        } else {
-            $this->usages[$namespace]->registerUsageInEnvironment($environment);
-        }
     }
 }

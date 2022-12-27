@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Replicate;
 
+use InvalidArgumentException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
@@ -21,8 +22,7 @@ final class ReplicateCopyFileCommand extends PackageCommand
             ->setName('replicate/copy-file')
             ->setDescription('Copy file into each package')
             ->addArgument('source', InputArgument::REQUIRED, 'Source file path')
-            ->addArgument('destination', InputArgument::REQUIRED, 'Destination file path')
-        ;
+            ->addArgument('destination', InputArgument::REQUIRED, 'Destination file path');
 
         parent::configure();
     }
@@ -33,7 +33,7 @@ final class ReplicateCopyFileCommand extends PackageCommand
         $this->destination = (string)$input->getArgument('destination');
 
         if (realpath($this->source) === false) {
-            throw new \InvalidArgumentException("File \"{$this->source}\" not found.");
+            throw new InvalidArgumentException("File \"{$this->source}\" not found.");
         }
     }
 

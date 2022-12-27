@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Forks;
+use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
 use RuntimeException;
@@ -14,7 +15,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
+/** @method YiiDevToolApplication getApplication() */
 final class ForksRepositoriesCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -53,7 +56,7 @@ final class ForksRepositoriesCommand extends Command
         $targetRepositories = array_unique(explode(',', $repositories));
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
         $forks = (new Forks($client));
 
         foreach ($targetRepositories as $repository) {
@@ -76,26 +79,9 @@ final class ForksRepositoriesCommand extends Command
 
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
-    }
-
-    /**
-     * Use this method to get a root directory of the tool.
-     *
-     * Commands and components can be moved as a result of refactoring,
-     * so you should not rely on their location in the file system.
-     *
-     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
-     */
-    protected function getAppRootDir(): string
-    {
-        return rtrim($this
-                ->getApplication()
-                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        return $this
+            ->getApplication()
+            ->getConfig()
+            ->getApiToken();
     }
 }

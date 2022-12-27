@@ -6,8 +6,12 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 class ReplicationSet
 {
-    public function __construct(private string $sourcePackage, private array $files, private array $includedPackages, private array $excludedPackages)
-    {
+    public function __construct(
+        private string $sourcePackage,
+        private array $files,
+        private array $includedPackages,
+        private array $excludedPackages
+    ) {
     }
 
     public function getSourcePackage(): string
@@ -26,10 +30,6 @@ class ReplicationSet
             return false;
         }
 
-        return !(in_array('*', $this->excludedPackages, true) || in_array($name, $this->excludedPackages, true))
-
-
-
-         ;
+        return !(in_array('*', $this->excludedPackages, true) || in_array($name, $this->excludedPackages, true));
     }
 }

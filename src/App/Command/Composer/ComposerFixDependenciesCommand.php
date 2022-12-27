@@ -16,26 +16,26 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependencies
 
 final class ComposerFixDependenciesCommand extends PackageCommand
 {
-    private array $skippedPackageIds = [];
-
     private const DEV_PATHS = [
         'tests',
         'config/params-test.php',
         'config/tests.php',
         'public/index-test.php',
     ];
-
     private const PRODUCTION_PATHS = [
         'config',
         'src',
         'public/index.php',
     ];
+    private array $skippedPackageIds = [];
 
     protected function configure(): void
     {
         $this
             ->setName('composer/fix-dependencies')
-            ->setDescription('Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes');
+            ->setDescription(
+                'Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes'
+            );
 
         parent::configure();
     }

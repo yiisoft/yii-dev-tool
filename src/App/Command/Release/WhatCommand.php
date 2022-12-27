@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Release;
 
-use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
@@ -16,11 +15,13 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
 use function array_key_exists;
 
+/** @method YiiDevToolApplication getApplication() */
 final class WhatCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -38,46 +39,6 @@ final class WhatCommand extends Command
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
         $this->io = new OutputManager(new YiiDevToolStyle($input, $output));
-    }
-
-    protected function getIO(): OutputManager
-    {
-        if ($this->io === null) {
-            throw new RuntimeException('IO is not initialized.');
-        }
-
-        return $this->io;
-    }
-
-    private function initPackageList(): void
-    {
-        $io = $this->getIO();
-
-        try {
-            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
-            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
-                $io->error([
-                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
-                    'See <file>owner-packages.php</file> to set the packages owner.',
-                ]);
-
-                exit(1);
-            }
-
-            $this->packageList = new PackageList(
-                $ownerPackages,
-                $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
-            );
-        } catch (InvalidArgumentException $e) {
-            $io->error([
-                'Invalid local package configuration <file>packages.local.php</file>',
-                $e->getMessage(),
-                'See <file>packages.local.php.example</file> for configuration examples.',
-            ]);
-
-            exit(1);
-        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -126,9 +87,13 @@ final class WhatCommand extends Command
                 }
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
-                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName($installedPackage->getName());
+                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName(
+                    $installedPackage->getName()
+                );
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
-                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName($dependencyName);
+                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName(
+                    $dependencyName
+                );
             }
         }
 
@@ -197,22 +162,42 @@ final class WhatCommand extends Command
         return Command::SUCCESS;
     }
 
-    private function hasRelease(Package $package): bool
+    private function initPackageList(): void
     {
-        $gitWorkingCopy = $package->getGitWorkingCopy();
-        foreach ($gitWorkingCopy
-                     ->tags()
-                     ->all() as $tag) {
-            if ($tag !== '') {
-                return true;
-            }
+        $this->packageList = new PackageList(
+            $this
+                ->getApplication()
+                ->getConfig()
+        );
+    }
+
+    protected function getIO(): OutputManager
+    {
+        if ($this->io === null) {
+            throw new RuntimeException('IO is not initialized.');
         }
-        return false;
+
+        return $this->io;
     }
 
     private function getPackageList(): PackageList
     {
         return $this->packageList;
+    }
+
+    private function hasRelease(Package $package): bool
+    {
+        $gitWorkingCopy = $package->getGitWorkingCopy();
+        foreach (
+            $gitWorkingCopy
+                ->tags()
+                ->all() as $tag
+        ) {
+            if ($tag !== '') {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getDependencyNames(Package $package): array
@@ -233,21 +218,6 @@ final class WhatCommand extends Command
         }
 
         return array_unique($names);
-    }
-
-    /**
-     * Use this method to get a root directory of the tool.
-     *
-     * Commands and components can be moved as a result of refactoring,
-     * so you should not rely on their location in the file system.
-     *
-     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
-     */
-    protected function getAppRootDir(): string
-    {
-        return rtrim($this
-                ->getApplication()
-                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     private function removeVendorName(string $packageName): string|array

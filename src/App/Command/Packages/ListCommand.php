@@ -2,19 +2,19 @@
 
 declare(strict_types=1);
 
-namespace Yiisoft\YiiDevTool\App\Command;
+namespace Yiisoft\YiiDevTool\App\Command\Packages;
 
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class ListCommand extends PackageCommand
 {
-    protected static $defaultName = 'list';
-    protected static $defaultDescription = 'List all packages';
-
     protected function configure()
     {
-        $this->setAliases(['l']);
+        $this
+            ->setName('packages/list')
+            ->setAliases(['l'])
+            ->setDescription('List all packages');
 
         parent::configure();
     }
@@ -29,14 +29,6 @@ final class ListCommand extends PackageCommand
         $url = $package->enabled() ? $package->getConfiguredRepositoryUrl() : '-';
         $info = sprintf('%' . $this->getMaxNameLength() . 's %s', $package->getId(), $url);
         $this->info($info);
-    }
-
-    private function info(string $message): void
-    {
-        $io = $this->getIO();
-        $io
-            ->important()
-            ->info($message);
     }
 
     private function getMaxNameLength(): int
@@ -55,5 +47,13 @@ final class ListCommand extends PackageCommand
         }
 
         return $maxLength;
+    }
+
+    private function info(string $message): void
+    {
+        $io = $this->getIO();
+        $io
+            ->important()
+            ->info($message);
     }
 }

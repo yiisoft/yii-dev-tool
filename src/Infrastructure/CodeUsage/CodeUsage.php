@@ -19,7 +19,7 @@ class CodeUsage
      */
     public function __construct(private string $identifier, $environments)
     {
-        $environments = (array) $environments;
+        $environments = (array)$environments;
 
         foreach ($environments as $environment) {
             if (!is_string($environment)) {
@@ -42,13 +42,6 @@ class CodeUsage
         return $this->environments;
     }
 
-    public function registerUsageInEnvironment(string $environment): void
-    {
-        if (!in_array($environment, $this->environments, true)) {
-            $this->environments[] = $environment;
-        }
-    }
-
     /**
      * @param string[] $environments
      */
@@ -60,6 +53,13 @@ class CodeUsage
             }
 
             $this->registerUsageInEnvironment($environment);
+        }
+    }
+
+    public function registerUsageInEnvironment(string $environment): void
+    {
+        if (!in_array($environment, $this->environments, true)) {
+            $this->environments[] = $environment;
         }
     }
 

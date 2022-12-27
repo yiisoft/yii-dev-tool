@@ -29,7 +29,7 @@ final class TestCommand extends PackageCommand
     protected function beforeProcessingPackages(InputInterface $input): void
     {
         $filter = $input->getOption('filter');
-        $this->filter = $filter === null ? null : (string) $filter;
+        $this->filter = $filter === null ? null : (string)$filter;
     }
 
     protected function processPackage(Package $package): void

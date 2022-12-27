@@ -16,27 +16,6 @@ class ComposerInstallation
         $this->analyzeDependencies();
     }
 
-    public function hasNotInstalledDependencyPackages(): bool
-    {
-        return count($this->notInstalledDependencies) > 0;
-    }
-
-    /**
-     * @return ComposerPackage[]
-     */
-    public function getNotInstalledDependencyPackages(): array
-    {
-        return $this->notInstalledDependencies;
-    }
-
-    /**
-     * @return ComposerPackage[]
-     */
-    public function getInstalledDependencyPackages(): array
-    {
-        return $this->installedDependencies;
-    }
-
     /**
      * @return ComposerPackage[]
      */
@@ -67,6 +46,27 @@ class ComposerInstallation
         }
 
         return $packages;
+    }
+
+    public function hasNotInstalledDependencyPackages(): bool
+    {
+        return count($this->notInstalledDependencies) > 0;
+    }
+
+    /**
+     * @return ComposerPackage[]
+     */
+    public function getNotInstalledDependencyPackages(): array
+    {
+        return $this->notInstalledDependencies;
+    }
+
+    /**
+     * @return ComposerPackage[]
+     */
+    public function getInstalledDependencyPackages(): array
+    {
+        return $this->installedDependencies;
     }
 
     private function analyzeDependencies(): void

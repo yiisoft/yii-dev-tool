@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
+use Github\AuthMethod;
 use Github\Client;
 use RuntimeException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
@@ -32,25 +33,23 @@ final class SettingsCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Adjusting settings for {package}');
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
         $repoApi = new Repo($client);
 
         $repoApi->update($package->getVendor(), $package->getId(), $this->getSettings());
     }
 
-    private function getSettings(): array
-    {
-        /** @noinspection PhpIncludeInspection */
-        return require $this->getAppRootDir() . 'config/settings.php';
-    }
-
     private function getToken(): string
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
+        return $this->getConfig()->getApiToken();
+    }
 
-        return trim(file_get_contents($tokenFile));
+    private function getSettings(): array
+    {
+        $settingsFile = $this->getConfig()->getConfigDir() . 'settings.php';
+        if (!file_exists($settingsFile)) {
+            throw new RuntimeException("There's no file settings.php in config directory");
+        }
+        return require $settingsFile;
     }
 }

@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure;
 
-final class Version implements \Stringable
+use RuntimeException;
+use Stringable;
+
+final class Version implements Stringable
 {
     public const TYPE_MAJOR = 'Major - Incompatible API changes.';
     public const TYPE_MINOR = 'Minor - Add functionality (backwards-compatible).';
@@ -47,7 +50,7 @@ final class Version implements \Stringable
                 $parts[2]++;
                 break;
             default:
-                throw new \RuntimeException('Unknown version type.');
+                throw new RuntimeException('Unknown version type.');
         }
         return new self(implode('.', $parts));
     }

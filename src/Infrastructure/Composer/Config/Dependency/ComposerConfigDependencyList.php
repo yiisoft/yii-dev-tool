@@ -23,6 +23,16 @@ class ComposerConfigDependencyList
         }
     }
 
+    public function isEmpty()
+    {
+        return count($this->dependencies) === 0;
+    }
+
+    public function isEqualTo(self $otherList): bool
+    {
+        return $this->asArray() === $otherList->asArray();
+    }
+
     public function asArray(): array
     {
         $result = [];
@@ -34,21 +44,6 @@ class ComposerConfigDependencyList
         return $result;
     }
 
-    public function isEmpty()
-    {
-        return count($this->dependencies) === 0;
-    }
-
-    public function isEqualTo(self $otherList): bool
-    {
-        return $this->asArray() === $otherList->asArray();
-    }
-
-    public function hasDependency(string $packageName): bool
-    {
-        return array_key_exists($packageName, $this->dependencies);
-    }
-
     public function getDependency(string $packageName): ComposerConfigDependency
     {
         if (!$this->hasDependency($packageName)) {
@@ -56,6 +51,11 @@ class ComposerConfigDependencyList
         }
 
         return $this->dependencies[$packageName];
+    }
+
+    public function hasDependency(string $packageName): bool
+    {
+        return array_key_exists($packageName, $this->dependencies);
     }
 
     /**
@@ -77,13 +77,6 @@ class ComposerConfigDependencyList
         return $this;
     }
 
-    public function removeDependency(string $packageNameToRemove): self
-    {
-        unset($this->dependencies[$packageNameToRemove]);
-
-        return $this;
-    }
-
     public function removeDependencies(array $packageNamesToRemove): self
     {
         foreach ($packageNamesToRemove as $packageNameToRemove) {
@@ -95,6 +88,13 @@ class ComposerConfigDependencyList
         foreach ($packageNamesToRemove as $packageNameToRemove) {
             $this->removeDependency($packageNameToRemove);
         }
+
+        return $this;
+    }
+
+    public function removeDependency(string $packageNameToRemove): self
+    {
+        unset($this->dependencies[$packageNameToRemove]);
 
         return $this;
     }

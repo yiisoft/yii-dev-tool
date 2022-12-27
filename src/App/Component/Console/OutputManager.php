@@ -26,11 +26,6 @@ class OutputManager
         return $this->io->hasColorSupport();
     }
 
-    public function isVerbose(): bool
-    {
-        return $this->io->isVerbose();
-    }
-
     public function getVerbosity(): int
     {
         return $this->io->getVerbosity();
@@ -66,6 +61,11 @@ class OutputManager
         return $this;
     }
 
+    public function isVerbose(): bool
+    {
+        return $this->io->isVerbose();
+    }
+
     public function clearPreparedPackageHeader(): self
     {
         $this->preparedPackageHeader = null;
@@ -93,6 +93,46 @@ class OutputManager
         $this->delegateOutputToIO('newLine', [$count]);
 
         return $this;
+    }
+
+    /**
+     * Delegates a call to the specified YiiDevToolStyle method if the next message is marked important,
+     * verbose mode is configured or output is forced. Otherwise, it does nothing and just returns null.
+     *
+     * If some data was previously prepared for output and output is needed,
+     * it outputs the prepared data before YiiDevToolStyle method call.
+     *
+     * @param string $method YiiDevToolStyle method name
+     * @param array $args call arguments
+     * @param bool $forceOutput whether to force call
+     *
+     * @return mixed method call result or null
+     *
+     * @see YiiDevToolStyle
+     */
+    private function delegateOutputToIO(string $method, $args = [], bool $forceOutput = false)
+    {
+        $result = null;
+
+        if ($forceOutput || $this->io->isVerbose() || $this->nextMessageIsImportant) {
+            $this->outputHeaderIfPrepared();
+
+            $result = call_user_func_array([$this->io, $method], $args);
+
+            $this->outputDone = true;
+            $this->nextMessageIsImportant = false;
+        }
+
+        return $result;
+    }
+
+    private function outputHeaderIfPrepared(): void
+    {
+        if ($this->preparedPackageHeader !== null) {
+            $this->io->header($this->preparedPackageHeader);
+            $this->preparedPackageHeader = null;
+            $this->outputDone = true;
+        }
     }
 
     public function write($message): self
@@ -158,45 +198,5 @@ class OutputManager
     public function nothingHasBeenOutput(): bool
     {
         return !$this->outputDone;
-    }
-
-    private function outputHeaderIfPrepared(): void
-    {
-        if ($this->preparedPackageHeader !== null) {
-            $this->io->header($this->preparedPackageHeader);
-            $this->preparedPackageHeader = null;
-            $this->outputDone = true;
-        }
-    }
-
-    /**
-     * Delegates a call to the specified YiiDevToolStyle method if the next message is marked important,
-     * verbose mode is configured or output is forced. Otherwise, it does nothing and just returns null.
-     *
-     * If some data was previously prepared for output and output is needed,
-     * it outputs the prepared data before YiiDevToolStyle method call.
-     *
-     * @param string $method YiiDevToolStyle method name
-     * @param array $args call arguments
-     * @param bool $forceOutput whether to force call
-     *
-     * @return mixed method call result or null
-     *
-     * @see YiiDevToolStyle
-     */
-    private function delegateOutputToIO(string $method, $args = [], bool $forceOutput = false)
-    {
-        $result = null;
-
-        if ($forceOutput || $this->io->isVerbose() || $this->nextMessageIsImportant) {
-            $this->outputHeaderIfPrepared();
-
-            $result = call_user_func_array([$this->io, $method], $args);
-
-            $this->outputDone = true;
-            $this->nextMessageIsImportant = false;
-        }
-
-        return $result;
     }
 }

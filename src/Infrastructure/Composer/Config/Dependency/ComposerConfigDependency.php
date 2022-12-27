@@ -64,6 +64,6 @@ class ComposerConfigDependency
 
     public function isPlatformRequirement(): bool
     {
-        return (bool) preg_match(self::PLATFORM_PACKAGE_REGEX, $this->packageName);
+        return (bool)preg_match(self::PLATFORM_PACKAGE_REGEX, $this->packageName);
     }
 }
