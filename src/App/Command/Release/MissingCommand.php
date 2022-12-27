@@ -23,14 +23,8 @@ final class MissingCommand extends Command
     private ?OutputManager $io = null;
     private ?PackageList $packageList = null;
 
-    protected function configure()
-    {
-        $this
-            ->setName('release/missing')
-            ->setDescription('Find out which stable packages contain unreleased changes');
-
-        parent::configure();
-    }
+    protected static $defaultName = 'release/missing';
+    protected static $defaultDescription = 'Find out which stable packages contain unreleased changes';
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {
