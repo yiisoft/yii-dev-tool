@@ -32,6 +32,7 @@ use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
 use Yiisoft\YiiDevTool\App\Command\ListCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\MakeCommand;
+use Yiisoft\YiiDevTool\App\Command\Release\MissingCommand;
 use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateComposerConfigCommand;
 use Yiisoft\YiiDevTool\App\Command\Replicate\ReplicateCopyFileCommand;
@@ -105,6 +106,7 @@ final class YiiDevToolApplication extends Application
             new UpdateCommand($packageService),
             new WhatCommand(),
             new MakeCommand(),
+            new MissingCommand(),
             new ForksRepositoriesCommand(),
             new SyncUpstreamRepositoriesCommand(),
             new SettingsCommand(),
