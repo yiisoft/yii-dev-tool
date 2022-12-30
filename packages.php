@@ -149,6 +149,7 @@ $packages = [
     'yii-widgets' => true,
     'form' => true,
     'assets' => true,
+    'yii-twig' => true,
 
     // Data abstractions and widgets
     'data' => true,
