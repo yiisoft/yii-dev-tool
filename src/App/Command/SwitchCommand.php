@@ -54,7 +54,7 @@ final class SwitchCommand extends PackageCommand
             if (in_array($packageId, $enablePackageIds, true)) {
                 $package->setEnabled(true);
                 $enabledPackages[] = $packageId;
-            } else {
+            } elseif ($package->enabled()) {
                 $package->setEnabled(false);
                 $disabledPackages[] = $packageId;
             }

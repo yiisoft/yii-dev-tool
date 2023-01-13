@@ -133,7 +133,7 @@ class OutputManager
 
     public function success($message): self
     {
-        $this->delegateOutputToIO('success', [$message]);
+        $this->delegateOutputToIO('success', [$message], true);
 
         return $this;
     }
