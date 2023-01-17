@@ -28,7 +28,7 @@
         "symfony/process": "^6.0",
         "symfony/yaml": "^6.0",
         "symplify/git-wrapper": "^10.2.0",
-        "yiisoft/arrays": "^2.0",
+        "yiisoft/arrays": "^3.0",
         "yiisoft/files": "^2.0",
         "yiisoft/var-dumper": "^1.4"
     },
