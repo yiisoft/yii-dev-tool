@@ -169,7 +169,6 @@ $packages = [
     'yii-bootstrap5' => true,
     'yii-bulma' => true,
 
-    'yii-captcha' => true,
     'yii-filesystem' => true,
 
     // Runners
