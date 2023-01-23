@@ -119,7 +119,6 @@ $packages = [
     'db-mssql' => true,
     'db-oracle' => true,
     //'db-mongodb' => true,
-    'db-mariadb' => true,
     'active-record' => true,
     'yii-db-migration' => true,
     'yii-cycle' => true,
