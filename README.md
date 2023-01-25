@@ -28,7 +28,6 @@ See our Vagrant [documentation](vagrant/README.md) for details.
 
 If you prefer Docker, you only need to install [Docker](https://www.docker.com/).
 
-
 Manual install
 --------------
 
@@ -81,7 +80,14 @@ Docker
 If you want to run **yii-dev-tool** in a Docker container, run the following command:
 
 ```bash
-docker-compose run --rm php bash
+docker-compose up -d
+./docker/bash
+```
+
+Alternatively, if you have GNU Make installed you can just run:
+
+```bash
+make bash
 ```
 
 Add [SSH keys](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) or [configure](packages.local.php.example) to use HTTPS.
