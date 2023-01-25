@@ -30,5 +30,8 @@ composer.phar
 /.vagrant
 .phpunit.result.cache
 
+# Docker runtime
+/docker-compose.override.yml
+
 # local phpunit config
 phpunit.xml
