@@ -77,14 +77,15 @@ Then save it in `config/github.token` file.
 Docker
 ------
 
-If you want to run **yii-dev-tool** in a Docker container, run the following command:
+If you want to run **yii-dev-tool** in a Docker container, run the following commands:
 
 ```bash
 docker-compose up -d
 ./docker/bash
+composer install
 ```
 
-Alternatively, if you have GNU Make installed you can just run:
+Alternatively, if you have GNU Make installed you can just run (which combines all of the above):
 
 ```bash
 make bash
