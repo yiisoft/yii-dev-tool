@@ -1,0 +1,13 @@
+#!/bin/bash
+#
+# Run a bash inside the docker container
+#
+# Same as the Makefile, but as a bash script, see Makefile for detailed explanation.
+#
+
+CONTAINER_NAME=php
+
+echo "preparing bash environment..."
+docker-compose exec $CONTAINER_NAME bash -c "grep '^$(whoami):' /etc/passwd >/dev/null || useradd -m '$(whoami)' --uid=$(id -u) -G www-data -s /bin/bash -d /app/docker/home"
+echo -e "\nYou are now in the \033[1m$CONTAINER_NAME\033[0m container.\n"
+docker-compose exec --user=$(id -u) $CONTAINER_NAME bash

@@ -28,6 +28,7 @@ See our Vagrant [documentation](vagrant/README.md) for details.
 
 If you prefer Docker, you only need to install [Docker](https://www.docker.com/).
 
+See our Docker [documentation](docker/README.md) for details.
 
 Manual install
 --------------
@@ -73,20 +74,6 @@ configuration options.
 
 Some commands such as `github/protect-branch`, `github/settings`, `release/make` require a GitHub auth token. Therefore, you need to create a personal access token on GitHub.
 Then save it in `config/github.token` file.
-
-
-Docker
-------
-
-If you want to run **yii-dev-tool** in a Docker container, run the following command:
-
-```bash
-docker-compose run --rm php bash
-```
-
-Add [SSH keys](https://help.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) or [configure](packages.local.php.example) to use HTTPS.
-
-Afterwards you can run the above commands like `./yii-dev install`.
 
 
 Usage example

@@ -5,7 +5,3 @@ services:
     working_dir: /app
     volumes:
       - .:/app
-      # For composer usage in container; NOTE! There may be performance issues, see also https://github.com/docker/for-mac/issues/77
-      - ~/.composer-docker/cache:/root/.composer/cache:delegated
-    ports:
-      - '30080:80'
