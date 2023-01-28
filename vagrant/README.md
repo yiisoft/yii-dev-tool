@@ -61,7 +61,7 @@ That's all. You just need to wait for completion!
    vagrant up
    ```
    
-   (You can read [here](http://www.wikihow.com/Change-Directories-in-Command-Prompt) how to change directories in command prompt) 
+   (You can read [here](https://www.wikihow.com/Change-Directories-in-Command-Prompt) how to change directories in command prompt) 
 
 That's all. You just need to wait for completion! 
 

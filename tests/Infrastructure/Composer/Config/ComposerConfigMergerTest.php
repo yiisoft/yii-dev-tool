@@ -43,13 +43,13 @@ final class ComposerConfigMergerTest extends TestCase
         {
             "name": "Qiang Xue",
             "email": "qiang.xue@gmail.com",
-            "homepage": "http://www.yiiframework.com/",
+            "homepage": "https://www.yiiframework.com/",
             "role": "Founder and project lead"
         },
         {
             "name": "Alexander Makarov",
             "email": "sam@rmcreative.ru",
-            "homepage": "http://rmcreative.ru/",
+            "homepage": "https://rmcreative.ru/",
             "role": "Core framework development"
         }
     ],
@@ -81,7 +81,7 @@ JSON,
         {
             "name": "Carsten Brandt",
             "email": "mail@cebe.cc",
-            "homepage": "http://cebe.cc/",
+            "homepage": "https://cebe.cc/",
             "role": "Core framework development"
         }
     ],
@@ -120,19 +120,19 @@ JSON,
         {
             "name": "Qiang Xue",
             "email": "qiang.xue@gmail.com",
-            "homepage": "http://www.yiiframework.com/",
+            "homepage": "https://www.yiiframework.com/",
             "role": "Founder and project lead"
         },
         {
             "name": "Alexander Makarov",
             "email": "sam@rmcreative.ru",
-            "homepage": "http://rmcreative.ru/",
+            "homepage": "https://rmcreative.ru/",
             "role": "Core framework development"
         },
         {
             "name": "Carsten Brandt",
             "email": "mail@cebe.cc",
-            "homepage": "http://cebe.cc/",
+            "homepage": "https://cebe.cc/",
             "role": "Core framework development"
         }
     ],

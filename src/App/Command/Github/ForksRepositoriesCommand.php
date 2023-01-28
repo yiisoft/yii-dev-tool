@@ -58,7 +58,7 @@ final class ForksRepositoriesCommand extends Command
 
         foreach ($targetRepositories as $repository) {
             try {
-                // See http://developer.github.com/v3/repos/forks/
+                // See https://developer.github.com/v3/repos/forks/
                 $forks->create($ownerRepository, $repository);
                 $output->write("<success>Successfully forked repository: $repository</success>" . PHP_EOL);
             } catch (GithubRuntimeException $e) {
