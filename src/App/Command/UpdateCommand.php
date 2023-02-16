@@ -39,6 +39,13 @@ final class UpdateCommand extends PackageCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Use <fg=green>--ignore-platform-reqs</> during <fg=green;options=bold>composer update</>'
+            )
+            ->addOption(
+                'no-symlinks',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Do not create symbolic links after process',
+                false
             );
 
         parent::configure();
@@ -54,9 +61,11 @@ final class UpdateCommand extends PackageCommand
         }
     }
 
-    protected function afterProcessingPackages(): void
+    protected function afterProcessingPackages(InputInterface $input): void
     {
-        $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
+        if ($input->getOption('no-symlinks') === false) {
+            $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
+        }
     }
 
     protected function processPackage(Package $package): void

@@ -32,6 +32,13 @@ final class InstallCommand extends PackageCommand
                 null,
                 InputOption::VALUE_NONE,
                 'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
+            )
+            ->addOption(
+                'no-symlinks',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Do not create symbolic links after process',
+                false
             );
 
         parent::configure();
@@ -48,9 +55,11 @@ final class InstallCommand extends PackageCommand
         }
     }
 
-    protected function afterProcessingPackages(): void
+    protected function afterProcessingPackages(InputInterface $input): void
     {
-        $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
+        if ($input->getOption('no-symlinks') === false) {
+            $this->packageService->createSymbolicLinks($this->getPackageList(), $this->getIO());
+        }
     }
 
     protected function processPackage(Package $package): void
