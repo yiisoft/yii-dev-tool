@@ -54,7 +54,7 @@ class PackageCommand extends Command
      * Override this method in a subclass if you want to do something after processing the packages.
      * For example, link the packages with each other.
      */
-    protected function afterProcessingPackages(): void
+    protected function afterProcessingPackages(InputInterface $input): void
     {
     }
 
@@ -259,7 +259,7 @@ class PackageCommand extends Command
         }
 
         $io->clearPreparedPackageHeader();
-        $this->afterProcessingPackages();
+        $this->afterProcessingPackages($input);
 
         $this->showPackageErrors();
 
