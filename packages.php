@@ -77,7 +77,6 @@ $packages = [
     'translator-message-php' => true,
     'translator-message-gettext' => true,
     'translator-message-db' => true,
-    'translator-formatter-intl' => true,
 
     // Queue
     'yii-queue' => true,
@@ -135,6 +134,7 @@ $packages = [
     'request-model' => true,
     'middleware-dispatcher' => true,
     'request-body-parser' => true,
+    'response-download' => true,
     'session' => true,
     'cookies' => true,
     'yii-http' => true,
@@ -167,8 +167,6 @@ $packages = [
     // CSS frameworks
     'yii-bootstrap5' => true,
     'yii-bulma' => true,
-
-    'yii-filesystem' => true,
 
     // Runners
     'yii-runner' => true,
