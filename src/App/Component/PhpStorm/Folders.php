@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Component\PhpStorm;
 
 final class Folders
@@ -59,7 +61,7 @@ final class Folders
 
         $imlContent = preg_replace(
             '~<content url="file://\$MODULE_DIR\$">.*</content>~s',
-            "<content url=\"file://\$MODULE_DIR\$\">\n" . $entries . "    </content>",
+            "<content url=\"file://\$MODULE_DIR\$\">\n" . $entries . '    </content>',
             $imlContent
         );
 
