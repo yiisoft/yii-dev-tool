@@ -28,6 +28,7 @@ use Yiisoft\YiiDevTool\App\Command\Github\ForksRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SyncUpstreamRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SettingsCommand;
+use Yiisoft\YiiDevTool\App\Command\IdeCommand;
 use Yiisoft\YiiDevTool\App\Command\InstallCommand;
 use Yiisoft\YiiDevTool\App\Command\LintCommand;
 use Yiisoft\YiiDevTool\App\Command\ListCommand;
@@ -116,6 +117,7 @@ final class YiiDevToolApplication extends Application
             new DisableCommand(),
             new AddChangelogCommand(),
             new SwitchCommand(),
+            new IdeCommand(),
         ];
     }
 
