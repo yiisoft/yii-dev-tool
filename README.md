@@ -48,7 +48,7 @@ You may select packages by providing a second argument:
 ```
 
 > Note: In case you are using PhpStorm, run `ide` command once to configure the project directories for
-> installed pacakges to avoid infinite indexing cycle.
+> installed packages to avoid infinite indexing cycle.
 
 Upgrade
 -------
