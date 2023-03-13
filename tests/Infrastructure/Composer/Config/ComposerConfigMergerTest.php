@@ -168,6 +168,7 @@ JSON,
      * @param $originalJson
      * @param $additionalJson
      * @param $expectedMergedJson
+     *
      * @dataProvider mergeProvider
      */
     public function testMerge(string $originalJson, string $additionalJson, string $expectedMergedJson)

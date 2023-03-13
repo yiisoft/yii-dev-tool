@@ -9,6 +9,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\ParserFactory;
 use RuntimeException;
 use Symfony\Component\Finder\Finder;
+
 use function array_key_exists;
 use function is_string;
 

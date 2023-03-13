@@ -43,6 +43,7 @@ class PackageCommand extends Command
      * This method in a subclass should implement the processing logic of each package.
      *
      * @param Package $package
+     *
      * @noinspection PhpUnusedParameterInspection
      */
     protected function processPackage(Package $package): void
