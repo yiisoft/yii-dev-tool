@@ -23,19 +23,16 @@ final class IdeCommand extends PackageCommand
 
     protected function processPackage(Package $package): void
     {
-        $path = 'dev/' . $package->getId();
-
-        if (is_dir($package->getPath() . '/vendor/yiisoft')) {
-            $this->folders->excludeFolder($path . '/vendor/yiisoft');
+        $rootPackage = $package->getRootPackage();
+        if ($rootPackage === null) {
+            $path = 'dev/' . $package->getId();
+        } else {
+            $path = 'dev/' . $rootPackage->getId() . '/' . $package->getId();
         }
 
-        if (is_dir($package->getPath() . '/tests')) {
-            $this->folders->testsFolder($path . '/tests');
-        }
-
-        if (is_dir($package->getPath() . '/src')) {
-            $this->folders->sourceFolder($path . '/src');
-        }
+        $this->folders->sourceFolder($path . '/src');
+        $this->folders->testsFolder($path . '/tests');
+        $this->folders->excludeFolder($path . '/vendor/yiisoft');
     }
 
     protected function afterProcessingPackages(InputInterface $input): void
