@@ -36,8 +36,9 @@ docker-down:
 	docker-compose down --remove-orphans
 
 # Run composer install if vendor/autoload.php does not exist or is outdated (older than composer.json)
-vendor/autoload.php: composer.json docker-up
-	@docker-compose exec --user=$$(id -u) $(CONTAINER_NAME) composer install
+vendor/autoload.php: composer.json
+	@docker-compose exec --user=$$(id -u) $(CONTAINER_NAME) php -dxdebug.mode=off /usr/local/bin/composer.phar install
+	@touch $@
 
 # create docker-compose.override.yml if it does not exist
 docker-compose.override.yml: docker-compose.override.dist.yml

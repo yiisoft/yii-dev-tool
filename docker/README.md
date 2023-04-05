@@ -6,7 +6,7 @@ Stack
  
 * PHP 8.2
 * Composer 2
-* ~~xDebug~~
+* xDebug
 * htop
 * mc (Midnight Commander)
 
@@ -27,8 +27,8 @@ Installation
    
 That's all. You just need to wait for completion!
 
-After completion you are inside
-   
+After completion you are running a `bash` inside the docker container environment.
+
 ### Manual for Windows users
 
 TBD
@@ -82,4 +82,14 @@ This will re-build the container with the new PHP version.
 PHP CLI debugging using Xdebug and PHPStorm
 -------------------------------------------
 
-TBD (not implemented yet)
+The Docker environment has xDebug installed by default.
+
+You can set the `PHP_ENABLE_XDEBUG` environment variable in `docker-compose.override.yml` to enable or disable xDebug.
+
+For Remote Debugging, use the following settings in PHPStorm or other IDE:
+
+- IDE-Key: `yii_dev`
+- Port: 9003
+- Server Path-Mapping: Repository Root of `yii-dev-tool` -> `/app` in the container.
+
+xDebug will automatically connect to the docker host machine.
