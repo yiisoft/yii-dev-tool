@@ -61,7 +61,7 @@ final class Changelog
         ];
         array_unshift($lines, $headline);
 
-        file_put_contents($this->path, implode("\n", array_merge($hl, $lines)));
+        file_put_contents($this->path, implode("\n", [...$hl, ...$lines]));
     }
 
     public function addEntry(string $text): void
