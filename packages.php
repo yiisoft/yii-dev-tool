@@ -150,6 +150,11 @@ $packages = [
     'assets' => true,
     'yii-twig' => true,
 
+    // Input & Hydrator
+    'hydrator' => true,
+    'input-validation' => true,
+    'input-http' => true,
+
     // Data abstractions and widgets
     'data' => true,
     'validator' => true,
