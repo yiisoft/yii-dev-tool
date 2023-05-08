@@ -152,7 +152,7 @@ $packages = [
 
     // Input & Hydrator
     'hydrator' => true,
-    'input-validation' => true,
+    'hydrator-validator' => true,
     'input-http' => true,
 
     // Data abstractions and widgets
