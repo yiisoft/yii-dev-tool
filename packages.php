@@ -133,6 +133,7 @@ $packages = [
     'data-response' => true,
     'request-model' => true,
     'middleware-dispatcher' => true,
+    'proxy-middleware' => true,
     'request-body-parser' => true,
     'response-download' => true,
     'session' => true,
