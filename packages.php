@@ -140,6 +140,7 @@ $packages = [
     'cookies' => true,
     'yii-http' => true,
     'yii-middleware' => true,
+    'proxy-middleware' => true,
 
     // View, assets, templates and widgets
     'view' => true,
