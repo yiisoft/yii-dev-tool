@@ -22,29 +22,25 @@ final class Changelog
     public function resort(): void
     {
         // split the file into relevant parts
-        [$start, $changelog, $end] = $this->splitChangelog();
+        [$start, $rawChangelog, $end] = $this->splitChangelog();
 
-        // cleanup whitespace
-        foreach ($changelog as $i => $line) {
-            $changelog[$i] = rtrim($line);
-        }
-        $changelog = array_filter($changelog);
-
-        $i = 0;
-
-        array_walk($changelog, static function ($line) use (&$i) {
-            if (preg_match('/^- (New|Chg|Enh|Bug)( #\d+(, #\d+)*)?: .+/', $line, $m)) {
-                $o = ['New' => 'C', 'Chg' => 'D', 'Enh' => 'E', 'Bug' => 'F'];
-                return $o[$m[1]] . ' ' . (!empty($m[2]) ? $m[2] : 'AAAA' . $i++);
+        $changelog = [];
+        foreach ($rawChangelog as $i => $line) {
+            $line = rtrim($line);
+            if ($line === '') {
+                continue;
             }
 
-            return 'B' . $i++;
-        });
-        array_multisort(
-            $changelog,
-            SORT_ASC,
-            SORT_NATURAL
-        );
+            if (preg_match('/^- (New|Chg|Enh|Bug)( #\d+(, #\d+)*)?: .+/', $line, $m)) {
+                $o = ['New' => 'C', 'Chg' => 'D', 'Enh' => 'E', 'Bug' => 'F'];
+                $key = $o[$m[1]] . ' ' . (!empty($m[2]) ? $m[2] : 'AAAA' . $i);
+            } else {
+                $key = 'B' . $i;
+            }
+
+            $changelog[$key] = $line;
+        }
+        ksort($changelog);
 
         file_put_contents($this->path, implode("\n", array_merge($start, $changelog, $end)));
     }
@@ -61,7 +57,7 @@ final class Changelog
         ];
         array_unshift($lines, $headline);
 
-        file_put_contents($this->path, implode("\n", array_merge($hl, $lines)));
+        file_put_contents($this->path, implode("\n", [...$hl, ...$lines]));
     }
 
     public function addEntry(string $text): void

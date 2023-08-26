@@ -119,7 +119,7 @@ $packages = [
     'db-oracle' => true,
     //'db-mongodb' => true,
     'active-record' => true,
-    'yii-db-migration' => true,
+    'db-migration' => true,
     'yii-cycle' => true,
     // 'db-sphinx' => true,
     // 'db-redis' => true,
@@ -133,6 +133,7 @@ $packages = [
     'data-response' => true,
     'request-model' => true,
     'middleware-dispatcher' => true,
+    'proxy-middleware' => true,
     'request-body-parser' => true,
     'response-download' => true,
     'session' => true,
@@ -149,6 +150,11 @@ $packages = [
     'form' => true,
     'assets' => true,
     'yii-twig' => true,
+
+    // Input & Hydrator
+    'hydrator' => true,
+    'hydrator-validator' => true,
+    'input-http' => true,
 
     // Data abstractions and widgets
     'data' => true,
