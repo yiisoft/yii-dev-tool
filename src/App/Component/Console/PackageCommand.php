@@ -27,7 +27,7 @@ class PackageCommand extends Command
     private ?bool $targetPackagesSpecifiedExplicitly = null;
 
     /** @var Package[]|null */
-    private ?array $targetPackages;
+    private ?array $targetPackages = null;
 
     /**
      * Override this method in a subclass if you want to do something before processing the packages.
