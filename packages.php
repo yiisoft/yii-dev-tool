@@ -128,6 +128,7 @@ $packages = [
     // Router
     'router' => true,
     'router-fastroute' => true,
+    'router-composer-attribute-collector' => true,
 
     // Web
     'data-response' => true,
