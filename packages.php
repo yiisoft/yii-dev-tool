@@ -148,6 +148,7 @@ $packages = [
     'widget' => true,
     'yii-widgets' => true,
     'form' => true,
+    'form-model' => true,
     'assets' => true,
     'yii-twig' => true,
 
