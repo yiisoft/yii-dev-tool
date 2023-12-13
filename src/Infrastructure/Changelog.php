@@ -33,7 +33,7 @@ final class Changelog
 
             if (preg_match('/^- (New|Chg|Enh|Bug)( #\d+(, #\d+)*)?: .+/', $line, $m)) {
                 $o = ['New' => 'C', 'Chg' => 'D', 'Enh' => 'E', 'Bug' => 'F'];
-                $key = $o[$m[1]] . ' ' . (!empty($m[2]) ? $m[2] : 'AAAA' . $i);
+                $key = $o[$m[1]] . ' ' . (!empty($m[2]) ? $m[2] : 'AAAA') . $i;
             } else {
                 $key = 'B' . $i;
             }
