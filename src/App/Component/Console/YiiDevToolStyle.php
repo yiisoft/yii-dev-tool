@@ -45,7 +45,7 @@ class YiiDevToolStyle extends SymfonyStyle
         $count = count($message);
         if ($count) {
             $message[0] = "{$tag}{$message[0]}";
-            $message[$count-1] .= '</>';
+            $message[$count - 1] .= '</>';
         }
 
         return $message;
