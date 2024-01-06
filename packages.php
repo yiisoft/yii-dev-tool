@@ -129,6 +129,7 @@ $packages = [
     'router' => true,
     'router-fastroute' => true,
     'router-composer-attribute-collector' => true,
+    'file-router' => true,
 
     // Web
     'data-response' => true,
