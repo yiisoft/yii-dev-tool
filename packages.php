@@ -79,8 +79,8 @@ $packages = [
     'translator-message-db' => true,
 
     // Queue
-    'yii-queue' => true,
-    'yii-queue-amqp' => true,
+    'queue' => true,
+    'queue-amqp' => true,
 
     // Mutex
     'mutex' => true,
