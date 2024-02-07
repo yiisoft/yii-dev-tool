@@ -32,8 +32,6 @@ class PackageCommand extends Command
     /**
      * Override this method in a subclass if you want to do something before processing the packages.
      * For example, check the input arguments.
-     *
-     * @param InputInterface $input
      */
     protected function beforeProcessingPackages(InputInterface $input): void
     {
@@ -41,8 +39,6 @@ class PackageCommand extends Command
 
     /**
      * This method in a subclass should implement the processing logic of each package.
-     *
-     * @param Package $package
      *
      * @noinspection PhpUnusedParameterInspection
      */
