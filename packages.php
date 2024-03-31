@@ -123,7 +123,6 @@ $packages = [
     'yii-cycle' => true,
     // 'db-sphinx' => true,
     // 'db-redis' => true,
-    'data-db' => true,
 
     // Router
     'router' => true,
@@ -161,6 +160,8 @@ $packages = [
 
     // Data abstractions and widgets
     'data' => true,
+    'data-db' => true,
+    'data-cycle' => true,
     'validator' => true,
     'yii-dataview' => true,
 
