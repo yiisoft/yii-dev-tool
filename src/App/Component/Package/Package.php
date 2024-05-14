@@ -152,7 +152,7 @@ class Package
     public function getGitWorkingCopy(): GitWorkingCopy
     {
         if (!$this->isGitRepositoryCloned()) {
-            throw new RuntimeException('Package does not have git working copy.');
+            throw new RuntimeException(sprintf('Package %s does not have git working copy.', $this->path));
         }
 
         if ($this->gitWorkingCopy === null) {
