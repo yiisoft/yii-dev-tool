@@ -144,7 +144,7 @@ $packages = [
     // View, assets, templates and widgets
     'view' => true,
     'view-twig' => true,
-    'yii-view' => true,
+    'yii-view-renderer' => true,
     'widget' => true,
     'yii-widgets' => true,
     'form' => true,
