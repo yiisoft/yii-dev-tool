@@ -93,6 +93,7 @@ $packages = [
     // Mailer
     'mailer' => true,
     'mailer-symfony' => true,
+    'mailer-view' => true,
 
     // Helpers and utilities
     'arrays' => true,
