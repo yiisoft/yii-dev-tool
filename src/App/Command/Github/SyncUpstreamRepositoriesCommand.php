@@ -9,17 +9,19 @@ use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'github/sync',
+    description: 'Sync forks from upstream repositories'
+)]
 final class SyncUpstreamRepositoriesCommand extends PackageCommand
 {
-    protected static $defaultName = 'github/sync';
-    protected static $defaultDescription = 'Sync forks from upstream repositories';
-
     private InputInterface $input;
 
     protected function initialize(InputInterface $input, OutputInterface $output)

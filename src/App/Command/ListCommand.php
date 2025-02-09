@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'list',
+    description: 'List all packages'
+)]
 final class ListCommand extends PackageCommand
 {
-    protected static $defaultName = 'list';
-    protected static $defaultDescription = 'List all packages';
-
     protected function configure()
     {
         $this->setAliases(['l']);

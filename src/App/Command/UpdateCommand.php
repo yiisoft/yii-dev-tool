@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
@@ -12,11 +13,12 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
 
+#[AsCommand(
+    name: 'update',
+    description: 'Pull changes from packages repositories and update composer dependencies'
+)]
 final class UpdateCommand extends PackageCommand
 {
-    protected static $defaultName = 'update';
-    protected static $defaultDescription = 'Pull changes from packages repositories and update composer dependencies';
-
     private array $additionalComposerUpdateOptions = [];
 
     public function __construct(private PackageService $packageService, string $name = null)

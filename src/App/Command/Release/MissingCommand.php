@@ -6,6 +6,7 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 
 use InvalidArgumentException;
 use RuntimeException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\Table;
 use Symfony\Component\Console\Helper\TableCell;
@@ -18,13 +19,14 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 
+#[AsCommand(
+    name: 'release/missing',
+    description: 'Find out which stable packages contain unreleased changes'
+)]
 final class MissingCommand extends Command
 {
     private ?OutputManager $io = null;
     private ?PackageList $packageList = null;
-
-    protected static $defaultName = 'release/missing';
-    protected static $defaultDescription = 'Find out which stable packages contain unreleased changes';
 
     protected function initialize(InputInterface $input, OutputInterface $output)
     {

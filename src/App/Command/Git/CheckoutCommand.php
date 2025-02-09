@@ -4,17 +4,18 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git/checkout',
+    description: 'Create a branch if does not exist, checkout a branch if it exists'
+)]
 final class CheckoutCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/checkout';
-    protected static $defaultDescription = 'Create a branch if does not exist, checkout a branch if it exists';
-
-    /** @var string */
     private string $branch;
 
     protected function configure(): void
