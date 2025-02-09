@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'exec',
+    description: 'Execute the specified console command in each package'
+)]
 final class ExecCommand extends PackageCommand
 {
-    protected static $defaultName = 'exec';
-    protected static $defaultDescription = 'Execute the specified console command in each package';
-
     private string $command;
 
     protected function configure()

@@ -4,17 +4,19 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'test',
+    description: 'Test packages'
+)]
 final class TestCommand extends PackageCommand
 {
-    protected static $defaultName = 'test';
-    protected static $defaultDescription = 'Test packages';
-
     private ?string $filter = null;
 
     protected function configure(): void

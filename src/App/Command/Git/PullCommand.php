@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git/pull',
+    description: 'Pull changes from package repositories'
+)]
 final class PullCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/pull';
-    protected static $defaultDescription = 'Pull changes from package repositories';
-
     protected function configure(): void
     {
         $this->setAliases(['pull']);

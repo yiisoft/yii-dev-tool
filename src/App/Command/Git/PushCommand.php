@@ -4,15 +4,17 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symplify\GitWrapper\Exception\GitException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git/push',
+    description: 'Push changes into package repositories'
+)]
 final class PushCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/push';
-    protected static $defaultDescription = 'Push changes into package repositories';
-
     protected function configure(): void
     {
         $this->setAliases(['push']);

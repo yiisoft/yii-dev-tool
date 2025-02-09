@@ -4,18 +4,19 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git/commit',
+    description: 'Add and commit changes into each package repository'
+)]
 final class CommitCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/commit';
-    protected static $defaultDescription = 'Add and commit changes into each package repository';
-
-    /** @var string */
     private string $message;
 
     protected function configure()
