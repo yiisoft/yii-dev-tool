@@ -70,7 +70,7 @@ final class InstallCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Installing package {package}');
 
         if (!$package->isGitRepositoryCloned()) {
-            $this->packageService->gitClone($package, self::$defaultName, $this->getErrorsList(), $io);
+            $this->packageService->gitClone($package, $this->getName(), $this->getErrorsList(), $io);
 
             if ($this->doesPackageContainErrors($package)) {
                 return;
