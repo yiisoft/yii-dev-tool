@@ -41,7 +41,7 @@ final class CloneCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Cloning package {package}');
 
-        $this->packageService->gitClone($package, self::$defaultName, $this->getErrorsList(), $io);
+        $this->packageService->gitClone($package, $this->getName(), $this->getErrorsList(), $io);
 
         if ($this->doesPackageContainErrors($package)) {
             return;
