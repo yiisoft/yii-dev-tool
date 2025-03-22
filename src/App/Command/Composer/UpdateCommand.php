@@ -19,7 +19,7 @@ final class UpdateCommand extends PackageCommand
 {
     private array $additionalComposerUpdateOptions = [];
 
-    public function __construct(private PackageService $packageService, string $name = null)
+    public function __construct(private PackageService $packageService, ?string $name = null)
     {
         parent::__construct($name);
     }

@@ -17,7 +17,7 @@ use Yiisoft\YiiDevTool\App\PackageService;
 )]
 final class CloneCommand extends PackageCommand
 {
-    public function __construct(private PackageService $packageService, string $name = null)
+    public function __construct(private PackageService $packageService, ?string $name = null)
     {
         parent::__construct($name);
     }

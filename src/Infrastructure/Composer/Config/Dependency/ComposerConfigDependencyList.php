@@ -14,7 +14,7 @@ class ComposerConfigDependencyList
      */
     private array $dependencies = [];
 
-    public function __construct(array $dependenciesAsArray = null)
+    public function __construct(?array $dependenciesAsArray = null)
     {
         if ($dependenciesAsArray !== null) {
             foreach ($dependenciesAsArray as $packageName => $constraint) {
