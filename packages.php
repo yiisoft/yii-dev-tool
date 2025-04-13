@@ -177,7 +177,7 @@ $packages = [
     'yii-gii-frontend' => true,
 
     // CSS frameworks
-    'yii-bootstrap5' => true,
+    'bootstrap5' => true,
     'yii-bulma' => true,
 
     // Runners
