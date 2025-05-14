@@ -135,6 +135,7 @@ $packages = [
     // Web
     'data-response' => true,
     'middleware-dispatcher' => true,
+    'psr-emitter' => true,
     'proxy-middleware' => true,
     'request-body-parser' => true,
     'response-download' => true,
