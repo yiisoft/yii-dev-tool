@@ -5,8 +5,6 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command;
 
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
@@ -25,7 +23,7 @@ final class ActCommand extends PackageCommand
         $actBinary = dirname(__DIR__, 3) . '/bin/act';
 
         $process = new Process([
-           $actBinary,
+            $actBinary,
         ], $package->getPath());
         $process->setTimeout(20);
         $process->run();
