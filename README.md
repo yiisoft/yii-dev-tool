@@ -21,7 +21,7 @@ If you prefer manual install, you need:
 
 If you prefer Vagrant, you only need to install 
 [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads),
-because our Vagrant environment already contains Ubuntu, PHP and Composer. 
+because our Vagrant environment already contains Ubuntu, PHP, and Composer. 
 See our Vagrant [documentation](vagrant/README.md) for details.
 
 ### Docker
@@ -66,7 +66,7 @@ Configuration
 -------------
 
 To customize the configuration of **yii-dev-tool**, create your local configuration `packages.local.php` 
-using file `packages.local.php.example` as example. In this file you will find examples of all available 
+using file `packages.local.php.example` as example. In this file, you will find examples of all available 
 configuration options.
 
 Some commands such as `github/protect-branch`, `github/settings`, `release/make` require
@@ -96,12 +96,12 @@ Go to the page of each repository and click the "Fork" button:
 * [yiisoft/view](https://github.com/yiisoft/view)
 * [yiisoft/i18n](https://github.com/yiisoft/i18n)
 
-Suppose my nickname on Github is "samdark". Then I will get three forks:
+Suppose my nickname on GitHub is "samdark." Then I will get three forks:
 * samdark/demo
 * samdark/view
 * samdark/i18n
 
-For your nickname you will get other fork names.
+For your nickname, you will get other fork names.
 
 ### Step 2: install yii-dev-tool
 
@@ -144,7 +144,8 @@ See [example](packages.local.php.example).
 
 ### Step 4: install packages
 
-In order to work with Github via SSH, you have to [add](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) your public SSH key to Github account. Add key if you have not done it before.
+To work with GitHub via SSH, you have to [add](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) your public SSH key to GitHub account. 
+Add key if you have not done it before.
 
 Now install the packages:
 
@@ -213,7 +214,7 @@ Go to the pages of the original repositories and create a PR in each:
 
 ### Final notes
 
-That's all. We developed new functionality and submitted it for review 🙂 Of course, the steps will be 
+That's all. We developed new functionality and submitted it for review, 🙂 Of course, the steps will be 
 slightly different for different tasks and configurations. 
 
 Remember that **yii-dev-tool** contains many other commands:
