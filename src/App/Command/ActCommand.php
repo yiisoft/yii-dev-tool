@@ -36,7 +36,7 @@ final class ActCommand extends PackageCommand
                     curl --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/nektos/act/master/install.sh | sudo bash
                 ERROR);
 
-            exit(1);
+            return Command::FAILURE;
         }
 
         $output = $process->getErrorOutput();
