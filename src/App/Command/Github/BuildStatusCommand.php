@@ -49,8 +49,6 @@ final class BuildStatusCommand extends PackageCommand
         );
 
         foreach ($checks['check_runs'] as $check) {
-
-
             if ($check['status'] === 'completed') {
                 if ($check['conclusion'] === 'success') {
                     $io->important()->success("✔ <href={$check['html_url']}>{$check['name']}</>");
