@@ -96,7 +96,7 @@ Go to the page of each repository and click the "Fork" button:
 * [yiisoft/view](https://github.com/yiisoft/view)
 * [yiisoft/i18n](https://github.com/yiisoft/i18n)
 
-Suppose my nickname on GitHub is "samdark." Then I will get three forks:
+Suppose my nickname on GitHub is `samdark`. Then I will get three forks:
 * samdark/demo
 * samdark/view
 * samdark/i18n
