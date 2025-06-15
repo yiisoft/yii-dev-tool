@@ -5,13 +5,16 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repo;
+use Github\AuthMethod;
 use Github\Client;
-use RuntimeException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 final class SettingsCommand extends PackageCommand
 {
+    use GitHubTokenAware;
+
     protected function configure()
     {
         $this
@@ -32,7 +35,7 @@ final class SettingsCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Adjusting settings for {package}');
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getGitHubToken(), null, AuthMethod::ACCESS_TOKEN);
         $repoApi = new Repo($client);
 
         $repoApi->update($package->getVendor(), $package->getId(), $this->getSettings());
@@ -42,15 +45,5 @@ final class SettingsCommand extends PackageCommand
     {
         /** @noinspection PhpIncludeInspection */
         return require $this->getAppRootDir() . 'config/settings.php';
-    }
-
-    private function getToken(): string
-    {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 }

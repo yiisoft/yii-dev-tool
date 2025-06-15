@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Forks;
+use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
 use RuntimeException;
@@ -14,9 +15,12 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 final class ForksRepositoriesCommand extends Command
 {
+    use GitHubTokenAware;
+
     private ?OutputManager $io = null;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -45,7 +49,7 @@ final class ForksRepositoriesCommand extends Command
         parent::configure();
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $ownerRepository = $input->getArgument('owner');
         $repositories = $input->getArgument('repositories');
@@ -53,7 +57,7 @@ final class ForksRepositoriesCommand extends Command
         $targetRepositories = array_unique(explode(',', $repositories));
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getGitHubToken(), null, AuthMethod::ACCESS_TOKEN);
         $forks = (new Forks($client));
 
         foreach ($targetRepositories as $repository) {
@@ -72,16 +76,6 @@ final class ForksRepositoriesCommand extends Command
             }
         }
         return Command::SUCCESS;
-    }
-
-    private function getToken(): string
-    {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 
     /**
