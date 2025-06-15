@@ -59,8 +59,7 @@ final class YiiDevToolApplication extends Application
 
     public function __construct(
         private array $config
-    )
-    {
+    ) {
         parent::__construct($this->header);
         $this->setDefaultCommand('list-commands');
     }
