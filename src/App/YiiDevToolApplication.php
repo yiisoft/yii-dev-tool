@@ -24,6 +24,7 @@ use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\StatusCommand;
+use Yiisoft\YiiDevTool\App\Command\Github\BuildStatusCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ForksRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SyncUpstreamRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
@@ -119,6 +120,7 @@ final class YiiDevToolApplication extends Application
             new AddChangelogCommand(),
             new SwitchCommand(),
             new IdeCommand(),
+            new BuildStatusCommand(),
         ];
     }
 
