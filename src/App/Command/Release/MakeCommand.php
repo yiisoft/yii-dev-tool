@@ -264,10 +264,16 @@ final class MakeCommand extends PackageCommand
         $changelog = new Changelog($changelogPath);
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
         $release = new Releases($client);
+
+
+        $changelogUrl = "https://github.com/yiisoft/$packageName/blob/$versionToRelease/CHANGELOG.md";
+        $body = implode("\n", $changelog->getReleaseNotes($versionToRelease));
+        $body .= "\n\n[Full changelog]({$changelogUrl})";
+
         $release->create($package->getVendor(), $package->getId(), [
             'name' => sprintf('Version %s', $versionToRelease),
             'tag_name' => $versionToRelease->asString(),
-            'body' => implode("\n", $changelog->getReleaseNotes($versionToRelease)),
+            'body' => $body,
             'draft' => false,
             'prerelease' => false, // TODO: check if this is pre-release
         ]);
