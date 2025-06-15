@@ -19,7 +19,6 @@ class ComposerConfig
 
     public const SECTION_DESCRIPTION = 'description';
 
-
     private function __construct(private array $data)
     {
     }

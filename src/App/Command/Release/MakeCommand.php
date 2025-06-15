@@ -282,6 +282,7 @@ final class MakeCommand extends PackageCommand
 
         return trim(file_get_contents($tokenFile));
     }
+
     private function displayReleaseSummary(Package $package, ComposerConfig $composerConfig, Changelog $changelog, Version $versionToRelease): void
     {
         $packageName = $package->getName();
@@ -290,7 +291,7 @@ final class MakeCommand extends PackageCommand
 
         $io = $this->getIO();
         $io->info("\n---\n");
-        $io->info("<fg=green>" . $description . ' ' . $versionToRelease . "</>\n");
+        $io->info('<fg=green>' . $description . ' ' . $versionToRelease . "</>\n");
 
         $changes = [];
 
