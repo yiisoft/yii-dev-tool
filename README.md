@@ -73,6 +73,8 @@ Some commands such as `github/protect-branch`, `github/settings`, `release/make`
 a [GitHub personal access token](https://github.com/settings/tokens). Therefore, you need to
 create it and save it in `config/github.token` file.
 
+To move `dev` directory where packages are installed to another location, create your local configuration `config/config.local.php` 
+using file `config/config.local.php.example` as example. Adjust `packagesRootDir` as needed.
 
 Usage example
 -------------

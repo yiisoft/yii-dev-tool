@@ -128,10 +128,12 @@ class PackageCommand extends Command
                 exit(1);
             }
 
+            $packagesRootDir = $this->getApplication()->getConfig('packagesRootDir') ??  $this->getAppRootDir() . 'dev';
+
             $this->packageList = new PackageList(
                 $ownerPackages,
                 $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
+                packagesRootDir: $packagesRootDir,
             );
 
             $this->errorList = new PackageErrorList();
