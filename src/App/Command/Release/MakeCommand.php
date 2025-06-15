@@ -306,13 +306,20 @@ final class MakeCommand extends PackageCommand
 
         $changes = implode("\n", $changes);
 
+        $upgradeNotesLink = '';
+        $upgradePath = $package->getPath() . '/UPGRADE.md';
+        if (file_exists($upgradePath)) {
+            $upgradeNotesLink = "\n\nSee [UPGRADE.md](https://github.com/yiisoft/$packageName/blob/$versionToRelease/UPGRADE.md) for upgrade notes.";
+        }
+
         $text = <<<TEXT
         [$description](https://github.com/yiisoft/$packageName) version $versionToRelease was released.
         In this version:
 
         $changes
+        $upgradeNotesLink
         TEXT;
 
-        $io->info($text . "\n");
+        $io->info(trim($text)). "\n");
     }
 }
