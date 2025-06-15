@@ -193,6 +193,13 @@ final class MakeCommand extends PackageCommand
             $io->info('The following steps are left to do manually:');
             $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
             $io->info('- Release news and announcement.');
+
+            $this->displayReleaseSummary(
+                package: $package,
+                composerConfig: $composerConfig,
+                changelog: $changelog,
+                versionToRelease: $versionToRelease
+            );
         }
     }
 
@@ -274,5 +281,38 @@ final class MakeCommand extends PackageCommand
         }
 
         return trim(file_get_contents($tokenFile));
+    }
+
+    private function displayReleaseSummary(Package $package, ComposerConfig $composerConfig, Changelog $changelog, Version $versionToRelease): void
+    {
+        $packageName = $package->getName();
+
+        $description = $composerConfig->getSection(ComposerConfig::SECTION_DESCRIPTION);
+
+        $io = $this->getIO();
+        $io->info("\n---\n");
+        $io->info('<fg=green>' . $description . ' ' . $versionToRelease . "</>\n");
+
+        $changes = [];
+
+        foreach ($changelog->getReleaseNotes($versionToRelease) as $note) {
+            $note = trim($note);
+            if ($note === '') {
+                continue;
+            }
+
+            $changes[] = '- ' . preg_replace('~^-.*?:\s+(.*)\s+\(?.*?\)$~', '$1', $note);
+        }
+
+        $changes = implode("\n", $changes);
+
+        $text = <<<TEXT
+        [$description](https://github.com/yiisoft/$packageName) version $versionToRelease was released.
+        In this version:
+
+        $changes
+        TEXT;
+
+        $io->info($text . "\n");
     }
 }

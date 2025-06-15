@@ -17,6 +17,8 @@ class ComposerConfig
     public const SECTION_REQUIRE = 'require';
     public const SECTION_REQUIRE_DEV = 'require-dev';
 
+    public const SECTION_DESCRIPTION = 'description';
+
     private function __construct(private array $data)
     {
     }
