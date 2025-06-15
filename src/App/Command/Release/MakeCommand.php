@@ -320,6 +320,6 @@ final class MakeCommand extends PackageCommand
         $upgradeNotesLink
         TEXT;
 
-        $io->info(trim($text)). "\n");
+        $io->info(trim($text) . "\n");
     }
 }
