@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Yiisoft\YiiDevTool\App\Component;
 
 use Symfony\Component\Console\Command\Command;
@@ -22,7 +24,7 @@ trait GitHubTokenAware
         if (!file_exists($tokenFile)) {
             $io->error([
                 "There's no $tokenFile.",
-                "<href=https://github.com/settings/tokens>Please create a GitHub token</> and put it there.",
+                '<href=https://github.com/settings/tokens>Please create a GitHub token</> and put it there.',
             ]);
             exit(Command::FAILURE);
         }
@@ -31,7 +33,7 @@ trait GitHubTokenAware
         if (empty($token)) {
             $io->error([
                 "$tokenFile exists but is empty.",
-                "<href=https://github.com/settings/tokens>Please create a GitHub token</> and put it there.",
+                '<href=https://github.com/settings/tokens>Please create a GitHub token</> and put it there.',
             ]);
             exit(Command::FAILURE);
         }
