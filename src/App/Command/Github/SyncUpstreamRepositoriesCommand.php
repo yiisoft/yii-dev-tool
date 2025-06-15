@@ -8,13 +8,13 @@ use Github\Api\Repo;
 use Github\AuthMethod;
 use Github\Client;
 use Github\Exception\RuntimeException as GithubRuntimeException;
-use RuntimeException;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 #[AsCommand(
     name: 'github/sync',
@@ -22,6 +22,8 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 )]
 final class SyncUpstreamRepositoriesCommand extends PackageCommand
 {
+    use GitHubTokenAware;
+
     private InputInterface $input;
 
     protected function initialize(InputInterface $input, OutputInterface $output)
@@ -79,7 +81,7 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
     private function getGithubApiRepository(): Repo
     {
         $client = new Client();
-        $client->authenticate($this->getToken(), null, AuthMethod::ACCESS_TOKEN);
+        $client->authenticate($this->getGitHubToken(), null, AuthMethod::ACCESS_TOKEN);
         // Remove anonymous class when method is added to github-api package
         // https://github.com/KnpLabs/php-github-api/issues/1083
         return new class ($client) extends Repo {
@@ -92,15 +94,5 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
             }
         };
         // return (new Repo($client));
-    }
-
-    private function getToken(): string
-    {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 }
