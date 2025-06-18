@@ -5,15 +5,18 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Github;
 
 use Github\Api\Repository\Protection;
+use Github\AuthMethod;
 use Github\Client;
-use RuntimeException;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 final class ProtectBranchCommand extends PackageCommand
 {
+    use GitHubTokenAware;
+
     private ?string $branch = null;
 
     protected function configure()
@@ -42,7 +45,7 @@ final class ProtectBranchCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Protecting {package}');
 
         $client = new Client();
-        $client->authenticate($this->getToken(), null, Client::AUTH_ACCESS_TOKEN);
+        $client->authenticate($this->getGitHubToken(), null, AuthMethod::ACCESS_TOKEN);
         $protectionApi = (new Protection($client));
 
         // See https://docs.github.com/en/rest/reference/repos#update-branch-protection
@@ -52,15 +55,5 @@ final class ProtectBranchCommand extends PackageCommand
             'required_pull_request_reviews' => null,
             'restrictions' => null,
         ]);
-    }
-
-    private function getToken(): string
-    {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 }
