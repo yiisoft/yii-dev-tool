@@ -288,7 +288,7 @@ final class MakeCommand extends PackageCommand
         $changes = implode("\n", $changes);
 
         $text = <<<TEXT
-        [$description](https://github.com/yiisoft/$packageName) version $versionToRelease was released.
+        [$description](https://github.com/$packageName) version $versionToRelease was released.
         In this version:
 
         $changes
