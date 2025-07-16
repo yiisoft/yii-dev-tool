@@ -18,11 +18,14 @@ use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 use function in_array;
 
 final class MakeCommand extends PackageCommand
 {
+    use GitHubTokenAware;
+
     private ?string $tag = null;
 
     private const MAIN_BRANCHES = ['master', 'main'];
@@ -32,7 +35,7 @@ final class MakeCommand extends PackageCommand
         $this
             ->setName('release/make')
             ->setDescription('Make a package release')
-            ->addOption('tag', null, InputArgument::OPTIONAL, 'Version to tag');
+            ->addOption('tag', null, InputArgument::OPTIONAL, description: 'Version to tag');
 
         parent::configure();
     }
@@ -79,18 +82,6 @@ final class MakeCommand extends PackageCommand
                 "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
                 'Release is only possible for stable packages.',
                 'Releasing skipped.',
-            ]);
-
-            return;
-        }
-
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            $io->warning([
-                "There's no $tokenFile. Please create one and put your GitHub token there.",
-                'Token is required to create release on GitHub.',
-                "You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.",
-                'Release cancelled.',
             ]);
 
             return;
@@ -182,9 +173,9 @@ final class MakeCommand extends PackageCommand
             'm' => 'Prepare for next release',
         ]);
 
-        if ($this->confirm('Push commits and tags, and release on GitHub?')) {
+        if ($this->confirm('Push commits and tag, and release on GitHub?')) {
             $git->push();
-            $git->pushTags();
+            $git->pushTag((string) $versionToRelease);
 
             $this->releaseOnGithub($package, $versionToRelease);
 
@@ -254,7 +245,7 @@ final class MakeCommand extends PackageCommand
 
         $client = new Client();
         try {
-            $token = $this->getToken();
+            $token = $this->getGitHubToken();
         } catch (RuntimeException $e) {
             $io->error($e->getMessage());
             $io->warning('Skipped creating release on GitHub.');
@@ -271,16 +262,6 @@ final class MakeCommand extends PackageCommand
             'draft' => false,
             'prerelease' => false, // TODO: check if this is pre-release
         ]);
-    }
-
-    private function getToken(): string
-    {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
-
-        return trim(file_get_contents($tokenFile));
     }
 
     private function displayReleaseSummary(Package $package, ComposerConfig $composerConfig, Changelog $changelog, Version $versionToRelease): void
@@ -313,7 +294,7 @@ final class MakeCommand extends PackageCommand
         }
 
         $text = <<<TEXT
-        [$description](https://github.com/yiisoft/$packageName) version $versionToRelease was released.
+        [$description](https://github.com/$packageName) version $versionToRelease was released.
         In this version:
 
         $changes
