@@ -282,7 +282,13 @@ final class MakeCommand extends PackageCommand
                 continue;
             }
 
-            $changes[] = '- ' . preg_replace('~^-.*?:\s+(.*)\s+\(?.*?\)$~', '$1', $note);
+            // Extract the main message from changelog entry, handling multiline entries
+            $processed = preg_replace('~^-\s+[A-Za-z]+\s+[^:]*:\s+(.*?)\s*\([^)]*\)$~s', '$1', $note);
+            if ($processed === $note) {
+                // Pattern didn't match, fallback to simpler processing
+                $processed = preg_replace('~^-\s+~', '', $note);
+            }
+            $changes[] = '- ' . $processed;
         }
 
         $changes = implode("\n", $changes);
