@@ -174,6 +174,9 @@ final class MakeCommand extends PackageCommand
         ]);
 
         if ($this->confirm('Push commits and tag, and release on GitHub?')) {
+            // Validate GitHub token before pushing commits and tags
+            $this->getGitHubToken();
+
             $git->push();
             $git->pushTag((string) $versionToRelease);
 
