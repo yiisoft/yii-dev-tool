@@ -62,6 +62,9 @@ final class MakeCommand extends PackageCommand
         $io->preparePackageHeader($package, 'Releasing {package}');
         $git = $package->getGitWorkingCopy();
 
+        // Validate GitHub token at the very beginning
+        $this->getGitHubToken();
+
         if (!$package->composerConfigFileExists()) {
             $io->warning([
                 "No <file>composer.json</file> in package <package>{$package->getName()}</package>.",
