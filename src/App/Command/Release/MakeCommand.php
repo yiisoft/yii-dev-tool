@@ -289,7 +289,7 @@ final class MakeCommand extends PackageCommand
 
         $upgradeNotesLink = '';
         $upgradePath = $package->getPath() . '/UPGRADE.md';
-        if (file_exists($upgradePath)) {
+        if (is_file($upgradePath)) {
             $upgradeNotesLink = "\n\nSee [UPGRADE.md](https://github.com/yiisoft/$packageName/blob/$versionToRelease/UPGRADE.md) for upgrade notes.";
         }
 
