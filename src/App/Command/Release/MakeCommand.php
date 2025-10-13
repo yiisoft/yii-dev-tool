@@ -7,7 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use Github\Api\Repository\Releases;
 use Github\AuthMethod;
 use Github\Client;
-use RuntimeException;
 use Symplify\GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
