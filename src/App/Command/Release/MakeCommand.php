@@ -21,6 +21,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Version;
 use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 use function in_array;
+use function sprintf;
 
 final class MakeCommand extends PackageCommand
 {
@@ -61,9 +62,7 @@ final class MakeCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Releasing {package}');
         $git = $package->getGitWorkingCopy();
-
-        // Validate GitHub token at the very beginning
-        $this->getGitHubToken();
+        $gitHubToken = $this->getGitHubToken();
 
         if (!$package->composerConfigFileExists()) {
             $io->warning([
@@ -180,7 +179,7 @@ final class MakeCommand extends PackageCommand
             $git->push();
             $git->pushTag((string) $versionToRelease);
 
-            $this->releaseOnGithub($package, $versionToRelease);
+            $this->releaseOnGithub($gitHubToken, $package, $versionToRelease);
 
             $io->done();
 
@@ -241,28 +240,21 @@ final class MakeCommand extends PackageCommand
         return $nextVersion;
     }
 
-    private function releaseOnGithub(Package $package, Version $versionToRelease): void
+    private function releaseOnGithub(string $token, Package $package, Version $versionToRelease): void
     {
         $io = $this->getIO();
         $io->info("Creating release on GitHub for $versionToRelease.\n");
 
         $client = new Client();
-        try {
-            $token = $this->getGitHubToken();
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
-            $io->warning('Skipped creating release on GitHub.');
-            return;
-        }
         $changelogPath = $package->getPath() . '/CHANGELOG.md';
         $changelog = new Changelog($changelogPath);
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
         $release = new Releases($client);
 
-
-        $changelogUrl = "https://github.com/yiisoft/$packageName/blob/$versionToRelease/CHANGELOG.md";
         $body = implode("\n", $changelog->getReleaseNotes($versionToRelease));
-        $body .= "\n\n[Full changelog]({$changelogUrl})";
+
+        $changelogUrl = "https://github.com/yiisoft/{$package->getName()}/blob/$versionToRelease/CHANGELOG.md";
+        $body .= "\n\n[Full changelog]($changelogUrl)";
 
         $release->create($package->getVendor(), $package->getId(), [
             'name' => sprintf('Version %s', $versionToRelease),
