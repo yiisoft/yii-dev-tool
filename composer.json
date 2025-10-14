@@ -47,23 +47,31 @@
         "yiisoft/var-dumper": "^1.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "^9.5",
-        "rector/rector": "^2.0.16"
+        "bamarni/composer-bin-plugin": "^1.8.2",
+        "phpunit/phpunit": "^9.6.29"
     },
     "autoload": {
         "psr-4": {
             "Yiisoft\\YiiDevTool\\": "src"
         }
     },
-    "config": {
-        "sort-packages": true,
-        "allow-plugins": {
-            "php-http/discovery": true
-        }
-    },
     "autoload-dev": {
         "psr-4": {
             "Yiisoft\\YiiDevTool\\Test\\": "tests"
+        }
+    },
+    "extra": {
+        "bamarni-bin": {
+            "bin-links": true,
+            "target-directory": "tools",
+            "forward-command": true
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "allow-plugins": {
+            "bamarni/composer-bin-plugin": true,
+            "php-http/discovery": true
         }
     }
 }
