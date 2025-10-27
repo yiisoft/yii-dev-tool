@@ -183,7 +183,7 @@ final class MakeCommand extends PackageCommand
             $io->done();
 
             $io->info('The following steps are left to do manually:');
-            $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
+            $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getVendor()}/{$package->getId()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
             $io->info('- Release news and announcement.');
 
             $this->displayReleaseSummary(
@@ -252,7 +252,7 @@ final class MakeCommand extends PackageCommand
 
         $body = implode("\n", $changelog->getReleaseNotes($versionToRelease));
 
-        $changelogUrl = "https://github.com/yiisoft/{$package->getName()}/blob/$versionToRelease/CHANGELOG.md";
+        $changelogUrl = "https://github.com/{$package->getVendor()}/{$package->getId()}/blob/$versionToRelease/CHANGELOG.md";
         $body .= "\n\n[Full changelog]($changelogUrl)";
 
         $release->create($package->getVendor(), $package->getId(), [
@@ -288,7 +288,7 @@ final class MakeCommand extends PackageCommand
         $changes = implode("\n", $changes);
 
         $text = <<<TEXT
-        [$description](https://github.com/$packageName) version $versionToRelease was released.
+        [$description](https://github.com/{$package->getVendor()}/{$package->getId()}) version $versionToRelease was released.
         In this version:
 
         $changes
