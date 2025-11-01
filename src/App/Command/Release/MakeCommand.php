@@ -252,7 +252,7 @@ final class MakeCommand extends PackageCommand
 
         $body = implode("\n", $changelog->getReleaseNotes($versionToRelease));
 
-        $changelogUrl = "https://github.com/yiisoft/{$package->getName()}/blob/$versionToRelease/CHANGELOG.md";
+        $changelogUrl = "https://github.com/{$package->getName()}/blob/$versionToRelease/CHANGELOG.md";
         $body .= "\n\n[Full changelog]($changelogUrl)";
 
         $release->create($package->getVendor(), $package->getId(), [
