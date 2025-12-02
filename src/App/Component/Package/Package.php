@@ -6,18 +6,14 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use InvalidArgumentException;
 use RuntimeException;
-use Symfony\Component\Process\ExecutableFinder;
-use Symplify\GitWrapper\GitWorkingCopy;
-use Symplify\GitWrapper\GitWrapper;
+use Yiisoft\YiiDevTool\Infrastructure\Git\GitRepository;
 
 class Package
 {
-    private static ?GitWrapper $gitWrapper = null;
-
     private string $id;
     private ?string $configuredRepositoryUrl = null;
     private string $path;
-    private ?GitWorkingCopy $gitWorkingCopy = null;
+    private ?GitRepository $gitWorkingCopy = null;
     private bool $enabled = true;
     private bool $isMonoRepository = false;
 
@@ -137,19 +133,8 @@ class Package
         return $this->rootPackage !== null;
     }
 
-    private static function getGitWrapper(): GitWrapper
-    {
-        if (static::$gitWrapper === null) {
-            $finder = new ExecutableFinder();
-            $gitBinary = $finder->find('git');
-            static::$gitWrapper = new GitWrapper($gitBinary);
-        }
-
-        return static::$gitWrapper;
-    }
-
     // TODO: Call all git commands through this interface
-    public function getGitWorkingCopy(): GitWorkingCopy
+    public function getGitWorkingCopy(): GitRepository
     {
         if (!$this->isGitRepositoryCloned()) {
             throw new RuntimeException(sprintf('Package %s does not have git working copy.', $this->path));
@@ -160,7 +145,7 @@ class Package
             if ($this->isVirtual()) {
                 $path = $this->rootPackage->getPath();
             }
-            $this->gitWorkingCopy = static::getGitWrapper()->workingCopy($path);
+            $this->gitWorkingCopy = new GitRepository($path);
         }
 
         return $this->gitWorkingCopy;

@@ -6,10 +6,10 @@ namespace Yiisoft\YiiDevTool\App\Command;
 
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
-use Symplify\GitWrapper\GitWorkingCopy;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
+use Yiisoft\YiiDevTool\Infrastructure\Git\GitRepository;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 final class AddChangelogCommand extends PackageCommand
@@ -96,7 +96,7 @@ final class AddChangelogCommand extends PackageCommand
         }
     }
 
-    private function getCurrentVersion(GitWorkingCopy $git): Version
+    private function getCurrentVersion(GitRepository $git): Version
     {
         $tags = $git
             ->tags()

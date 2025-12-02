@@ -5,9 +5,9 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
 use Symfony\Component\Console\Attribute\AsCommand;
-use Symplify\GitWrapper\Exception\GitException;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use Yiisoft\YiiDevTool\Infrastructure\Git\GitException;
 
 #[AsCommand(
     name: 'git/push',
