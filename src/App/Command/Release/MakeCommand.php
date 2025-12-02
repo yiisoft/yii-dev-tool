@@ -282,7 +282,7 @@ final class MakeCommand extends PackageCommand
                 continue;
             }
 
-            $changes[] = '- ' . preg_replace('~^-.*?:\s+(.*)\s+\(?.*?\)$~', '$1', $note);
+            $changes[] = '- ' . preg_replace('~^-.*?:\s+(.*)\s+\(.*\)$~', '$1', $note);
         }
 
         $changes = implode("\n", $changes);
