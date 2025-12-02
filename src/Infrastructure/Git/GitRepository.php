@@ -19,12 +19,10 @@ use Gitonomy\Git\Repository;
 final class GitRepository
 {
     private Repository $repository;
-    private string $path;
 
-    public function __construct(string $path)
+    public function __construct(private string $path)
     {
-        $this->path = $path;
-        $this->repository = new Repository($path, [
+        $this->repository = new Repository($this->path, [
             'inherit_environment_variables' => true,
         ]);
     }
