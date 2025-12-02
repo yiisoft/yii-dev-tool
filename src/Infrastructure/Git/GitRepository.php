@@ -176,20 +176,19 @@ final class GitRepository
     }
 
     /**
-     * Creates a commit with the given options.
+     * Converts an associative array of options to command-line arguments.
      *
-     * @param array<string, bool|string> $options Commit options
+     * @param array<string, bool|string> $options Options array
+     * @return string[] Command-line arguments
      */
-    public function commit(array $options = []): string
+    private function buildCommandArgs(array $options): array
     {
         $args = [];
         foreach ($options as $option => $value) {
             if (strlen($option) === 1) {
                 // Short option
-                if ($value === true) {
-                    $args[] = "-$option";
-                } else {
-                    $args[] = "-$option";
+                $args[] = "-$option";
+                if ($value !== true) {
                     $args[] = (string) $value;
                 }
             } else {
@@ -201,8 +200,17 @@ final class GitRepository
                 }
             }
         }
+        return $args;
+    }
 
-        return $this->repository->run('commit', $args);
+    /**
+     * Creates a commit with the given options.
+     *
+     * @param array<string, bool|string> $options Commit options
+     */
+    public function commit(array $options = []): string
+    {
+        return $this->repository->run('commit', $this->buildCommandArgs($options));
     }
 
     /**
@@ -212,27 +220,7 @@ final class GitRepository
      */
     public function tag(array $options = []): string
     {
-        $args = [];
-        foreach ($options as $option => $value) {
-            if (strlen($option) === 1) {
-                // Short option
-                if ($value === true) {
-                    $args[] = "-$option";
-                } else {
-                    $args[] = "-$option";
-                    $args[] = (string) $value;
-                }
-            } else {
-                // Long option
-                if ($value === true) {
-                    $args[] = "--$option";
-                } elseif (is_string($value)) {
-                    $args[] = "--$option=$value";
-                }
-            }
-        }
-
-        return $this->repository->run('tag', $args);
+        return $this->repository->run('tag', $this->buildCommandArgs($options));
     }
 
     /**
@@ -242,16 +230,7 @@ final class GitRepository
      */
     public function branch(array $options = []): string
     {
-        $args = [];
-        foreach ($options as $option => $value) {
-            if ($value === true) {
-                $args[] = "--$option";
-            } elseif (is_string($value)) {
-                $args[] = "--$option=$value";
-            }
-        }
-
-        return $this->repository->run('branch', $args);
+        return $this->repository->run('branch', $this->buildCommandArgs($options));
     }
 
     /**
