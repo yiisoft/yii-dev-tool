@@ -178,13 +178,18 @@ final class GitRepository
     /**
      * Converts an associative array of options to command-line arguments.
      *
-     * @param array<string, bool|string> $options Options array
+     * @param array<string, bool|string|int|float> $options Options array
      * @return string[] Command-line arguments
      */
     private function buildCommandArgs(array $options): array
     {
         $args = [];
         foreach ($options as $option => $value) {
+            // Skip false values - they indicate the option should be omitted
+            if ($value === false) {
+                continue;
+            }
+
             if (strlen($option) === 1) {
                 // Short option
                 $args[] = "-$option";
@@ -195,8 +200,8 @@ final class GitRepository
                 // Long option
                 if ($value === true) {
                     $args[] = "--$option";
-                } elseif (is_string($value)) {
-                    $args[] = "--$option=$value";
+                } else {
+                    $args[] = "--$option=" . (string) $value;
                 }
             }
         }
@@ -206,7 +211,7 @@ final class GitRepository
     /**
      * Creates a commit with the given options.
      *
-     * @param array<string, bool|string> $options Commit options
+     * @param array<string, bool|string|int|float> $options Commit options
      */
     public function commit(array $options = []): string
     {
@@ -216,7 +221,7 @@ final class GitRepository
     /**
      * Creates a tag with the given options.
      *
-     * @param array<string, bool|string> $options Tag options
+     * @param array<string, bool|string|int|float> $options Tag options
      */
     public function tag(array $options = []): string
     {
@@ -226,7 +231,7 @@ final class GitRepository
     /**
      * Executes a branch command with the given options.
      *
-     * @param array<string, bool|string> $options Branch options
+     * @param array<string, bool|string|int|float> $options Branch options
      */
     public function branch(array $options = []): string
     {
@@ -244,12 +249,21 @@ final class GitRepository
     /**
      * Executes a raw git command.
      *
+     * This method is intended for internal use only where the command string is
+     * constructed from trusted, hardcoded values. The command string is split on
+     * whitespace to separate the git subcommand from its arguments. Arguments are
+     * passed to the underlying Gitonomy library which uses Symfony Process for
+     * proper escaping.
+     *
+     * @internal
      * @param string $command The git command to execute (without 'git' prefix)
      * @param string|null $workingDir Optional working directory for the command
      */
     public function git(string $command, ?string $workingDir = null): string
     {
         // Parse the command string into command and arguments
+        // Note: This simple splitting is safe because this method is only used internally
+        // with hardcoded command strings from the codebase
         $parts = preg_split('/\s+/', $command, -1, PREG_SPLIT_NO_EMPTY);
         $gitCommand = array_shift($parts);
         $args = $parts;
