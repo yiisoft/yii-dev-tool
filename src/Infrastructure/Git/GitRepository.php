@@ -178,7 +178,7 @@ final class GitRepository
     /**
      * Converts an associative array of options to command-line arguments.
      *
-     * @param array<string, bool|string|int|float> $options Options array
+     * @param array<string, bool|float|int|string> $options Options array
      * @return string[] Command-line arguments
      */
     private function buildCommandArgs(array $options): array
@@ -211,7 +211,7 @@ final class GitRepository
     /**
      * Creates a commit with the given options.
      *
-     * @param array<string, bool|string|int|float> $options Commit options
+     * @param array<string, bool|float|int|string> $options Commit options
      */
     public function commit(array $options = []): string
     {
@@ -221,7 +221,7 @@ final class GitRepository
     /**
      * Creates a tag with the given options.
      *
-     * @param array<string, bool|string|int|float> $options Tag options
+     * @param array<string, bool|float|int|string> $options Tag options
      */
     public function tag(array $options = []): string
     {
@@ -231,7 +231,7 @@ final class GitRepository
     /**
      * Executes a branch command with the given options.
      *
-     * @param array<string, bool|string|int|float> $options Branch options
+     * @param array<string, bool|float|int|string> $options Branch options
      */
     public function branch(array $options = []): string
     {
