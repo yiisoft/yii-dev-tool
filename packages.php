@@ -11,6 +11,7 @@ declare(strict_types=1);
 $packages = [
     'actions' => true,
     'docs' => true,
+    'code-style' => true,
 
     // Config plugin
     'config' => true,
