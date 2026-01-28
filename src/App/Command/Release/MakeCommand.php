@@ -7,7 +7,6 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use Github\Api\Repository\Releases;
 use Github\AuthMethod;
 use Github\Client;
-use Symplify\GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -16,6 +15,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
+use Yiisoft\YiiDevTool\Infrastructure\Git\GitRepository;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
@@ -202,14 +202,14 @@ final class MakeCommand extends PackageCommand
             ->confirm($message, false);
     }
 
-    private function getCurrentBranch(GitWorkingCopy $git): string
+    private function getCurrentBranch(GitRepository $git): string
     {
         return trim($git->branch(['show-current' => true]));
     }
 
-    private function getMainBranch(GitWorkingCopy $git): ?string
+    private function getMainBranch(GitRepository $git): ?string
     {
-        foreach ($git->getBranches() as $branch) {
+        foreach ($git->getBranches()->all() as $branch) {
             if (in_array($branch, self::MAIN_BRANCHES, true)) {
                 return $branch;
             }
@@ -217,7 +217,7 @@ final class MakeCommand extends PackageCommand
         return null;
     }
 
-    private function getCurrentVersion(GitWorkingCopy $git): Version
+    private function getCurrentVersion(GitRepository $git): Version
     {
         $tags = $git
             ->tags()
