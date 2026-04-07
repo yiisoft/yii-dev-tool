@@ -91,9 +91,7 @@ final class ContributorsCommand extends Command
         $contributors = [];
 
         foreach ($installedPackages as $installedPackage) {
-            $git = $installedPackage
-                ->getGitWorkingCopy()
-                ->getWrapper();
+            $git = $installedPackage->getGitWorkingCopy();
             $out = $git->git("shortlog -s -e --group=author --group=trailer:co-authored-by$sinceCommand HEAD", $installedPackage->getPath());
             foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
                 [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
