@@ -29,7 +29,7 @@ final class WhatCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('release/what')
+            ->setName('release:what')
             ->setDescription('Find out what to release next');
 
         parent::configure();

@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
 
 #[AsCommand(
-    name: 'git/clone',
+    name: 'git:clone',
     description: 'Package repositories cloning',
 )]
 final class CloneCommand extends PackageCommand

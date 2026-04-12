@@ -10,7 +10,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
-    name: 'git/pull',
+    name: 'git:pull',
     description: 'Pull changes from package repositories'
 )]
 final class PullCommand extends PackageCommand

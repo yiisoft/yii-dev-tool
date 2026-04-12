@@ -22,7 +22,7 @@ final class ProtectBranchCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('github/protect-branch')
+            ->setName('github:protect-branch')
             ->setDescription('Protect specified branch for specified GitHub repositories')
             ->addArgument('branch', InputArgument::REQUIRED, 'Branch to protect');
 

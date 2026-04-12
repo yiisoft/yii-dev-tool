@@ -13,7 +13,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
-    name: 'git/pr/create',
+    name: 'git:pr:create',
     description: 'Create a GitHub pull request'
 )]
 final class RequestPullCommand extends PackageCommand

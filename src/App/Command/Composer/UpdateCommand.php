@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
 
 #[AsCommand(
-    name: 'composer/update',
+    name: 'composer:update',
     description: 'Update composer dependencies in packages'
 )]
 final class UpdateCommand extends PackageCommand

@@ -199,7 +199,7 @@ class PackageCommand extends Command
 
         if (!$package->isGitRepositoryCloned()) {
             // TODO: Implement extensible validation instead of checking command names
-            if (in_array($this->getName(), ['install', 'update', 'git/clone'], true)) {
+            if (in_array($this->getName(), ['install', 'update', 'git:clone'], true)) {
                 return true;
             }
 

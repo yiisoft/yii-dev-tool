@@ -18,7 +18,7 @@ final class BuildStatusCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('github/build-status')
+            ->setName('github:build-status')
             ->setDescription('Check build status of current commit');
 
         parent::configure();

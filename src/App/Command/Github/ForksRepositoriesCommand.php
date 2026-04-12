@@ -41,7 +41,7 @@ final class ForksRepositoriesCommand extends Command
     {
         $this
             ->setAliases(['forks'])
-            ->setName('github/forks')
+            ->setName('github:forks')
             ->setDescription('Creating forks for repositories')
             ->addArgument('owner', InputArgument::REQUIRED, 'Repositories owner')
             ->addArgument('repositories', InputArgument::REQUIRED, 'upstream repositories');

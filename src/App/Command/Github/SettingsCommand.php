@@ -18,7 +18,7 @@ final class SettingsCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('github/settings')
+            ->setName('github:settings')
             ->setDescription('Apply settings to GitHub repositories');
 
         parent::configure();

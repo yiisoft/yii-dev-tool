@@ -167,7 +167,7 @@ Create a new **feature-x** branch in the repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/checkout feature-x demo,view,i18n
+./yii-dev git:checkout feature-x demo,view,i18n
 ```
 
 ### Step 6: writing the code
@@ -191,14 +191,14 @@ Commit the changes:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/commit "Add feature X" demo,view,i18n
+./yii-dev git:commit "Add feature X" demo,view,i18n
 ```
 
 Push the new code to remote repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/push demo,view,i18n
+./yii-dev git:push demo,view,i18n
 ```
 
 ### Step 9: create pull requests
@@ -219,27 +219,27 @@ Remember that **yii-dev-tool** contains many other commands:
 
 | Command                   | Aliases   | Description                                                                  |
 |---------------------------|-----------|------------------------------------------------------------------------------|
-| changelog/add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
+| changelog:add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
 | exec                      | e         | Executes the specified console command in each package.                      |
-| composer/update           | cu        | Update composer dependencies in packages.                                    |
-| git/checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
-| git/clone                 | clone     | Package repositories cloning.                                                |
-| git/commit                | commit    | Add and commit changes into each package repository.                         |
-| git/pull                  | pull      | Pull changes from package repositories.                                      |
-| git/push                  | push      | Push changes into package repositories.                                      |
-| git/status                | status, s | Show git status of packages.                                                 |
-| git/pr/create             | pr        | Create a pull request at GitHub.                                             |
-| github/forks              | forks     | Create forks of repositories                                                 |
-| github/sync               | sync      | Sync forks from upstream repositories                                        |
-| github/settings           | -         | Change settings of a GitHub repository.                                      |
+| composer:update           | cu        | Update composer dependencies in packages.                                    |
+| git:checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
+| git:clone                 | clone     | Package repositories cloning.                                                |
+| git:commit                | commit    | Add and commit changes into each package repository.                         |
+| git:pull                  | pull      | Pull changes from package repositories.                                      |
+| git:push                  | push      | Push changes into package repositories.                                      |
+| git:status                | status, s | Show git status of packages.                                                 |
+| git:pr:create             | pr        | Create a pull request at GitHub.                                             |
+| github:forks              | forks     | Create forks of repositories                                                 |
+| github:sync               | sync      | Sync forks from upstream repositories                                        |
+| github:settings           | -         | Change settings of a GitHub repository.                                      |
 | list                      | l         | List enabled packages.                                                       |
 | install                   | i         | Clone packages repositories and install composer dependencies.               |
 | update                    | u         | Pull changes from packages repositories and update composer dependencies.    |
 | lint                      | -         | Check packages according to PSR-12 standard.                                 |
-| release/make              | -         | Make a package release.                                                      |
-| replicate/files           | -         | Copy files specified in `config/replicate/files.php` into each package.      |
-| replicate/composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package. |
-| replicate/copy-file       | -         | Copy file into each package.                                                 |
+| release:make              | -         | Make a package release.                                                      |
+| replicate:files           | -         | Copy files specified in `config/replicate/files.php` into each package.      |
+| replicate:composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package. |
+| replicate:copy-file       | -         | Copy file into each package.                                                 |
 | test                      | t         | Test packages.                                                               |
 | enable                    | -         | Enable packages.                                                             |
 | disable                   | -         | Disable packages.                                                            |

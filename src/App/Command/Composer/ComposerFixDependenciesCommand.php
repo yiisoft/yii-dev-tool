@@ -34,7 +34,7 @@ final class ComposerFixDependenciesCommand extends PackageCommand
     protected function configure(): void
     {
         $this
-            ->setName('composer/fix-dependencies')
+            ->setName('composer:fix-dependencies')
             ->setDescription('Fix <fg=yellow;options=bold>require</> and <fg=yellow;options=bold>require-dev</> sections in <fg=blue;options=bold>composer.json</> according to the actual use of classes');
 
         parent::configure();

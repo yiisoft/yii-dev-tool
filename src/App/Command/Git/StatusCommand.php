@@ -10,7 +10,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
-    name: 'git/status',
+    name: 'git:status',
     description: 'Show git status of packages'
 )]
 final class StatusCommand extends PackageCommand

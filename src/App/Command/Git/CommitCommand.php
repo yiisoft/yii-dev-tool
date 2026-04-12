@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
-    name: 'git/commit',
+    name: 'git:commit',
     description: 'Add and commit changes into each package repository'
 )]
 final class CommitCommand extends PackageCommand

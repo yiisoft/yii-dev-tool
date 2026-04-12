@@ -14,7 +14,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
     protected function configure(): void
     {
         $this
-            ->setName('replicate/composer-config')
+            ->setName('replicate:composer-config')
             ->setDescription('Merge <fg=blue;options=bold>config/replicate/composer.json</> into <fg=blue;options=bold>composer.json</> of each package')
         ;
 

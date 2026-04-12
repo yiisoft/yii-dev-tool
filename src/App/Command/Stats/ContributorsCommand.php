@@ -22,7 +22,7 @@ final class ContributorsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('stats/contributors')
+            ->setName('stats:contributors')
             ->addOption('since', null, InputArgument::OPTIONAL, 'Date and time to check contributors from YYYY-MM-DD.')
             ->setDescription('Displays contributors statistics');
 

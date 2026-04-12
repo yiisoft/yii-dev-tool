@@ -20,7 +20,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 
 #[AsCommand(
-    name: 'release/missing',
+    name: 'release:missing',
     description: 'Find out which stable packages contain unreleased changes'
 )]
 final class MissingCommand extends Command

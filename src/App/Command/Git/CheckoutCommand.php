@@ -11,7 +11,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
-    name: 'git/checkout',
+    name: 'git:checkout',
     description: 'Create a branch if does not exist, checkout a branch if it exists'
 )]
 final class CheckoutCommand extends PackageCommand

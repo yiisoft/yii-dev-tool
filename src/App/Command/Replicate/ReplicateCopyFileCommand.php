@@ -18,7 +18,7 @@ final class ReplicateCopyFileCommand extends PackageCommand
     protected function configure(): void
     {
         $this
-            ->setName('replicate/copy-file')
+            ->setName('replicate:copy-file')
             ->setDescription('Copy file into each package')
             ->addArgument('source', InputArgument::REQUIRED, 'Source file path')
             ->addArgument('destination', InputArgument::REQUIRED, 'Destination file path')

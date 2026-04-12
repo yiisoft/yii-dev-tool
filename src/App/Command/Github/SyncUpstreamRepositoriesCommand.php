@@ -17,7 +17,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 #[AsCommand(
-    name: 'github/sync',
+    name: 'github:sync',
     description: 'Sync forks from upstream repositories'
 )]
 final class SyncUpstreamRepositoriesCommand extends PackageCommand

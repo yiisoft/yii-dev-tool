@@ -33,7 +33,7 @@ final class MakeCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('release/make')
+            ->setName('release:make')
             ->setDescription('Make a package release')
             ->addOption('tag', null, InputArgument::OPTIONAL, description: 'Version to tag');
 

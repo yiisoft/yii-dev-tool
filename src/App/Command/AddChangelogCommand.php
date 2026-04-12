@@ -21,7 +21,7 @@ final class AddChangelogCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('changelog/add')
+            ->setName('changelog:add')
             ->setDescription('Add an changelog entry')
             ->addArgument('type', InputArgument::REQUIRED, 'Change type', null)
             ->addArgument('message', InputArgument::REQUIRED, 'Entry text')
