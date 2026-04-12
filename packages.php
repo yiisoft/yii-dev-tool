@@ -188,6 +188,7 @@ $packages = [
     'yii-runner-http' => true,
     'yii-runner-console' => true,
     'yii-runner-roadrunner' => true,
+    'yii-runner-frankenphp' => true,
 
     // Demo
     'demo' => [
