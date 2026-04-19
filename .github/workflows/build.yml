@@ -31,3 +31,5 @@ jobs:
         ['ubuntu-latest']
       php: >-
         ['8.0']
+      composer-command: |
+        composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi --no-security-blocking
