@@ -20,6 +20,7 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 use function in_array;
+use function is_file;
 use function sprintf;
 
 final class MakeCommand extends PackageCommand
@@ -258,7 +259,8 @@ final class MakeCommand extends PackageCommand
             $package->getName(),
             $previousVersion,
             $versionToRelease,
-            $changelog->getReleaseNotes($versionToRelease)
+            $changelog->getReleaseNotes($versionToRelease),
+            is_file($package->getPath() . '/UPGRADE.md')
         );
 
         $release->create($package->getVendor(), $package->getId(), [
