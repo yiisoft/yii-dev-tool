@@ -26,7 +26,7 @@ final class GitWorkingCopy
 
     public function checkoutNewBranch(string $branch): string
     {
-        return $this->checkout($branch, ['b' => true]);
+        return $this->checkout(['b' => true], $branch);
     }
 
     public function clean(string ...$argsOrOptions): string
@@ -101,6 +101,7 @@ final class GitWorkingCopy
             array_merge([$this->gitBinary, $command], $this->buildArguments($argsOrOptions)),
             $this->directory
         );
+        $process->setTimeout(null);
         $process->run();
 
         if (!$process->isSuccessful()) {
