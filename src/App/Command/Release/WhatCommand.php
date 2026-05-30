@@ -64,10 +64,12 @@ final class WhatCommand extends Command
                 exit(1);
             }
 
+            $packagesRootDir = $this->getApplication()->getConfig('packagesRootDir') ?? $this->getAppRootDir() . 'dev';
+
             $this->packageList = new PackageList(
                 $ownerPackages,
                 $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
+                $packagesRootDir,
             );
         } catch (InvalidArgumentException $e) {
             $io->error([
@@ -93,22 +95,28 @@ final class WhatCommand extends Command
 
         // Get packages without release.
         foreach ($installedPackages as $installedPackage) {
-            if ($this->hasRelease($installedPackage)) {
-                $io->info("Skip {$installedPackage->getName()}. Already released.");
-                // Skip released packages.
-                continue;
-            }
-
             if (!$installedPackage->composerConfigFileExists()) {
                 $io->info("Skip {$installedPackage->getName()}. No composer.json.");
                 // Skip packages without composer.json.
                 continue;
             }
 
+            if (!$installedPackage->isGitRepositoryCloned()) {
+                $io->info("Skip {$installedPackage->getName()}. No git working copy.");
+                // Skip packages without a git working copy.
+                continue;
+            }
+
+            if ($this->hasRelease($installedPackage)) {
+                $io->info("Skip {$installedPackage->getName()}. Already released.");
+                // Skip released packages.
+                continue;
+            }
+
             $packagesWithoutRelease[$installedPackage->getName()] = [
                 'dependencies' => 0,
                 'dependents' => 0,
-                'deps' => [],
+                'dependencyPackages' => [],
             ];
         }
 
@@ -126,9 +134,8 @@ final class WhatCommand extends Command
                 }
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
-                $packagesWithoutRelease[$dependencyName]['deps'][] = $this->removeVendorName($installedPackage->getName());
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
-                $packagesWithoutRelease[$installedPackage->getName()]['deps'][] = $this->removeVendorName($dependencyName);
+                $packagesWithoutRelease[$installedPackage->getName()]['dependencyPackages'][] = $this->removeVendorName($dependencyName);
             }
         }
 
@@ -148,20 +155,20 @@ final class WhatCommand extends Command
                     new TableCell($packageName, ['style' => $errorStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
-                    $this->concatDependencies($stats['deps']),
+                    $this->concatDependencies($stats['dependencyPackages']),
                 ];
             } else {
                 $packagesToRelease[] = [
                     new TableCell($packageName, ['style' => $successStyle]),
                     $stats['dependencies'],
                     $stats['dependents'],
-                    $this->concatDependencies($stats['deps']),
+                    $this->concatDependencies($stats['dependencyPackages']),
                 ];
             }
         }
 
         $tableIO = new Table($output);
-        $tableIO->setHeaders(['Package', 'Out deps', 'In deps', 'Packages']);
+        $tableIO->setHeaders(['Package', 'Out deps', 'In deps', 'Out packages']);
         $tableIO->setColumnMaxWidth(3, 120);
 
         if (count($packagesToRelease) > 0) {
@@ -191,6 +198,7 @@ final class WhatCommand extends Command
                 <<<TEXT
         <success>Out deps</success> – count unreleased packages from which the package depends
         <success>In deps</success> – count unreleased packages which depends on the package
+        <success>Out packages</success> – unreleased packages from which the package depends
         TEXT
             );
 
