@@ -178,7 +178,7 @@ final class MakeCommand extends PackageCommand
             $git->push();
             $git->pushTag((string) $versionToRelease);
 
-            $this->releaseOnGithub($gitHubToken, $package, $versionToRelease);
+            $this->releaseOnGithub($gitHubToken, $package, $currentVersion, $versionToRelease);
 
             $io->done();
 
@@ -223,7 +223,7 @@ final class MakeCommand extends PackageCommand
             ->tags()
             ->all();
         rsort($tags, SORT_NATURAL); // TODO this can not deal with alpha/beta/rc...
-        return new Version(reset($tags));
+        return new Version($tags === [] ? '' : reset($tags));
     }
 
     private function getVersionToRelease(Version $currentVersion): Version
@@ -239,8 +239,12 @@ final class MakeCommand extends PackageCommand
         return $nextVersion;
     }
 
-    private function releaseOnGithub(string $token, Package $package, Version $versionToRelease): void
-    {
+    private function releaseOnGithub(
+        string $token,
+        Package $package,
+        Version $previousVersion,
+        Version $versionToRelease
+    ): void {
         $io = $this->getIO();
         $io->info("Creating release on GitHub for $versionToRelease.\n");
 
@@ -250,10 +254,12 @@ final class MakeCommand extends PackageCommand
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
         $release = new Releases($client);
 
-        $body = implode("\n", $changelog->getReleaseNotes($versionToRelease));
-
-        $changelogUrl = "https://github.com/{$package->getName()}/blob/$versionToRelease/CHANGELOG.md";
-        $body .= "\n\n[Full changelog]($changelogUrl)";
+        $body = (new ReleaseDescription())->getBody(
+            $package->getName(),
+            $previousVersion,
+            $versionToRelease,
+            $changelog->getReleaseNotes($versionToRelease)
+        );
 
         $release->create($package->getVendor(), $package->getId(), [
             'name' => sprintf('Version %s', $versionToRelease),
