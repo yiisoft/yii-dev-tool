@@ -20,7 +20,7 @@ final class ReleaseNewsTest extends TestCase
             ],
             $releaseNews->getChanges(
                 [
-                    "- Enh #47: Minor refactor `RequestBodyParser`: use `str_contains()` function instead of `strpos()` and `::class` instead\n  of `get_class()` (@vjik)",
+                    "- Enh #47: Minor refactor `RequestBodyParser`: use `str_contains()` function instead of `strpos()`\n   and `::class` instead\n  of `get_class()` (@vjik)",
                     '- Bug #44: Explicitly mark nullable parameters (@vjik)',
                 ]
             )
