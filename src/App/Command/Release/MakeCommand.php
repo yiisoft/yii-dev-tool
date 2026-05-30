@@ -274,18 +274,10 @@ final class MakeCommand extends PackageCommand
         $io->info("\n---\n");
         $io->info('<fg=green>' . $description . ' ' . $versionToRelease . "</>\n");
 
-        $changes = [];
-
-        foreach ($changelog->getReleaseNotes($versionToRelease) as $note) {
-            $note = trim($note);
-            if ($note === '') {
-                continue;
-            }
-
-            $changes[] = '- ' . preg_replace('~^-.*?:\s+(.*)\s+\(.*\)$~', '$1', $note);
-        }
-
-        $changes = implode("\n", $changes);
+        $changes = implode(
+            "\n",
+            (new ReleaseNews())->getChanges($changelog->getReleaseNotes($versionToRelease))
+        );
 
         $text = <<<TEXT
         [$description](https://github.com/$packageName) version $versionToRelease was released.
