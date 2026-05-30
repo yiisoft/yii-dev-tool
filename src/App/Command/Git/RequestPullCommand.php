@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
@@ -71,12 +72,9 @@ final class RequestPullCommand extends PackageCommand
         }
 
         $process = new Process($processParameters, $package->getPath());
-        $process->run();
+        ProcessOutput::run($process, $io);
 
         if ($process->isSuccessful()) {
-            $io
-                ->important()
-                ->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
 
             return;
@@ -93,9 +91,6 @@ final class RequestPullCommand extends PackageCommand
 
         $output = $process->getErrorOutput();
 
-        $io
-            ->important()
-            ->info($output);
         $io->error([
             "An error occurred during creating PR for package <package>{$package->getId()}</package> repository.",
             'Creating PR aborted.',

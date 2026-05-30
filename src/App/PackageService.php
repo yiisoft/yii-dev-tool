@@ -8,6 +8,7 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Yiisoft\Files\FileHelper;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
@@ -66,12 +67,11 @@ final class PackageService
         $io->info("Repository url: <file>{$package->getConfiguredRepositoryUrl()}</file>");
 
         $process = new Process(['git', 'clone', $package->getConfiguredRepositoryUrl(), $package->getPath()]);
-        $process
-            ->setTimeout(null)
-            ->run();
+        $process->setTimeout(null);
+
+        ProcessOutput::run($process, $io);
 
         if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
             return;
         }
@@ -192,19 +192,15 @@ final class PackageService
 
         $process = new Process($params);
 
-        $process
-            ->setTimeout(null)
-            ->run();
+        $process->setTimeout(null);
+
+        ProcessOutput::run($process, $io);
 
         if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io
-                ->important()
-                ->info($output);
             $io->error([
                 "An error occurred during running `composer $command`.",
                 "Package $command aborted.",

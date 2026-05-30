@@ -97,12 +97,28 @@ final class GitWorkingCopy
      */
     public function run(string $command, array $argsOrOptions = []): string
     {
+        return $this->runCommand($command, $argsOrOptions);
+    }
+
+    /**
+     * @param mixed[] $argsOrOptions
+     */
+    public function runWithOutput(string $command, array $argsOrOptions, callable $callback): string
+    {
+        return $this->runCommand($command, $argsOrOptions, $callback);
+    }
+
+    /**
+     * @param mixed[] $argsOrOptions
+     */
+    private function runCommand(string $command, array $argsOrOptions = [], ?callable $callback = null): string
+    {
         $process = new Process(
             array_merge([$this->gitBinary, $command], $this->buildArguments($argsOrOptions)),
             $this->directory
         );
         $process->setTimeout(null);
-        $process->run();
+        $process->run($callback);
 
         if (!$process->isSuccessful()) {
             $message = trim($process->getErrorOutput() . $process->getOutput());

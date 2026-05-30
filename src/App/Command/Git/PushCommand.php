@@ -6,6 +6,7 @@ namespace Yiisoft\YiiDevTool\App\Command\Git;
 
 use Symfony\Component\Console\Attribute\AsCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Git\GitException;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
@@ -38,11 +39,12 @@ final class PushCommand extends PackageCommand
             $currentBranch = $gitWorkingCopy
                 ->getBranches()
                 ->head();
+            $callback = ProcessOutput::callback($io);
 
             if ($currentBranch === 'master') {
-                $gitWorkingCopy->push();
+                $gitWorkingCopy->runWithOutput('push', [], $callback);
             } else {
-                $gitWorkingCopy->push('origin', $currentBranch);
+                $gitWorkingCopy->runWithOutput('push', ['origin', $currentBranch], $callback);
             }
 
             $io->done();

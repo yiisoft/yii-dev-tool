@@ -6,6 +6,7 @@ namespace Yiisoft\YiiDevTool\App\Command;
 
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 final class LintCommand extends PackageCommand
@@ -42,13 +43,9 @@ final class LintCommand extends PackageCommand
             '--ignore=*/vendor/*,*/docs/*',
         ], $this->getAppRootDir());
 
-        $process->run();
+        ProcessOutput::run($process, $io);
 
-        if ($process->getExitCode() > 0) {
-            $io
-                ->important()
-                ->info($process->getOutput() . $process->getErrorOutput());
-        } else {
+        if ($process->getExitCode() === 0) {
             $io->success('✔ No problems found.');
         }
     }
