@@ -128,10 +128,12 @@ class PackageCommand extends Command
                 exit(1);
             }
 
+            $packagesRootDir = $this->getApplication()->getConfig('packagesRootDir') ??  $this->getAppRootDir() . 'dev';
+
             $this->packageList = new PackageList(
                 $ownerPackages,
                 $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
+                packagesRootDir: $packagesRootDir,
             );
 
             $this->errorList = new PackageErrorList();
@@ -197,7 +199,7 @@ class PackageCommand extends Command
 
         if (!$package->isGitRepositoryCloned()) {
             // TODO: Implement extensible validation instead of checking command names
-            if (in_array($this->getName(), ['install', 'update', 'git/clone'], true)) {
+            if (in_array($this->getName(), ['install', 'update', 'git:clone'], true)) {
                 return true;
             }
 
@@ -238,7 +240,7 @@ class PackageCommand extends Command
         return true;
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->initPackageList();
         $this->initTargetPackages($input);

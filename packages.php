@@ -11,6 +11,7 @@ declare(strict_types=1);
 $packages = [
     'actions' => true,
     'docs' => true,
+    'code-style' => true,
 
     // Config plugin
     'config' => true,
@@ -81,6 +82,7 @@ $packages = [
     // Queue
     'queue' => true,
     'queue-amqp' => true,
+    'queue-db' => true,
 
     // Mutex
     'mutex' => true,
@@ -93,6 +95,7 @@ $packages = [
     // Mailer
     'mailer' => true,
     'mailer-symfony' => true,
+    'mailer-view' => true,
 
     // Helpers and utilities
     'arrays' => true,
@@ -132,7 +135,10 @@ $packages = [
 
     // Web
     'data-response' => true,
+    'http-middleware' => true,
+    'locale-middleware' => true,
     'middleware-dispatcher' => true,
+    'psr-emitter' => true,
     'proxy-middleware' => true,
     'request-body-parser' => true,
     'response-download' => true,
@@ -175,7 +181,7 @@ $packages = [
     'yii-gii-frontend' => true,
 
     // CSS frameworks
-    'yii-bootstrap5' => true,
+    'bootstrap5' => true,
     'yii-bulma' => true,
 
     // Runners
@@ -183,6 +189,7 @@ $packages = [
     'yii-runner-http' => true,
     'yii-runner-console' => true,
     'yii-runner-roadrunner' => true,
+    'yii-runner-frankenphp' => true,
 
     // Demo
     'demo' => [
@@ -193,6 +200,8 @@ $packages = [
             'blog-api' => true,
         ],
     ],
+    'demo-blog' => true,
+    'demo-diary' => true,
 
     // Application templates
     'app' => true,

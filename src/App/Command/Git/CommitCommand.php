@@ -4,18 +4,20 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git:commit',
+    description: 'Add and commit changes into each package repository'
+)]
 final class CommitCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/commit';
-    protected static $defaultDescription = 'Add and commit changes into each package repository';
-
-    /** @var string */
     private string $message;
 
     protected function configure()
@@ -59,19 +61,13 @@ final class CommitCommand extends PackageCommand
         }
 
         $process = new Process(['git', 'commit', '-m', $this->message], $package->getPath());
-        $process->run();
+        ProcessOutput::run($process, $io);
 
         if ($process->isSuccessful()) {
-            $io
-                ->important()
-                ->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io
-                ->important()
-                ->info($output);
             $io->error([
                 "An error occurred during committing package <package>{$package->getId()}</package> repository.",
                 'Package committing aborted.',

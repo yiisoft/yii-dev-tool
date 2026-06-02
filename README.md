@@ -21,7 +21,7 @@ If you prefer manual install, you need:
 
 If you prefer Vagrant, you only need to install 
 [Vagrant](https://www.vagrantup.com/downloads.html) and [VirtualBox](https://www.virtualbox.org/wiki/Downloads),
-because our Vagrant environment already contains Ubuntu, PHP and Composer. 
+because our Vagrant environment already contains Ubuntu, PHP, and Composer. 
 See our Vagrant [documentation](vagrant/README.md) for details.
 
 ### Docker
@@ -66,12 +66,11 @@ Configuration
 -------------
 
 To customize the configuration of **yii-dev-tool**, create your local configuration `packages.local.php` 
-using file `packages.local.php.example` as example. In this file you will find examples of all available 
+using file `packages.local.php.example` as example. In this file, you will find examples of all available 
 configuration options.
 
-Some commands such as `github/protect-branch`, `github/settings`, `release/make` require a GitHub auth token. Therefore, you need to create a personal access token on GitHub.
-Then save it in `config/github.token` file.
-
+To move `dev` directory where packages are installed to another location, create your local configuration `config/config.local.php` 
+using file `config/config.local.php.example` as example. Adjust `packagesRootDir` as needed.
 
 Usage example
 -------------
@@ -95,12 +94,12 @@ Go to the page of each repository and click the "Fork" button:
 * [yiisoft/view](https://github.com/yiisoft/view)
 * [yiisoft/i18n](https://github.com/yiisoft/i18n)
 
-Suppose my nickname on Github is "samdark". Then I will get three forks:
+Suppose my nickname on GitHub is "samdark." Then I will get three forks:
 * samdark/demo
 * samdark/view
 * samdark/i18n
 
-For your nickname you will get other fork names.
+For your nickname, you will get other fork names.
 
 ### Step 2: install yii-dev-tool
 
@@ -143,7 +142,8 @@ See [example](packages.local.php.example).
 
 ### Step 4: install packages
 
-In order to work with Github via SSH, you have to [add](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) your public SSH key to Github account. Add key if you have not done it before.
+To work with GitHub via SSH, you have to [add](https://docs.github.com/en/github/authenticating-to-github/adding-a-new-ssh-key-to-your-github-account) your public SSH key to GitHub account. 
+Add key if you have not done it before.
 
 Now install the packages:
 
@@ -167,7 +167,7 @@ Create a new **feature-x** branch in the repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/checkout feature-x demo,view,i18n
+./yii-dev git:checkout feature-x demo,view,i18n
 ```
 
 ### Step 6: writing the code
@@ -191,14 +191,14 @@ Commit the changes:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/commit "Add feature X" demo,view,i18n
+./yii-dev git:commit "Add feature X" demo,view,i18n
 ```
 
 Push the new code to remote repositories:
 
 ```bash
 cd yii-dev-tool
-./yii-dev git/push demo,view,i18n
+./yii-dev git:push demo,view,i18n
 ```
 
 ### Step 9: create pull requests
@@ -212,34 +212,34 @@ Go to the pages of the original repositories and create a PR in each:
 
 ### Final notes
 
-That's all. We developed new functionality and submitted it for review 🙂 Of course, the steps will be 
+That's all. We developed new functionality and submitted it for review, 🙂 Of course, the steps will be 
 slightly different for different tasks and configurations. 
 
 Remember that **yii-dev-tool** contains many other commands:
 
 | Command                   | Aliases   | Description                                                                  |
 |---------------------------|-----------|------------------------------------------------------------------------------|
-| changelog/add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
+| changelog:add             |           | Adds a changelog entry into `CHANGELOG.md` into `under development` section. |
 | exec                      | e         | Executes the specified console command in each package.                      |
-| composer/update           | cu        | Update composer dependencies in packages.                                    |
-| git/checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
-| git/clone                 | clone     | Package repositories cloning.                                                |
-| git/commit                | commit    | Add and commit changes into each package repository.                         |
-| git/pull                  | pull      | Pull changes from package repositories.                                      |
-| git/push                  | push      | Push changes into package repositories.                                      |
-| git/status                | status, s | Show git status of packages.                                                 |
-| git/pr/create             | pr        | Create a pull request at GitHub.                                             |
-| github/forks              | forks     | Create forks of repositories                                                 |
-| github/sync               | sync      | Sync forks from upstream repositories                                        |
-| github/settings           | -         | Change settings of a GitHub repository.                                      |
+| composer:update           | cu        | Update composer dependencies in packages.                                    |
+| git:checkout              | checkout  | Creates, if not exists, and checkout a git branch.                           |
+| git:clone                 | clone     | Package repositories cloning.                                                |
+| git:commit                | commit    | Add and commit changes into each package repository.                         |
+| git:pull                  | pull      | Pull changes from package repositories.                                      |
+| git:push                  | push      | Push changes into package repositories.                                      |
+| git:status                | status, s | Show git status of packages.                                                 |
+| git:pr:create             | pr        | Create a pull request at GitHub.                                             |
+| github:forks              | forks     | Create forks of repositories                                                 |
+| github:sync               | sync      | Sync forks from upstream repositories                                        |
+| github:settings           | -         | Change settings of a GitHub repository.                                      |
 | list                      | l         | List enabled packages.                                                       |
 | install                   | i         | Clone packages repositories and install composer dependencies.               |
 | update                    | u         | Pull changes from packages repositories and update composer dependencies.    |
 | lint                      | -         | Check packages according to PSR-12 standard.                                 |
-| release/make              | -         | Make a package release.                                                      |
-| replicate/files           | -         | Copy files specified in `config/replicate/files.php` into each package.      |
-| replicate/composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package. |
-| replicate/copy-file       | -         | Copy file into each package.                                                 |
+| release:make              | -         | Make a package release.                                                      |
+| replicate:files           | -         | Copy files specified in `config/replicate/files.php` into each package.      |
+| replicate:composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package. |
+| replicate:copy-file       | -         | Copy file into each package.                                                 |
 | test                      | t         | Test packages.                                                               |
 | enable                    | -         | Enable packages.                                                             |
 | disable                   | -         | Disable packages.                                                            |

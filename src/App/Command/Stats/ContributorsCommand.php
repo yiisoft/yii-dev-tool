@@ -22,7 +22,7 @@ final class ContributorsCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('stats/contributors')
+            ->setName('stats:contributors')
             ->addOption('since', null, InputArgument::OPTIONAL, 'Date and time to check contributors from YYYY-MM-DD.')
             ->setDescription('Displays contributors statistics');
 
@@ -76,11 +76,7 @@ final class ContributorsCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $since = $input->getOption('since');
-        $sinceCommand = '';
-        if (!empty($since)) {
-            $sinceCommand = " --since=$since";
-        }
+        $since = (string) $input->getOption('since');
 
         $this->initPackageList();
 
@@ -91,10 +87,18 @@ final class ContributorsCommand extends Command
         $contributors = [];
 
         foreach ($installedPackages as $installedPackage) {
-            $git = $installedPackage
+            $arguments = [
+                's' => true,
+                'e' => true,
+                'group' => ['author', 'trailer:co-authored-by'],
+            ];
+            if (!empty($since)) {
+                $arguments['since'] = $since;
+            }
+
+            $out = $installedPackage
                 ->getGitWorkingCopy()
-                ->getWrapper();
-            $out = $git->git("shortlog -s -e --group=author --group=trailer:co-authored-by$sinceCommand HEAD", $installedPackage->getPath());
+                ->run('shortlog', [$arguments, 'HEAD']);
             foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
                 [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
 

@@ -10,6 +10,6 @@ return new Config([
         'key-2' => 'value-2',
     ],
     'objects' => [
-        'spl-fixed-array' => new \Production\Spl\SplFixedArray(),
+        'spl-fixed-array' => new Production\Spl\SplFixedArray(),
     ],
 ]);

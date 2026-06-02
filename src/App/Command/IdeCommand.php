@@ -4,16 +4,18 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\PhpStorm\Folders;
 use Symfony\Component\Console\Input\InputInterface;
 
+#[AsCommand(
+    name: 'ide',
+    description: 'Adjust PhpStorm configs',
+)]
 final class IdeCommand extends PackageCommand
 {
-    protected static $defaultName = 'ide';
-    protected static $defaultDescription = 'Adjust PhpStorm configs';
-
     private Folders $folders;
 
     protected function beforeProcessingPackages(InputInterface $input): void

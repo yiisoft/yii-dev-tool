@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -12,11 +13,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
+#[AsCommand(
+    name: 'enable',
+    description: 'Enable packages'
+)]
 final class EnableCommand extends PackageCommand
 {
-    protected static $defaultName = 'enable';
-    protected static $defaultDescription = 'Enable packages';
-
     protected function configure()
     {
         $this->addArgument(

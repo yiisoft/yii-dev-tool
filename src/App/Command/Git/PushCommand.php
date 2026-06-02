@@ -4,15 +4,18 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command\Git;
 
-use Symplify\GitWrapper\Exception\GitException;
+use Symfony\Component\Console\Attribute\AsCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
+use Yiisoft\YiiDevTool\App\Component\Git\GitException;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'git:push',
+    description: 'Push changes into package repositories'
+)]
 final class PushCommand extends PackageCommand
 {
-    protected static $defaultName = 'git/push';
-    protected static $defaultDescription = 'Push changes into package repositories';
-
     protected function configure(): void
     {
         $this->setAliases(['push']);
@@ -36,11 +39,12 @@ final class PushCommand extends PackageCommand
             $currentBranch = $gitWorkingCopy
                 ->getBranches()
                 ->head();
+            $callback = ProcessOutput::callback($io);
 
             if ($currentBranch === 'master') {
-                $gitWorkingCopy->push();
+                $gitWorkingCopy->runWithOutput('push', [], $callback);
             } else {
-                $gitWorkingCopy->push('origin', $currentBranch);
+                $gitWorkingCopy->runWithOutput('push', ['origin', $currentBranch], $callback);
             }
 
             $io->done();

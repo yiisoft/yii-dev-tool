@@ -5,6 +5,12 @@ use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
 require __DIR__ . '/vendor/autoload.php';
 
-(new YiiDevToolApplication())
+$configFile = __DIR__ . '/config/config.local.php';
+$config = [];
+if (file_exists($configFile)) {
+    $config = require $configFile;
+}
+
+(new YiiDevToolApplication($config))
     ->setRootDir(__DIR__)
     ->run();

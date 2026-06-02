@@ -4,17 +4,20 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Command;
 
+use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+#[AsCommand(
+    name: 'exec',
+    description: 'Execute the specified console command in each package'
+)]
 final class ExecCommand extends PackageCommand
 {
-    protected static $defaultName = 'exec';
-    protected static $defaultDescription = 'Execute the specified console command in each package';
-
     private string $command;
 
     protected function configure()
@@ -64,17 +67,7 @@ final class ExecCommand extends PackageCommand
              * We want to receive the output of the program in real time,
              * so we pass a callback that will read the data as it comes in.
              */
-            ->run(function ($type, $data) use ($io) {
-                /**
-                 * We do not split data into output streams by data type,
-                 * because many programs write non-error messages to the error stream.
-                 *
-                 * We write everything to one regular output stream.
-                 */
-                $io
-                    ->important()
-                    ->write($data);
-            });
+            ->run(ProcessOutput::callback($io));
 
         /**
          * End each program block with a new line so that

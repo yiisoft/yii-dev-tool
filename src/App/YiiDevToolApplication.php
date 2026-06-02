@@ -24,6 +24,7 @@ use Yiisoft\YiiDevTool\App\Command\Git\PullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\PushCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\RequestPullCommand;
 use Yiisoft\YiiDevTool\App\Command\Git\StatusCommand;
+use Yiisoft\YiiDevTool\App\Command\Github\BuildStatusCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ForksRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\SyncUpstreamRepositoriesCommand;
 use Yiisoft\YiiDevTool\App\Command\Github\ProtectBranchCommand;
@@ -57,8 +58,9 @@ final class YiiDevToolApplication extends Application
     This tool helps with setting up a development environment for Yii 3 packages.
     HEADER;
 
-    public function __construct()
-    {
+    public function __construct(
+        private array $config
+    ) {
         parent::__construct($this->header);
         $this->setDefaultCommand('list-commands');
     }
@@ -118,6 +120,7 @@ final class YiiDevToolApplication extends Application
             new AddChangelogCommand(),
             new SwitchCommand(),
             new IdeCommand(),
+            new BuildStatusCommand(),
         ];
     }
 
@@ -128,5 +131,10 @@ final class YiiDevToolApplication extends Application
             new InputOption('--help', '-h', InputOption::VALUE_NONE, 'Display this help message'),
             new InputOption('--verbose', '-v', InputOption::VALUE_NONE, 'Increase the verbosity of messages'),
         ]);
+    }
+
+    public function getConfig(string $name): mixed
+    {
+        return $this->config[$name] ?? null;
     }
 }

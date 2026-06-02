@@ -52,26 +52,6 @@ return [
             '.github/dependabot.yml',
         ],
     ],
-    'scrutinizer' => [
-        'source' => 'package-template',
-        'packages' => [
-            'include' => ['*'],
-            'exclude' => [
-                'actions',
-                'docs',
-                'yii-docker',
-                'access',
-                // apps (they have to report coverage from Codeception)
-                'app',
-                'app-api',
-                'demo',
-                'demo-api',
-            ],
-        ],
-        'files' => [
-            '.scrutinizer.yml',
-        ],
-    ],
     'styleci' => [
         'source' => 'package-template',
         'packages' => [

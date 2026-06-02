@@ -7,12 +7,11 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 use InvalidArgumentException;
 use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
-use Symplify\GitWrapper\GitWorkingCopy;
-use Symplify\GitWrapper\GitWrapper;
+use Yiisoft\YiiDevTool\App\Component\Git\GitWorkingCopy;
 
 class Package
 {
-    private static ?GitWrapper $gitWrapper = null;
+    private static ?string $gitBinary = null;
 
     private string $id;
     private ?string $configuredRepositoryUrl = null;
@@ -137,15 +136,19 @@ class Package
         return $this->rootPackage !== null;
     }
 
-    private static function getGitWrapper(): GitWrapper
+    private static function getGitBinary(): string
     {
-        if (static::$gitWrapper === null) {
+        if (static::$gitBinary === null) {
             $finder = new ExecutableFinder();
             $gitBinary = $finder->find('git');
-            static::$gitWrapper = new GitWrapper($gitBinary);
+            if ($gitBinary === null) {
+                throw new RuntimeException('Could not find the "git" executable.');
+            }
+
+            static::$gitBinary = $gitBinary;
         }
 
-        return static::$gitWrapper;
+        return static::$gitBinary;
     }
 
     // TODO: Call all git commands through this interface
@@ -160,7 +163,7 @@ class Package
             if ($this->isVirtual()) {
                 $path = $this->rootPackage->getPath();
             }
-            $this->gitWorkingCopy = static::getGitWrapper()->workingCopy($path);
+            $this->gitWorkingCopy = new GitWorkingCopy(static::getGitBinary(), $path);
         }
 
         return $this->gitWorkingCopy;

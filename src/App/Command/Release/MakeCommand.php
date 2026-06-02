@@ -7,12 +7,12 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 use Github\Api\Repository\Releases;
 use Github\AuthMethod;
 use Github\Client;
-use RuntimeException;
-use Symplify\GitWrapper\GitWorkingCopy;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Git\GitWorkingCopy;
+use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
@@ -20,9 +20,13 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
 
 use function in_array;
+use function is_file;
+use function sprintf;
 
 final class MakeCommand extends PackageCommand
 {
+    use GitHubTokenAware;
+
     private ?string $tag = null;
 
     private const MAIN_BRANCHES = ['master', 'main'];
@@ -30,9 +34,9 @@ final class MakeCommand extends PackageCommand
     protected function configure()
     {
         $this
-            ->setName('release/make')
+            ->setName('release:make')
             ->setDescription('Make a package release')
-            ->addOption('tag', null, InputArgument::OPTIONAL, 'Version to tag');
+            ->addOption('tag', null, InputArgument::OPTIONAL, description: 'Version to tag');
 
         parent::configure();
     }
@@ -58,6 +62,7 @@ final class MakeCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Releasing {package}');
         $git = $package->getGitWorkingCopy();
+        $gitHubToken = $this->getGitHubToken();
 
         if (!$package->composerConfigFileExists()) {
             $io->warning([
@@ -79,18 +84,6 @@ final class MakeCommand extends PackageCommand
                 "Minimum-stability of package <package>{$package->getName()}</package> is <em>$minimumStability</em>.",
                 'Release is only possible for stable packages.',
                 'Releasing skipped.',
-            ]);
-
-            return;
-        }
-
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            $io->warning([
-                "There's no $tokenFile. Please create one and put your GitHub token there.",
-                'Token is required to create release on GitHub.',
-                "You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.",
-                'Release cancelled.',
             ]);
 
             return;
@@ -182,17 +175,24 @@ final class MakeCommand extends PackageCommand
             'm' => 'Prepare for next release',
         ]);
 
-        if ($this->confirm('Push commits and tags, and release on GitHub?')) {
+        if ($this->confirm('Push commits and tag, and release on GitHub?')) {
             $git->push();
-            $git->pushTags();
+            $git->pushTag((string) $versionToRelease);
 
-            $this->releaseOnGithub($package, $versionToRelease);
+            $this->releaseOnGithub($gitHubToken, $package, $currentVersion, $versionToRelease);
 
             $io->done();
 
             $io->info('The following steps are left to do manually:');
             $io->info("- Close the $versionToRelease <href=https://github.com/{$package->getName()}/milestones/>milestone on GitHub</> and open new one for $nextVersion.");
             $io->info('- Release news and announcement.');
+
+            $this->displayReleaseSummary(
+                package: $package,
+                composerConfig: $composerConfig,
+                changelog: $changelog,
+                versionToRelease: $versionToRelease
+            );
         }
     }
 
@@ -224,7 +224,7 @@ final class MakeCommand extends PackageCommand
             ->tags()
             ->all();
         rsort($tags, SORT_NATURAL); // TODO this can not deal with alpha/beta/rc...
-        return new Version(reset($tags));
+        return new Version($tags === [] ? '' : reset($tags));
     }
 
     private function getVersionToRelease(Version $currentVersion): Version
@@ -240,39 +240,60 @@ final class MakeCommand extends PackageCommand
         return $nextVersion;
     }
 
-    private function releaseOnGithub(Package $package, Version $versionToRelease): void
-    {
+    private function releaseOnGithub(
+        string $token,
+        Package $package,
+        Version $previousVersion,
+        Version $versionToRelease
+    ): void {
         $io = $this->getIO();
         $io->info("Creating release on GitHub for $versionToRelease.\n");
 
         $client = new Client();
-        try {
-            $token = $this->getToken();
-        } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
-            $io->warning('Skipped creating release on GitHub.');
-            return;
-        }
         $changelogPath = $package->getPath() . '/CHANGELOG.md';
         $changelog = new Changelog($changelogPath);
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
         $release = new Releases($client);
+
+        $body = (new ReleaseDescription())->getBody(
+            $package->getName(),
+            $previousVersion,
+            $versionToRelease,
+            $changelog->getReleaseNotes($versionToRelease),
+            is_file($package->getPath() . '/UPGRADE.md')
+        );
+
         $release->create($package->getVendor(), $package->getId(), [
             'name' => sprintf('Version %s', $versionToRelease),
             'tag_name' => $versionToRelease->asString(),
-            'body' => implode("\n", $changelog->getReleaseNotes($versionToRelease)),
+            'body' => $body,
             'draft' => false,
             'prerelease' => false, // TODO: check if this is pre-release
         ]);
     }
 
-    private function getToken(): string
+    private function displayReleaseSummary(Package $package, ComposerConfig $composerConfig, Changelog $changelog, Version $versionToRelease): void
     {
-        $tokenFile = $this->getAppRootDir() . 'config/github.token';
-        if (!file_exists($tokenFile)) {
-            throw new RuntimeException("There's no $tokenFile. Please create one and put your GitHub token there. You may create it here: https://github.com/settings/tokens. Choose 'repo' rights.");
-        }
+        $packageName = $package->getName();
 
-        return trim(file_get_contents($tokenFile));
+        $description = $composerConfig->getSection(ComposerConfig::SECTION_DESCRIPTION);
+
+        $io = $this->getIO();
+        $io->info("\n---\n");
+        $io->info('<fg=green>' . $description . ' ' . $versionToRelease . "</>\n");
+
+        $changes = implode(
+            "\n",
+            (new ReleaseNews())->getChanges($changelog->getReleaseNotes($versionToRelease))
+        );
+
+        $text = <<<TEXT
+        [$description](https://github.com/$packageName) version $versionToRelease was released.
+        In this version:
+
+        $changes
+        TEXT;
+
+        $io->info($text . "\n");
     }
 }
