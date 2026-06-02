@@ -10,6 +10,7 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\PackageService;
 
@@ -111,18 +112,14 @@ final class UpdateCommand extends PackageCommand
         $process = new Process(['git', 'pull']);
         $process->setWorkingDirectory($package->getPath());
 
-        $process
-            ->setTimeout(null)
-            ->run();
+        $process->setTimeout(null);
+        ProcessOutput::run($process, $io);
+
         if ($process->isSuccessful()) {
-            $io->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io
-                ->important()
-                ->info($output);
             $io->error([
                 'An error occurred during running `git pull`.',
             ]);

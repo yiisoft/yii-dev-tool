@@ -8,6 +8,7 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
@@ -44,7 +45,7 @@ final class TestCommand extends PackageCommand
             'test',
         ], $package->getPath());
         $process->setTimeout(20);
-        $process->run();
+        ProcessOutput::run($process, $io);
 
         if (!$process->isSuccessful() && $this->isComposerTestNotImplemented($process)) {
             $command = [
@@ -60,7 +61,7 @@ final class TestCommand extends PackageCommand
 
             $process = new Process($command, $package->getPath());
             $process->setTimeout(20);
-            $process->run();
+            ProcessOutput::run($process, $io);
         }
 
         if ($process->getExitCode() === 0) {
@@ -77,9 +78,6 @@ final class TestCommand extends PackageCommand
 
         $output = $process->getErrorOutput();
         $this->registerPackageError($package, $output, 'testing package');
-        $io
-            ->important()
-            ->info($process->getOutput() . $output);
     }
 
     private function isComposerTestNotImplemented(Process $process): bool

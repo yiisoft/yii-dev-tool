@@ -9,6 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
+use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
@@ -60,19 +61,13 @@ final class CommitCommand extends PackageCommand
         }
 
         $process = new Process(['git', 'commit', '-m', $this->message], $package->getPath());
-        $process->run();
+        ProcessOutput::run($process, $io);
 
         if ($process->isSuccessful()) {
-            $io
-                ->important()
-                ->info($process->getOutput() . $process->getErrorOutput());
             $io->done();
         } else {
             $output = $process->getErrorOutput();
 
-            $io
-                ->important()
-                ->info($output);
             $io->error([
                 "An error occurred during committing package <package>{$package->getId()}</package> repository.",
                 'Package committing aborted.',
