@@ -139,7 +139,7 @@ class NamespaceUsageFinder
     private function findNamespaceUsagesInPhpCode(string &$code, string $environment): void
     {
         $stmts = (new ParserFactory())
-            ->create(ParserFactory::PREFER_PHP7)
+            ->createForHostVersion()
             ->parse($code);
         $nodeTraverser = new NodeTraverser();
         $nodeTraverser->addVisitor(new NamespaceUsageFinderNameResolver($this, $environment));
