@@ -77,9 +77,6 @@ final class PackageService
         }
 
         $output = $process->getErrorOutput();
-        $io
-            ->important()
-            ->info($output);
 
         $io->error([
             "An error occurred during cloning package <package>{$package->getName()}</package> repository.",

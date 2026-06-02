@@ -17,7 +17,11 @@ final class ProcessOutputTest extends TestCase
     public function testRunStreamsOutputBeforeProcessFinishes(): void
     {
         $sentinel = tempnam(sys_get_temp_dir(), 'yii-dev-tool-process-output-');
-        unlink($sentinel);
+        self::assertIsString($sentinel);
+
+        if (file_exists($sentinel)) {
+            unlink($sentinel);
+        }
 
         $output = new class ($sentinel) extends BufferedOutput {
             public bool $receivedOutputBeforeProcessFinished = false;
