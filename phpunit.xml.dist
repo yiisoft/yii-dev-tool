@@ -1,4 +1,9 @@
 <phpunit colors="true">
+    <coverage>
+        <include>
+            <directory suffix=".php">./src</directory>
+        </include>
+    </coverage>
     <testsuites>
         <testsuite name="Yii Dev Tool Tests">
             <directory>./tests</directory>
