@@ -83,6 +83,7 @@ $packages = [
     'queue' => true,
     'queue-amqp' => true,
     'queue-db' => true,
+    'queue-redis' => true,
 
     // Mutex
     'mutex' => true,
