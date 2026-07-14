@@ -96,7 +96,6 @@ $packages = [
     // Mailer
     'mailer' => true,
     'mailer-symfony' => true,
-    'mailer-view' => true,
 
     // Helpers and utilities
     'arrays' => true,
@@ -179,7 +178,6 @@ $packages = [
 
     // Gii
     'yii-gii' => true,
-    'yii-gii-frontend' => true,
 
     // CSS frameworks
     'bootstrap5' => true,
