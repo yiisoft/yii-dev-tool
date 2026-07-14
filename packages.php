@@ -193,16 +193,9 @@ $packages = [
     'yii-runner-frankenphp' => true,
 
     // Demo
-    'demo' => [
-        'enabled' => true,
-        'monorepo' => true,
-        'packages' => [
-            'blog' => true,
-            'blog-api' => true,
-        ],
-    ],
     'demo-blog' => true,
     'demo-diary' => true,
+    'demo-summarizer' => true,
 
     // Application templates
     'app' => true,
