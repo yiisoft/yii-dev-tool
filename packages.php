@@ -195,6 +195,7 @@ $packages = [
     // Demo
     'demo-blog' => true,
     'demo-diary' => true,
+    'demo-summarizer' => true,
 
     // Application templates
     'app' => true,
