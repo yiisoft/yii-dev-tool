@@ -10,6 +10,8 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\PhpStorm\Folders;
 use Symfony\Component\Console\Input\InputInterface;
 
+use function dirname;
+
 #[AsCommand(
     name: 'ide',
     description: 'Adjust PhpStorm configs',

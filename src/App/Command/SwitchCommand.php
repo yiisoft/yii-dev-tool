@@ -12,9 +12,12 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
+use function dirname;
+use function in_array;
+
 #[AsCommand(
     name: 'switch',
-    description: 'Enable specified packages and disable others'
+    description: 'Enable specified packages and disable others',
 )]
 final class SwitchCommand extends PackageCommand
 {
@@ -26,7 +29,7 @@ final class SwitchCommand extends PackageCommand
             <<<DESCRIPTION
             Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.</>
-            DESCRIPTION
+            DESCRIPTION,
         );
     }
 
@@ -37,7 +40,7 @@ final class SwitchCommand extends PackageCommand
         $packageList = $this->getPackageList();
 
         $enablePackageIds = array_unique(explode(',', (string) $input->getArgument('packages')));
-        $enablePackageIds = array_filter($enablePackageIds, static fn ($id) => !empty($id));
+        $enablePackageIds = array_filter($enablePackageIds, static fn($id) => !empty($id));
         if (empty($enablePackageIds)) {
             $io->error('Please, specify packages separated by commas.');
             return Command::FAILURE;

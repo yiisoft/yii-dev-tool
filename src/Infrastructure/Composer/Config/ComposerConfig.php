@@ -9,6 +9,11 @@ use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency\ComposerConfigDependencyList;
 
 use function array_key_exists;
+use function in_array;
+
+use const JSON_ERROR_NONE;
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
 
 class ComposerConfig
 {
@@ -19,9 +24,7 @@ class ComposerConfig
 
     public const SECTION_DESCRIPTION = 'description';
 
-    private function __construct(private array $data)
-    {
-    }
+    private function __construct(private array $data) {}
 
     public static function getAllDependencySections(): array
     {

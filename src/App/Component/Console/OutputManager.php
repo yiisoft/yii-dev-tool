@@ -6,6 +6,8 @@ namespace Yiisoft\YiiDevTool\App\Component\Console;
 
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+use function call_user_func_array;
+
 /**
  * Determines whether to output messages in the current environment.
  * If a console command operates in a verbose mode, output all messages.
@@ -17,9 +19,7 @@ class OutputManager
     private bool $nextMessageIsImportant = false;
     private bool $outputDone = false;
 
-    public function __construct(private YiiDevToolStyle $io)
-    {
-    }
+    public function __construct(private YiiDevToolStyle $io) {}
 
     public function hasColorSupport(): bool
     {

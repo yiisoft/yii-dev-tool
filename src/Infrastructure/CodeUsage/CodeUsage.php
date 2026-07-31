@@ -6,6 +6,10 @@ namespace Yiisoft\YiiDevTool\Infrastructure\CodeUsage;
 
 use InvalidArgumentException;
 
+use function count;
+use function in_array;
+use function is_string;
+
 class CodeUsage
 {
     /**

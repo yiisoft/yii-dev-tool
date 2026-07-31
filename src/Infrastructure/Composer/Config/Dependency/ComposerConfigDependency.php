@@ -11,9 +11,7 @@ class ComposerConfigDependency
      */
     private const PLATFORM_PACKAGE_REGEX = '{^(?:php(?:-64bit|-ipv6|-zts|-debug)?|hhvm|(?:ext|lib)-[a-z0-9](?:[_.-]?[a-z0-9]+)*|composer-(?:plugin|runtime)-api)$}iD';
 
-    public function __construct(private string $packageName, private string $constraint)
-    {
-    }
+    public function __construct(private string $packageName, private string $constraint) {}
 
     public function getPackageName(): string
     {

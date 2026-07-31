@@ -1,30 +1,24 @@
-permissions:
-  contents: read
+name: build
 
 on:
   pull_request:
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
-
+    paths: &paths
+      - 'src/**'
+      - 'config/**'
+      - 'tests/**'
+      - 'phpunit.xml.dist'
+      - 'composer.json'
+      - '.github/workflows/build.yml'
   push:
-    branches:
-      - master
-    paths-ignore:
-      - 'docs/**'
-      - 'README.md'
-      - 'CHANGELOG.md'
-      - '.gitignore'
-      - '.gitattributes'
-      - 'infection.json.dist'
-      - 'psalm.xml'
+    branches: ['master']
+    paths: *paths
 
-name: build
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   phpunit:
@@ -33,5 +27,7 @@ jobs:
       os: >-
         ['ubuntu-latest']
       php: >-
-        ['8.0']
+        ['8.0', '8.1', '8.2', '8.3', '8.4', '8.5']
       composer-command: composer update --prefer-dist --no-interaction --no-progress --optimize-autoloader --ansi --no-security-blocking
+    secrets:
+      CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}

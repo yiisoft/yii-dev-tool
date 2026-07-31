@@ -6,6 +6,8 @@ namespace Yiisoft\YiiDevTool\Infrastructure;
 
 use InvalidArgumentException;
 
+use function sprintf;
+
 final class Changelog
 {
     public const TYPES = [
@@ -15,9 +17,7 @@ final class Changelog
         'Enh',
     ];
 
-    public function __construct(private string $path)
-    {
-    }
+    public function __construct(private string $path) {}
 
     public function resort(): void
     {
@@ -68,7 +68,7 @@ final class Changelog
             $1
             - $text
             MARKDOWN,
-            $this->path
+            $this->path,
         );
         if ($replaces === 0) {
             $this->replaceInFile(
@@ -77,7 +77,7 @@ final class Changelog
             $1
             - $text
             MARKDOWN,
-                $this->path
+                $this->path,
             );
         }
     }
@@ -87,7 +87,7 @@ final class Changelog
         $this->replaceInFile(
             '/\d+\.\d+\.\d+ under development/',
             $version . ' ' . date('F d, Y'),
-            $this->path
+            $this->path,
         );
     }
 
@@ -117,7 +117,7 @@ final class Changelog
                 sprintf(
                     'File path "%s" is incorrect. The file does not exist.',
                     $file,
-                )
+                ),
             );
         }
         file_put_contents($file, preg_replace($pattern, $replace, file_get_contents($file), count: $replaces));
@@ -151,7 +151,7 @@ final class Changelog
             }
             if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with(
                 $lines[$lineNumber + 1],
-                '## '
+                '## ',
             )) {
                 $state = 'end';
             }

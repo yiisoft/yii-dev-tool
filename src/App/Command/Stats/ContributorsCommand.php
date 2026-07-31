@@ -14,6 +14,11 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
+use function array_key_exists;
+
+use const DIRECTORY_SEPARATOR;
+use const PREG_SPLIT_NO_EMPTY;
+
 final class ContributorsCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -41,6 +46,66 @@ final class ContributorsCommand extends Command
         }
 
         return $this->io;
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output)
+    {
+        $since = (string) $input->getOption('since');
+
+        $this->initPackageList();
+
+        $installedPackages = $this
+            ->getPackageList()
+            ->getInstalledAndEnabledPackages();
+
+        $contributors = [];
+
+        foreach ($installedPackages as $installedPackage) {
+            $arguments = [
+                's' => true,
+                'e' => true,
+                'group' => ['author', 'trailer:co-authored-by'],
+            ];
+            if (!empty($since)) {
+                $arguments['since'] = $since;
+            }
+
+            $out = $installedPackage
+                ->getGitWorkingCopy()
+                ->run('shortlog', [$arguments, 'HEAD']);
+            foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
+                [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
+
+                if (array_key_exists($name, $contributors)) {
+                    $contributors[$name] += (int) $commits;
+                } else {
+                    $contributors[$name] = (int) $commits;
+                }
+            }
+        }
+
+        arsort($contributors);
+
+        foreach ($contributors as $name => $commits) {
+            echo $name . "\n";
+        }
+
+        return Command::SUCCESS;
+    }
+
+    /**
+     * Use this method to get a root directory of the tool.
+     *
+     * Commands and components can be moved as a result of refactoring,
+     * so you should not rely on their location in the file system.
+     *
+     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
+     */
+    protected function getAppRootDir(): string
+    {
+        return rtrim($this
+                ->getApplication()
+                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     private function initPackageList(): void
@@ -74,68 +139,8 @@ final class ContributorsCommand extends Command
         }
     }
 
-    protected function execute(InputInterface $input, OutputInterface $output)
-    {
-        $since = (string) $input->getOption('since');
-
-        $this->initPackageList();
-
-        $installedPackages = $this
-            ->getPackageList()
-            ->getInstalledAndEnabledPackages();
-
-        $contributors = [];
-
-        foreach ($installedPackages as $installedPackage) {
-            $arguments = [
-                's' => true,
-                'e' => true,
-                'group' => ['author', 'trailer:co-authored-by'],
-            ];
-            if (!empty($since)) {
-                $arguments['since'] = $since;
-            }
-
-            $out = $installedPackage
-                ->getGitWorkingCopy()
-                ->run('shortlog', [$arguments, 'HEAD']);
-            foreach (preg_split('~\R~', $out, -1, PREG_SPLIT_NO_EMPTY) as $line) {
-                [$commits, $name] = preg_split('~\t~', $line, -1, PREG_SPLIT_NO_EMPTY);
-
-                if (array_key_exists($name, $contributors)) {
-                    $contributors[$name] += (int)$commits;
-                } else {
-                    $contributors[$name] = (int)$commits;
-                }
-            }
-        }
-
-        arsort($contributors);
-
-        foreach ($contributors as $name => $commits) {
-            echo $name . "\n";
-        }
-
-        return Command::SUCCESS;
-    }
-
     private function getPackageList(): PackageList
     {
         return $this->packageList;
-    }
-
-    /**
-     * Use this method to get a root directory of the tool.
-     *
-     * Commands and components can be moved as a result of refactoring,
-     * so you should not rely on their location in the file system.
-     *
-     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
-     */
-    protected function getAppRootDir(): string
-    {
-        return rtrim($this
-                ->getApplication()
-                ->getRootDir(), DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 }

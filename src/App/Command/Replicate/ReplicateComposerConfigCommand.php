@@ -8,6 +8,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigMerger;
+use Throwable;
 
 final class ReplicateComposerConfigCommand extends PackageCommand
 {
@@ -48,7 +49,7 @@ final class ReplicateComposerConfigCommand extends PackageCommand
                 ComposerConfig::createByFilePath($targetPath),
                 ComposerConfig::createByFilePath($this->getAppRootDir() . 'config/replicate/composer.json'),
             );
-        } catch (\Throwable $e) {
+        } catch (Throwable $e) {
             $io->error([
                 "An error occurred while working on package \"{$package->getId()}\"",
                 $e->getMessage(),

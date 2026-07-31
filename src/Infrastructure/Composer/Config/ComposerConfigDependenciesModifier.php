@@ -6,11 +6,11 @@ namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config;
 
 use InvalidArgumentException;
 
+use function is_string;
+
 class ComposerConfigDependenciesModifier
 {
-    public function __construct(private ComposerConfig $config)
-    {
-    }
+    public function __construct(private ComposerConfig $config) {}
 
     /**
      * Remove dependencies from composer config.
@@ -56,9 +56,9 @@ class ComposerConfigDependenciesModifier
         $this->validatePackageNames($packageNames);
         ComposerConfig::validateDependencySection($targetSection);
 
-        $sectionForCleaning = $targetSection === ComposerConfig::SECTION_REQUIRE ?
-            ComposerConfig::SECTION_REQUIRE_DEV :
-            ComposerConfig::SECTION_REQUIRE;
+        $sectionForCleaning = $targetSection === ComposerConfig::SECTION_REQUIRE
+            ? ComposerConfig::SECTION_REQUIRE_DEV
+            : ComposerConfig::SECTION_REQUIRE;
 
         $config = $this->config;
 
@@ -68,7 +68,7 @@ class ComposerConfigDependenciesModifier
             if (!$targetDependencyList->hasDependency($packageName)) {
                 $targetDependencyList->addDependency(
                     $packageName,
-                    $this->getDependencyConstraint($packageName, $sectionForCleaning)
+                    $this->getDependencyConstraint($packageName, $sectionForCleaning),
                 );
 
                 $dependenciesChanged = true;

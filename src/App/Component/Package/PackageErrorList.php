@@ -6,6 +6,9 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use Countable;
 use Iterator;
+use ReturnTypeWillChange;
+
+use function count;
 
 class PackageErrorList implements Iterator, Countable
 {
@@ -31,7 +34,7 @@ class PackageErrorList implements Iterator, Countable
         reset($this->list);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function current()
     {
         return current($this->list);
@@ -42,7 +45,7 @@ class PackageErrorList implements Iterator, Countable
         return key($this->list);
     }
 
-    #[\ReturnTypeWillChange]
+    #[ReturnTypeWillChange]
     public function next()
     {
         return next($this->list);

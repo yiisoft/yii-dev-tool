@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
     name: 'test',
-    description: 'Test packages'
+    description: 'Test packages',
 )]
 final class TestCommand extends PackageCommand
 {

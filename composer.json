@@ -46,7 +46,10 @@
     },
     "require-dev": {
         "bamarni/composer-bin-plugin": "^1.8.2",
-        "phpunit/phpunit": "^9.6.29"
+        "friendsofphp/php-cs-fixer": "^3.95",
+        "phpunit/phpunit": "^9.6.29",
+        "rector/rector": "^2.5",
+        "yiisoft/code-style": "^1.1"
     },
     "autoload": {
         "psr-4": {
@@ -57,6 +60,11 @@
         "psr-4": {
             "Yiisoft\\YiiDevTool\\Test\\": "tests"
         }
+    },
+    "scripts": {
+        "cs-fix": "php-cs-fixer fix",
+        "rector": "rector",
+        "test": "phpunit"
     },
     "extra": {
         "bamarni-bin": {

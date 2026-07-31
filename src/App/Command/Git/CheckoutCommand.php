@@ -11,9 +11,11 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+use function in_array;
+
 #[AsCommand(
     name: 'git:checkout',
-    description: 'Create a branch if does not exist, checkout a branch if it exists'
+    description: 'Create a branch if does not exist, checkout a branch if it exists',
 )]
 final class CheckoutCommand extends PackageCommand
 {

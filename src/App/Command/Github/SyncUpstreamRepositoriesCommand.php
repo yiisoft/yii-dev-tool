@@ -18,7 +18,7 @@ use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
 #[AsCommand(
     name: 'github:sync',
-    description: 'Sync forks from upstream repositories'
+    description: 'Sync forks from upstream repositories',
 )]
 final class SyncUpstreamRepositoriesCommand extends PackageCommand
 {
@@ -41,7 +41,7 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
                 'b',
                 InputOption::VALUE_REQUIRED,
                 'Name of the branch to be synchronized',
-                'master'
+                'master',
             );
 
         parent::configure();
@@ -59,12 +59,12 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
                 $this->getIO()->important()->success("Repository successfully synced: {$package->getName()}");
             } else {
                 $this->getIO()->error(
-                    $this->errorMessage($package->getName())
+                    $this->errorMessage($package->getName()),
                 );
             }
         } catch (GithubRuntimeException $e) {
             $this->getIO()->error(
-                $this->errorMessage($package->getName(), $e->getMessage())
+                $this->errorMessage($package->getName(), $e->getMessage()),
             );
         }
     }
@@ -89,7 +89,7 @@ final class SyncUpstreamRepositoriesCommand extends PackageCommand
             {
                 return $this->post(
                     '/repos/' . rawurlencode($username) . '/' . rawurlencode($repository) . '/merge-upstream',
-                    ['branch' => $branchName ?? 'main']
+                    ['branch' => $branchName ?? 'main'],
                 );
             }
         };

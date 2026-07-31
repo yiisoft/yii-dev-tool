@@ -13,9 +13,11 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Yiisoft\VarDumper\VarDumper;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 
+use function dirname;
+
 #[AsCommand(
     name: 'disable',
-    description: 'Disable packages'
+    description: 'Disable packages',
 )]
 final class DisableCommand extends PackageCommand
 {
@@ -28,7 +30,7 @@ final class DisableCommand extends PackageCommand
             Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
             If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
-            DESCRIPTION
+            DESCRIPTION,
         );
         $this->addOption('all', 'a', InputOption::VALUE_NONE, 'Disable all packages');
     }
@@ -76,7 +78,6 @@ final class DisableCommand extends PackageCommand
         fwrite($handle, '<?php' . "\n\n");
         fwrite($handle, 'return ' . $dump . ';');
         fclose($handle);
-
 
         if (empty($alreadyDisabledPackages) && empty($disabledPackages)) {
             $io->info('Packages not found.');

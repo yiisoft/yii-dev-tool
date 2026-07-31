@@ -11,6 +11,12 @@ use Yiisoft\YiiDevTool\App\Component\Git\GitWorkingCopy;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 use Yiisoft\YiiDevTool\Infrastructure\Version;
+use InvalidArgumentException;
+
+use function in_array;
+use function sprintf;
+
+use const SORT_NATURAL;
 
 final class AddChangelogCommand extends PackageCommand
 {
@@ -47,14 +53,14 @@ final class AddChangelogCommand extends PackageCommand
     {
         $io = $this->getIO();
 
-        $loweredTypes = array_map(fn (string $type) => strtolower($type), Changelog::TYPES);
+        $loweredTypes = array_map(fn(string $type) => strtolower($type), Changelog::TYPES);
         if (!in_array(strtolower($this->type), $loweredTypes, true)) {
             $io->error(
                 sprintf(
                     'The type argument value must be one of the following: %s. "%s" given',
                     implode(', ', Changelog::TYPES),
-                    $this->type
-                )
+                    $this->type,
+                ),
             );
             return;
         }
@@ -89,7 +95,7 @@ final class AddChangelogCommand extends PackageCommand
         ));
         try {
             $changelog->addEntry($text);
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             $io->error($e);
 
             $this->registerPackageError($package, $e->getMessage(), 'adding an changelog entry');

@@ -17,6 +17,9 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\GitHubTokenAware;
 
+use const DIRECTORY_SEPARATOR;
+use const PHP_EOL;
+
 final class ForksRepositoriesCommand extends Command
 {
     use GitHubTokenAware;
@@ -71,7 +74,7 @@ final class ForksRepositoriesCommand extends Command
                         "<error>Error when forking a repository $repository: {$e->getMessage()}</error>",
                         '<error>Check if the nickname of the owner and the name of the repository are correct</error>' . PHP_EOL,
                     ],
-                    true
+                    true,
                 );
             }
         }

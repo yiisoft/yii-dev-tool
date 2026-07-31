@@ -23,13 +23,15 @@ use function in_array;
 use function is_file;
 use function sprintf;
 
+use const SORT_NATURAL;
+
 final class MakeCommand extends PackageCommand
 {
     use GitHubTokenAware;
 
-    private ?string $tag = null;
-
     private const MAIN_BRANCHES = ['master', 'main'];
+
+    private ?string $tag = null;
 
     protected function configure()
     {
@@ -112,7 +114,6 @@ final class MakeCommand extends PackageCommand
             $io->info("Current version is $currentVersion.");
         }
 
-
         $versionToRelease = $this->getVersionToRelease($currentVersion);
         $io->info("Going to release $versionToRelease.");
 
@@ -191,7 +192,7 @@ final class MakeCommand extends PackageCommand
                 package: $package,
                 composerConfig: $composerConfig,
                 changelog: $changelog,
-                versionToRelease: $versionToRelease
+                versionToRelease: $versionToRelease,
             );
         }
     }
@@ -244,7 +245,7 @@ final class MakeCommand extends PackageCommand
         string $token,
         Package $package,
         Version $previousVersion,
-        Version $versionToRelease
+        Version $versionToRelease,
     ): void {
         $io = $this->getIO();
         $io->info("Creating release on GitHub for $versionToRelease.\n");
@@ -260,7 +261,7 @@ final class MakeCommand extends PackageCommand
             $previousVersion,
             $versionToRelease,
             $changelog->getReleaseNotes($versionToRelease),
-            is_file($package->getPath() . '/UPGRADE.md')
+            is_file($package->getPath() . '/UPGRADE.md'),
         );
 
         $release->create($package->getVendor(), $package->getId(), [
@@ -284,7 +285,7 @@ final class MakeCommand extends PackageCommand
 
         $changes = implode(
             "\n",
-            (new ReleaseNews())->getChanges($changelog->getReleaseNotes($versionToRelease))
+            (new ReleaseNews())->getChanges($changelog->getReleaseNotes($versionToRelease)),
         );
 
         $text = <<<TEXT

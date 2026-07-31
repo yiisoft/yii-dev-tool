@@ -7,13 +7,13 @@ namespace Yiisoft\YiiDevTool\Infrastructure\Composer;
 use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
+use function array_key_exists;
+
 class ComposerPackage
 {
     private ?ComposerConfig $config = null;
 
-    public function __construct(private string $name, private string $path)
-    {
-    }
+    public function __construct(private string $name, private string $path) {}
 
     public function getName(): string
     {

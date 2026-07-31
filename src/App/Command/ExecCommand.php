@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
     name: 'exec',
-    description: 'Execute the specified console command in each package'
+    description: 'Execute the specified console command in each package',
 )]
 final class ExecCommand extends PackageCommand
 {
@@ -30,7 +30,7 @@ final class ExecCommand extends PackageCommand
                 <<<DESCRIPTION
                 Console command to be executed. Complex console commands should be enclosed in quotes.
                 For example: <fg=green;options=bold>'git commit --message="Feature X" --amend'</>
-                DESCRIPTION
+                DESCRIPTION,
             );
 
         parent::configure();

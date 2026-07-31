@@ -19,9 +19,14 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\Infrastructure\Changelog;
 
+use function count;
+
+use const DIRECTORY_SEPARATOR;
+use const SORT_NATURAL;
+
 #[AsCommand(
     name: 'release:missing',
-    description: 'Find out which stable packages contain unreleased changes'
+    description: 'Find out which stable packages contain unreleased changes',
 )]
 final class MissingCommand extends Command
 {
@@ -40,37 +45,6 @@ final class MissingCommand extends Command
         }
 
         return $this->io;
-    }
-
-    private function initPackageList(): void
-    {
-        $io = $this->getIO();
-
-        try {
-            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
-            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
-                $io->error([
-                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
-                    'See <file>owner-packages.php</file> to set the packages owner.',
-                ]);
-
-                exit(1);
-            }
-
-            $this->packageList = new PackageList(
-                $ownerPackages,
-                $this->getAppRootDir() . 'packages.php',
-                $this->getAppRootDir() . 'dev',
-            );
-        } catch (InvalidArgumentException $e) {
-            $io->error([
-                'Invalid local package configuration <file>packages.local.php</file>',
-                $e->getMessage(),
-                'See <file>packages.local.php.example</file> for configuration examples.',
-            ]);
-
-            exit(1);
-        }
     }
 
     protected function execute(InputInterface $input, OutputInterface $output)
@@ -124,6 +98,55 @@ final class MissingCommand extends Command
         return Command::SUCCESS;
     }
 
+    /**
+     * Use this method to get a root directory of the tool.
+     *
+     * Commands and components can be moved as a result of refactoring,
+     * so you should not rely on their location in the file system.
+     *
+     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
+     */
+    protected function getAppRootDir(): string
+    {
+        return rtrim(
+            $this
+                    ->getApplication()
+                    ->getRootDir(),
+            DIRECTORY_SEPARATOR,
+        ) . DIRECTORY_SEPARATOR;
+    }
+
+    private function initPackageList(): void
+    {
+        $io = $this->getIO();
+
+        try {
+            $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
+            if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
+                $io->error([
+                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
+                    'See <file>owner-packages.php</file> to set the packages owner.',
+                ]);
+
+                exit(1);
+            }
+
+            $this->packageList = new PackageList(
+                $ownerPackages,
+                $this->getAppRootDir() . 'packages.php',
+                $this->getAppRootDir() . 'dev',
+            );
+        } catch (InvalidArgumentException $e) {
+            $io->error([
+                'Invalid local package configuration <file>packages.local.php</file>',
+                $e->getMessage(),
+                'See <file>packages.local.php.example</file> for configuration examples.',
+            ]);
+
+            exit(1);
+        }
+    }
+
     private function hasRelease(Package $package): bool
     {
         $gitWorkingCopy = $package->getGitWorkingCopy();
@@ -142,23 +165,5 @@ final class MissingCommand extends Command
     private function getPackageList(): PackageList
     {
         return $this->packageList;
-    }
-
-    /**
-     * Use this method to get a root directory of the tool.
-     *
-     * Commands and components can be moved as a result of refactoring,
-     * so you should not rely on their location in the file system.
-     *
-     * @return string Path to the root directory of the tool WITH a TRAILING SLASH.
-     */
-    protected function getAppRootDir(): string
-    {
-        return rtrim(
-            $this
-                    ->getApplication()
-                    ->getRootDir(),
-            DIRECTORY_SEPARATOR
-        ) . DIRECTORY_SEPARATOR;
     }
 }

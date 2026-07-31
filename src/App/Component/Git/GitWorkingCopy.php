@@ -6,13 +6,18 @@ namespace Yiisoft\YiiDevTool\App\Component\Git;
 
 use Symfony\Component\Process\Process;
 
+use function is_array;
+use function is_int;
+use function is_string;
+use function sprintf;
+use function strlen;
+
 final class GitWorkingCopy
 {
     public function __construct(
         private string $gitBinary,
         private string $directory,
-    ) {
-    }
+    ) {}
 
     public function branch(mixed ...$argsOrOptions): string
     {
@@ -108,6 +113,16 @@ final class GitWorkingCopy
         return $this->runCommand($command, $argsOrOptions, $callback);
     }
 
+    public function tag(mixed ...$argsOrOptions): string
+    {
+        return $this->run('tag', $argsOrOptions);
+    }
+
+    public function tags(): GitTags
+    {
+        return new GitTags($this);
+    }
+
     /**
      * @param mixed[] $argsOrOptions
      */
@@ -115,7 +130,7 @@ final class GitWorkingCopy
     {
         $process = new Process(
             array_merge([$this->gitBinary, $command], $this->buildArguments($argsOrOptions)),
-            $this->directory
+            $this->directory,
         );
         $process->setTimeout(null);
         $process->run($callback);
@@ -126,16 +141,6 @@ final class GitWorkingCopy
         }
 
         return $process->getOutput();
-    }
-
-    public function tag(mixed ...$argsOrOptions): string
-    {
-        return $this->run('tag', $argsOrOptions);
-    }
-
-    public function tags(): GitTags
-    {
-        return new GitTags($this);
     }
 
     /**

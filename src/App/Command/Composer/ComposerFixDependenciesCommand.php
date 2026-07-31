@@ -14,10 +14,11 @@ use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackageUsageAnalyzer;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfigDependenciesModifier;
 
+use function count;
+use function sprintf;
+
 final class ComposerFixDependenciesCommand extends PackageCommand
 {
-    private array $skippedPackageIds = [];
-
     private const DEV_PATHS = [
         'tests',
         'config/params-test.php',
@@ -30,6 +31,7 @@ final class ComposerFixDependenciesCommand extends PackageCommand
         'src',
         'public/index.php',
     ];
+    private array $skippedPackageIds = [];
 
     protected function configure(): void
     {
@@ -98,8 +100,8 @@ final class ComposerFixDependenciesCommand extends PackageCommand
 
         $dependencyPackages = $composerInstallation->getInstalledDependencyPackages();
 
-        $namespaceUsages =
-            (new NamespaceUsageFinder())
+        $namespaceUsages
+            = (new NamespaceUsageFinder())
                 ->addTargetPaths(CodeUsageEnvironment::DEV, self::DEV_PATHS, $composerPackage->getPath())
                 ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, self::PRODUCTION_PATHS, $composerPackage->getPath())
                 ->getUsages();

@@ -16,6 +16,11 @@ use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
+use function count;
+use function in_array;
+
+use const DIRECTORY_SEPARATOR;
+
 /**
  * @method YiiDevToolApplication getApplication()
  */
@@ -33,9 +38,7 @@ class PackageCommand extends Command
      * Override this method in a subclass if you want to do something before processing the packages.
      * For example, check the input arguments.
      */
-    protected function beforeProcessingPackages(InputInterface $input): void
-    {
-    }
+    protected function beforeProcessingPackages(InputInterface $input): void {}
 
     /**
      * This method in a subclass should implement the processing logic of each package.
@@ -51,9 +54,7 @@ class PackageCommand extends Command
      * Override this method in a subclass if you want to do something after processing the packages.
      * For example, link the packages with each other.
      */
-    protected function afterProcessingPackages(InputInterface $input): void
-    {
-    }
+    protected function afterProcessingPackages(InputInterface $input): void {}
 
     /**
      * Override this method in a subclass if you want to output something to the console
@@ -90,7 +91,7 @@ class PackageCommand extends Command
             Package names separated by commas. For example: <fg=cyan;options=bold>rbac,di,demo,db-mysql</>
             Array keys from <fg=blue;options=bold>package.php</> configuration can be specified.
             If packages are not specified, then command will be applied to <fg=yellow>all packages.</>
-            DESCRIPTION
+            DESCRIPTION,
         );
     }
 
@@ -193,53 +194,6 @@ class PackageCommand extends Command
         $this->targetPackages = $targetPackages;
     }
 
-    private function isCurrentInstallationValid(Package $package): bool
-    {
-        $io = $this->getIO();
-
-        if (!$package->isGitRepositoryCloned()) {
-            // TODO: Implement extensible validation instead of checking command names
-            if (in_array($this->getName(), ['install', 'update', 'git:clone'], true)) {
-                return true;
-            }
-
-            $io->error([
-                "Package <package>{$package->getId()}</package> repository is not cloned.",
-                'To fix, run the command:',
-                '',
-                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
-            ]);
-
-            if (!$this->areTargetPackagesSpecifiedExplicitly()) {
-                $io->error([
-                    'You can also disable the package in <file>packages.local.php</file>',
-                    'See <file>packages.local.php.example</file> for configuration examples.',
-                ]);
-            }
-
-            return false;
-        }
-
-        $gitWorkingCopy = $package->getGitWorkingCopy();
-        $remoteOriginUrl = $gitWorkingCopy->getRemoteUrl('origin');
-        if ($package->getConfiguredRepositoryUrl() !== $remoteOriginUrl) {
-            $io->error([
-                "Package <package>{$package->getId()}</package> repository is cloned from <file>{$remoteOriginUrl}</file>, but url <file>{$package->getConfiguredRepositoryUrl()}</file> is configured.",
-                'To fix, delete the existing working copy of the repository and run the command:',
-                '',
-                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
-                '',
-                'Before deleting, make sure that you do not have local changes, branches and tags that are not sent to remote repository.',
-                'You can also reconfigure the package repository url in <file>packages.local.php</file>',
-                'See <file>packages.local.php.example</file> for configuration examples.',
-            ]);
-
-            return false;
-        }
-
-        return true;
-    }
-
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $this->initPackageList();
@@ -310,34 +264,6 @@ class PackageCommand extends Command
         return $this->errorList->has($package);
     }
 
-    private function showPackageErrors(): void
-    {
-        $io = $this->getIO();
-
-        if (($this->errorList === null ? 0 : count($this->errorList)) > 0) {
-            $io
-                ->important()
-                ->info([
-                    '<em>',
-                    '=======================================================================',
-                    'SUMMARY OF ERRORS THAT OCCURRED',
-                    '=======================================================================',
-                    '</em>',
-                ]);
-
-            foreach ($this->errorList as $packageError) {
-                $io->preparePackageHeader(
-                    $packageError->getPackage(),
-                    "Package {package} error occurred during <em>{$packageError->getDuring()}</em>:"
-                );
-
-                $io
-                    ->important()
-                    ->info($packageError->getMessage());
-            }
-        }
-    }
-
     /**
      * @return string Console command prefix that works in current environment.
      */
@@ -369,5 +295,80 @@ class PackageCommand extends Command
         }
 
         return true;
+    }
+
+    private function isCurrentInstallationValid(Package $package): bool
+    {
+        $io = $this->getIO();
+
+        if (!$package->isGitRepositoryCloned()) {
+            // TODO: Implement extensible validation instead of checking command names
+            if (in_array($this->getName(), ['install', 'update', 'git:clone'], true)) {
+                return true;
+            }
+
+            $io->error([
+                "Package <package>{$package->getId()}</package> repository is not cloned.",
+                'To fix, run the command:',
+                '',
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
+            ]);
+
+            if (!$this->areTargetPackagesSpecifiedExplicitly()) {
+                $io->error([
+                    'You can also disable the package in <file>packages.local.php</file>',
+                    'See <file>packages.local.php.example</file> for configuration examples.',
+                ]);
+            }
+
+            return false;
+        }
+
+        $gitWorkingCopy = $package->getGitWorkingCopy();
+        $remoteOriginUrl = $gitWorkingCopy->getRemoteUrl('origin');
+        if ($package->getConfiguredRepositoryUrl() !== $remoteOriginUrl) {
+            $io->error([
+                "Package <package>{$package->getId()}</package> repository is cloned from <file>{$remoteOriginUrl}</file>, but url <file>{$package->getConfiguredRepositoryUrl()}</file> is configured.",
+                'To fix, delete the existing working copy of the repository and run the command:',
+                '',
+                "  <cmd>{$this->getExampleCommandPrefix()}yii-dev install {$package->getId()}</cmd>",
+                '',
+                'Before deleting, make sure that you do not have local changes, branches and tags that are not sent to remote repository.',
+                'You can also reconfigure the package repository url in <file>packages.local.php</file>',
+                'See <file>packages.local.php.example</file> for configuration examples.',
+            ]);
+
+            return false;
+        }
+
+        return true;
+    }
+
+    private function showPackageErrors(): void
+    {
+        $io = $this->getIO();
+
+        if (($this->errorList === null ? 0 : count($this->errorList)) > 0) {
+            $io
+                ->important()
+                ->info([
+                    '<em>',
+                    '=======================================================================',
+                    'SUMMARY OF ERRORS THAT OCCURRED',
+                    '=======================================================================',
+                    '</em>',
+                ]);
+
+            foreach ($this->errorList as $packageError) {
+                $io->preparePackageHeader(
+                    $packageError->getPackage(),
+                    "Package {package} error occurred during <em>{$packageError->getDuring()}</em>:",
+                );
+
+                $io
+                    ->important()
+                    ->info($packageError->getMessage());
+            }
+        }
     }
 }

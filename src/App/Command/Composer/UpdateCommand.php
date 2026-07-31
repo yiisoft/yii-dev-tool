@@ -13,7 +13,7 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 #[AsCommand(
     name: 'composer:update',
-    description: 'Update composer dependencies in packages'
+    description: 'Update composer dependencies in packages',
 )]
 final class UpdateCommand extends PackageCommand
 {
@@ -32,20 +32,20 @@ final class UpdateCommand extends PackageCommand
                 'no-plugins',
                 null,
                 InputOption::VALUE_NONE,
-                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>'
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer update</>',
             )
             ->addOption(
                 'ignore-platform-reqs',
                 null,
                 InputOption::VALUE_NONE,
-                'Use <fg=green>--ignore-platform-reqs</> during <fg=green;options=bold>composer update</>'
+                'Use <fg=green>--ignore-platform-reqs</> during <fg=green;options=bold>composer update</>',
             )
             ->addOption(
                 'no-symlinks',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Do not create symbolic links after process',
-                false
+                false,
             );
 
         parent::configure();
@@ -88,7 +88,7 @@ final class UpdateCommand extends PackageCommand
             $package,
             $this->additionalComposerUpdateOptions,
             $this->getErrorsList(),
-            $io
+            $io,
         );
 
         if (!$io->isVerbose()) {

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 use function array_key_exists;
+use function is_array;
+use function is_bool;
 
 class PackageList
 {
@@ -81,7 +83,7 @@ class PackageList
         if ($this->installedAndEnabledList === null) {
             $this->installedAndEnabledList = array_filter(
                 $this->getInstalledPackages(),
-                static fn (Package $package) => $package->enabled(),
+                static fn(Package $package) => $package->enabled(),
             );
         }
 
