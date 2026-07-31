@@ -59,7 +59,7 @@ class ComposerConfigMerger
 
     private function sortInternal(array $packages): array
     {
-        uksort($packages, 'strnatcmp');
+        uksort($packages, strnatcmp(...));
 
         $extensions = [];
         foreach ($packages as $package => $version) {

@@ -53,7 +53,7 @@ final class AddChangelogCommand extends PackageCommand
     {
         $io = $this->getIO();
 
-        $loweredTypes = array_map(fn(string $type) => strtolower($type), Changelog::TYPES);
+        $loweredTypes = array_map(strtolower(...), Changelog::TYPES);
         if (!in_array(strtolower($this->type), $loweredTypes, true)) {
             $io->error(
                 sprintf(
