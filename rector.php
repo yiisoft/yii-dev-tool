@@ -11,7 +11,7 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
         __DIR__ . '/config',
     ])
-    ->withPhpSets(php80: true)
+    ->withPhpSets(php81: true)
     ->withSets([
         SetList::YII_CORE,
     ])
