@@ -59,7 +59,7 @@ final class YiiDevToolApplication extends Application
     HEADER;
 
     public function __construct(
-        private array $config
+        private array $config,
     ) {
         parent::__construct($this->header);
         $this->setDefaultCommand('list-commands');
@@ -79,6 +79,11 @@ final class YiiDevToolApplication extends Application
         }
 
         return $this->rootDir;
+    }
+
+    public function getConfig(string $name): mixed
+    {
+        return $this->config[$name] ?? null;
     }
 
     protected function getDefaultCommands(): array
@@ -131,10 +136,5 @@ final class YiiDevToolApplication extends Application
             new InputOption('--help', '-h', InputOption::VALUE_NONE, 'Display this help message'),
             new InputOption('--verbose', '-v', InputOption::VALUE_NONE, 'Increase the verbosity of messages'),
         ]);
-    }
-
-    public function getConfig(string $name): mixed
-    {
-        return $this->config[$name] ?? null;
     }
 }

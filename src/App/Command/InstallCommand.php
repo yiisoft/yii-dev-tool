@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\PackageService;
 
 #[AsCommand(
     name: 'install',
-    description: 'Clone packages repositories and install composer dependencies'
+    description: 'Clone packages repositories and install composer dependencies',
 )]
 final class InstallCommand extends PackageCommand
 {
@@ -33,14 +33,14 @@ final class InstallCommand extends PackageCommand
                 'no-plugins',
                 null,
                 InputOption::VALUE_NONE,
-                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>'
+                'Use <fg=green>--no-plugins</> during <fg=green;options=bold>composer install</>',
             )
             ->addOption(
                 'no-symlinks',
                 null,
                 InputOption::VALUE_OPTIONAL,
                 'Do not create symbolic links after process',
-                false
+                false,
             );
 
         parent::configure();

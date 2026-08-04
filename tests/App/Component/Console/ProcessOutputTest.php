@@ -12,6 +12,8 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\ProcessOutput;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 
+use const PHP_BINARY;
+
 final class ProcessOutputTest extends TestCase
 {
     public function testRunStreamsOutputBeforeProcessFinishes(): void
@@ -50,7 +52,7 @@ final class ProcessOutputTest extends TestCase
 
         ProcessOutput::run(
             $process,
-            new OutputManager(new YiiDevToolStyle(new ArrayInput([]), $output))
+            new OutputManager(new YiiDevToolStyle(new ArrayInput([]), $output)),
         );
 
         try {

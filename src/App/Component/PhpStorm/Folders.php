@@ -4,6 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\PhpStorm;
 
+use InvalidArgumentException;
+use RuntimeException;
+
+use function sprintf;
+
 final class Folders
 {
     private string $ideaPath;
@@ -15,7 +20,7 @@ final class Folders
     public function __construct(string $ideaPath)
     {
         if (!is_dir($ideaPath)) {
-            throw new \InvalidArgumentException("No .idea at $ideaPath.");
+            throw new InvalidArgumentException("No .idea at $ideaPath.");
         }
         $this->ideaPath = $ideaPath;
     }
@@ -53,7 +58,7 @@ final class Folders
 
         $modulesContent = file_get_contents($this->ideaPath . '/modules.xml');
         if (!preg_match('~<module.*?filepath="\$PROJECT_DIR\$/\.idea/(.*?.iml)"~', $modulesContent, $matches)) {
-            throw new \RuntimeException('Can not find module path in modules.xml.');
+            throw new RuntimeException('Can not find module path in modules.xml.');
         }
 
         $imlPath = $this->ideaPath . '/' . $matches[1];
@@ -62,7 +67,7 @@ final class Folders
         $imlContent = preg_replace(
             '~<content url="file://\$MODULE_DIR\$">.*</content>~s',
             "<content url=\"file://\$MODULE_DIR\$\">\n" . $entries . '    </content>',
-            $imlContent
+            $imlContent,
         );
 
         file_put_contents($imlPath, $imlContent);

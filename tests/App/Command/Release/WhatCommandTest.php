@@ -10,6 +10,9 @@ use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 
+use const JSON_PRETTY_PRINT;
+use const JSON_UNESCAPED_SLASHES;
+
 final class WhatCommandTest extends TestCase
 {
     private string $rootDir;
@@ -27,7 +30,7 @@ final class WhatCommandTest extends TestCase
         file_put_contents($this->rootDir . '/owner-packages.php', "<?php\n\nreturn 'yiisoft';\n");
         file_put_contents(
             $this->rootDir . '/packages.php',
-            "<?php\n\nreturn [\n    'demo' => true,\n    'input-http' => true,\n    'request-model' => true,\n    'validator' => true,\n];\n"
+            "<?php\n\nreturn [\n    'demo' => true,\n    'input-http' => true,\n    'request-model' => true,\n    'validator' => true,\n];\n",
         );
 
         (new Filesystem())->mkdir($this->packagesRootDir . '/demo');
@@ -58,11 +61,11 @@ final class WhatCommandTest extends TestCase
         $this->assertStringContainsString('Out packages', $output);
         $this->assertMatchesRegularExpression(
             '/\| yiisoft\/request-model\s+\| 1\s+\| 1\s+\| validator\s+\|/',
-            $output
+            $output,
         );
         $this->assertDoesNotMatchRegularExpression(
             '/\| yiisoft\/request-model\s+\| 1\s+\| 1\s+\|[^\n]*input-http/',
-            $output
+            $output,
         );
     }
 
@@ -78,7 +81,7 @@ final class WhatCommandTest extends TestCase
 
         file_put_contents(
             $packageDir . '/composer.json',
-            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n"
+            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
         );
 
         (new Process(['git', 'init', '--quiet'], $packageDir))->mustRun();

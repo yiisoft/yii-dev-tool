@@ -9,6 +9,9 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
+use function count;
+use function is_array;
+
 class YiiDevToolStyle extends SymfonyStyle
 {
     private bool $hasColorSupport;
@@ -34,21 +37,6 @@ class YiiDevToolStyle extends SymfonyStyle
     public function hasColorSupport(): bool
     {
         return $this->hasColorSupport;
-    }
-
-    protected function wrap($message, string $tag)
-    {
-        if (!is_array($message)) {
-            $message = [$message];
-        }
-
-        $count = count($message);
-        if ($count) {
-            $message[0] = "{$tag}{$message[0]}";
-            $message[$count - 1] .= '</>';
-        }
-
-        return $message;
     }
 
     public function error($message): void
@@ -81,5 +69,20 @@ class YiiDevToolStyle extends SymfonyStyle
         ]);
 
         $this->newLine();
+    }
+
+    protected function wrap($message, string $tag)
+    {
+        if (!is_array($message)) {
+            $message = [$message];
+        }
+
+        $count = count($message);
+        if ($count) {
+            $message[0] = "{$tag}{$message[0]}";
+            $message[$count - 1] .= '</>';
+        }
+
+        return $message;
     }
 }

@@ -6,9 +6,7 @@ namespace Yiisoft\YiiDevTool\App\Component\Package;
 
 class PackageError
 {
-    public function __construct(private Package $package, private string $message, private string $during)
-    {
-    }
+    public function __construct(private Package $package, private string $message, private string $during) {}
 
     public function getPackage(): Package
     {

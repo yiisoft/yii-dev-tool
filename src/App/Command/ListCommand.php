@@ -8,9 +8,12 @@ use Symfony\Component\Console\Attribute\AsCommand;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+use function sprintf;
+use function strlen;
+
 #[AsCommand(
     name: 'list',
-    description: 'List all packages'
+    description: 'List all packages',
 )]
 final class ListCommand extends PackageCommand
 {

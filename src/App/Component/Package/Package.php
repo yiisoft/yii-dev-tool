@@ -9,6 +9,13 @@ use RuntimeException;
 use Symfony\Component\Process\ExecutableFinder;
 use Yiisoft\YiiDevTool\App\Component\Git\GitWorkingCopy;
 
+use function is_array;
+use function is_bool;
+use function is_string;
+use function sprintf;
+
+use const DIRECTORY_SEPARATOR;
+
 class Package
 {
     private static ?string $gitBinary = null;
@@ -136,21 +143,6 @@ class Package
         return $this->rootPackage !== null;
     }
 
-    private static function getGitBinary(): string
-    {
-        if (static::$gitBinary === null) {
-            $finder = new ExecutableFinder();
-            $gitBinary = $finder->find('git');
-            if ($gitBinary === null) {
-                throw new RuntimeException('Could not find the "git" executable.');
-            }
-
-            static::$gitBinary = $gitBinary;
-        }
-
-        return static::$gitBinary;
-    }
-
     // TODO: Call all git commands through this interface
     public function getGitWorkingCopy(): GitWorkingCopy
     {
@@ -182,5 +174,20 @@ class Package
     public function isMonoRepository(): bool
     {
         return $this->isMonoRepository;
+    }
+
+    private static function getGitBinary(): string
+    {
+        if (static::$gitBinary === null) {
+            $finder = new ExecutableFinder();
+            $gitBinary = $finder->find('git');
+            if ($gitBinary === null) {
+                throw new RuntimeException('Could not find the "git" executable.');
+            }
+
+            static::$gitBinary = $gitBinary;
+        }
+
+        return static::$gitBinary;
     }
 }

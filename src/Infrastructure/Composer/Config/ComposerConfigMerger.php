@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config;
 
+use function array_key_exists;
+use function is_array;
+use function is_string;
+
 class ComposerConfigMerger
 {
     public function merge(ComposerConfig $firstConfig, ComposerConfig $secondConfig): ComposerConfig
@@ -55,7 +59,7 @@ class ComposerConfigMerger
 
     private function sortInternal(array $packages): array
     {
-        uksort($packages, 'strnatcmp');
+        uksort($packages, strnatcmp(...));
 
         $extensions = [];
         foreach ($packages as $package => $version) {

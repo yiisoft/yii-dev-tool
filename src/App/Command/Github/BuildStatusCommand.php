@@ -38,8 +38,6 @@ final class BuildStatusCommand extends PackageCommand
         $io = $this->getIO();
         $io->preparePackageHeader($package, 'Gettting status for {package} commit ' . $currentCommit);
 
-
-
         $client = new Client();
         $client->authenticate($this->getGitHubToken(), null, AuthMethod::ACCESS_TOKEN);
 
@@ -48,7 +46,7 @@ final class BuildStatusCommand extends PackageCommand
         $checks = $checksRunsApi->allForReference(
             username: $package->getVendor(),
             repository: $package->getId(),
-            ref: $currentCommit
+            ref: $currentCommit,
         );
 
         foreach ($checks['check_runs'] as $check) {

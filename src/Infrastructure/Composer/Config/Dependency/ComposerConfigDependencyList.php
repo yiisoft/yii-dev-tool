@@ -7,6 +7,10 @@ namespace Yiisoft\YiiDevTool\Infrastructure\Composer\Config\Dependency;
 use InvalidArgumentException;
 use RuntimeException;
 
+use function array_key_exists;
+use function count;
+use function is_string;
+
 class ComposerConfigDependencyList
 {
     /**

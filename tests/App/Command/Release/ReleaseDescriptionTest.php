@@ -26,8 +26,8 @@ final class ReleaseDescriptionTest extends TestCase
                 'yiisoft/html',
                 new Version('3.10.0'),
                 new Version('3.11.0'),
-                ['- Bug #1: Fixed issue (@samdark)']
-            )
+                ['- Bug #1: Fixed issue (@samdark)'],
+            ),
         );
     }
 
@@ -41,8 +41,8 @@ final class ReleaseDescriptionTest extends TestCase
                 'yiisoft/html',
                 new Version(''),
                 new Version('1.0.0'),
-                ['- Initial release.']
-            )
+                ['- Initial release.'],
+            ),
         );
     }
 
@@ -65,8 +65,8 @@ final class ReleaseDescriptionTest extends TestCase
                 new Version('3.10.0'),
                 new Version('4.0.0'),
                 ['- Enh #1: Removed deprecated API (@samdark)'],
-                true
-            )
+                true,
+            ),
         );
     }
 
@@ -87,8 +87,8 @@ final class ReleaseDescriptionTest extends TestCase
                 new Version('3.10.0'),
                 new Version('3.11.0'),
                 ['- Enh #1: Added API (@samdark)'],
-                true
-            )
+                true,
+            ),
         );
     }
 
@@ -108,8 +108,8 @@ final class ReleaseDescriptionTest extends TestCase
                 'yiisoft/html',
                 new Version('3.10.0'),
                 new Version('4.0.0'),
-                ['- Enh #1: Removed deprecated API (@samdark)']
-            )
+                ['- Enh #1: Removed deprecated API (@samdark)'],
+            ),
         );
     }
 }

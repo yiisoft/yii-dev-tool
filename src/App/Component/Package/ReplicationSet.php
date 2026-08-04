@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Yiisoft\YiiDevTool\App\Component\Package;
 
+use function in_array;
+
 class ReplicationSet
 {
-    public function __construct(private string $sourcePackage, private array $files, private array $includedPackages, private array $excludedPackages)
-    {
-    }
+    public function __construct(private string $sourcePackage, private array $files, private array $includedPackages, private array $excludedPackages) {}
 
     public function getSourcePackage(): string
     {
@@ -27,8 +27,6 @@ class ReplicationSet
         }
 
         return !(in_array('*', $this->excludedPackages, true) || in_array($name, $this->excludedPackages, true))
-
-
 
         ;
     }

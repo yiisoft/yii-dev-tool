@@ -9,9 +9,11 @@ use Symfony\Component\Process\Process;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
+use const PHP_EOL;
+
 #[AsCommand(
     name: 'git:status',
-    description: 'Show git status of packages'
+    description: 'Show git status of packages',
 )]
 final class StatusCommand extends PackageCommand
 {

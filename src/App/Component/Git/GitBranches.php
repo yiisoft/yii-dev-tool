@@ -12,9 +12,7 @@ use IteratorAggregate;
  */
 final class GitBranches implements IteratorAggregate
 {
-    public function __construct(private GitWorkingCopy $gitWorkingCopy)
-    {
-    }
+    public function __construct(private GitWorkingCopy $gitWorkingCopy) {}
 
     /**
      * @return string[]
@@ -48,8 +46,8 @@ final class GitBranches implements IteratorAggregate
         }
 
         return array_map(
-            static fn (string $branch): string => ltrim($branch, ' *'),
-            preg_split('~\R~', $output) ?: []
+            static fn(string $branch): string => ltrim($branch, ' *'),
+            preg_split('~\R~', $output) ?: [],
         );
     }
 }

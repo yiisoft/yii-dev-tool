@@ -8,6 +8,8 @@ use InvalidArgumentException;
 use RuntimeException;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsage;
 
+use function array_key_exists;
+
 class ComposerPackageUsageAnalyzer
 {
     /**

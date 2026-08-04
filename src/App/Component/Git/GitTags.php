@@ -12,9 +12,7 @@ use IteratorAggregate;
  */
 final class GitTags implements IteratorAggregate
 {
-    public function __construct(private GitWorkingCopy $gitWorkingCopy)
-    {
-    }
+    public function __construct(private GitWorkingCopy $gitWorkingCopy) {}
 
     /**
      * @return string[]
@@ -27,8 +25,8 @@ final class GitTags implements IteratorAggregate
         }
 
         return array_map(
-            static fn (string $tag): string => ltrim($tag, ' *'),
-            preg_split('~\R~', $output) ?: []
+            static fn(string $tag): string => ltrim($tag, ' *'),
+            preg_split('~\R~', $output) ?: [],
         );
     }
 

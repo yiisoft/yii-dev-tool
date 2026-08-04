@@ -7,18 +7,17 @@ namespace Yiisoft\YiiDevTool\Test\Infrastructure\CodeUsage;
 use PHPUnit\Framework\TestCase;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\CodeUsageEnvironment;
 use Yiisoft\YiiDevTool\Infrastructure\CodeUsage\NamespaceUsageFinder;
+use Custom\NonPSRNamespace\VarStorage;
+use Production\Config\Config;
+use SplFixedArray;
+use SplStack;
 
 final class NamespaceUsageFinderTest extends TestCase
 {
-    protected function getFixturePath(string $name)
-    {
-        return __DIR__ . '/Fixture/' . $name;
-    }
-
     public function testGetUsages()
     {
-        $namespaceUsages =
-            (new NamespaceUsageFinder())
+        $namespaceUsages
+            = (new NamespaceUsageFinder())
                 ->addTargetPaths(CodeUsageEnvironment::PRODUCTION, [
                     'config/prod.php',
                     'src',
@@ -31,15 +30,15 @@ final class NamespaceUsageFinderTest extends TestCase
 
         $expectedResults = [
             // Used in custom environment only
-            '\\' . \Custom\NonPSRNamespace\VarStorage::class => ['custom-environment'],
+            '\\' . VarStorage::class => ['custom-environment'],
             '\\' . \Custom\Storage\VarStorage::class => ['custom-environment'],
-            '\\' . \SplStack::class => ['custom-environment'],
+            '\\' . SplStack::class => ['custom-environment'],
 
             // Used in production environment only
-            '\\' . \Production\Config\Config::class => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . Config::class => [CodeUsageEnvironment::PRODUCTION],
             '\\' . \Production\NonPSRNamespace\Config::class => [CodeUsageEnvironment::PRODUCTION],
             '\\' . \Production\Spl\SplFixedArray::class => [CodeUsageEnvironment::PRODUCTION],
-            '\\' . \SplFixedArray::class => [CodeUsageEnvironment::PRODUCTION],
+            '\\' . SplFixedArray::class => [CodeUsageEnvironment::PRODUCTION],
 
             // Used in both environments
             '\time' => [CodeUsageEnvironment::PRODUCTION, 'custom-environment'],
@@ -52,5 +51,10 @@ final class NamespaceUsageFinderTest extends TestCase
 
         // Not used, replaced by local implementation
         $this->assertArrayNotHasKey('\count', $namespaceUsages);
+    }
+
+    protected function getFixturePath(string $name)
+    {
+        return __DIR__ . '/Fixture/' . $name;
     }
 }

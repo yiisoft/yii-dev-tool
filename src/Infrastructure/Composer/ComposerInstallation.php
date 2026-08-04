@@ -6,6 +6,8 @@ namespace Yiisoft\YiiDevTool\Infrastructure\Composer;
 
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
+use function count;
+
 class ComposerInstallation
 {
     private array $installedDependencies;

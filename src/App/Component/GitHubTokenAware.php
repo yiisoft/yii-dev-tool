@@ -7,6 +7,7 @@ namespace Yiisoft\YiiDevTool\App\Component;
 use Symfony\Component\Console\Command\Command;
 use Github\Client;
 use Github\AuthMethod;
+use Exception;
 
 trait GitHubTokenAware
 {
@@ -44,7 +45,7 @@ trait GitHubTokenAware
 
         try {
             $client->currentUser()->show();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             $io->error([
                 "Failed to authenticate with GitHub using the provided token from $tokenFile.",
                 '<href=https://github.com/settings/tokens>Please make sure the token is valid and has the required permissions</>.',

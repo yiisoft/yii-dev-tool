@@ -18,7 +18,7 @@ final class ReleaseDescription
         Version $previousVersion,
         Version $versionToRelease,
         array $releaseNotes,
-        bool $hasUpgradeNotes = false
+        bool $hasUpgradeNotes = false,
     ): string {
         $body = implode("\n", $releaseNotes);
 

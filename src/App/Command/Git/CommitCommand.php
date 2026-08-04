@@ -14,7 +14,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
     name: 'git:commit',
-    description: 'Add and commit changes into each package repository'
+    description: 'Add and commit changes into each package repository',
 )]
 final class CommitCommand extends PackageCommand
 {

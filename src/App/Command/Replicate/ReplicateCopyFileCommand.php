@@ -8,6 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
+use InvalidArgumentException;
 
 final class ReplicateCopyFileCommand extends PackageCommand
 {
@@ -29,11 +30,11 @@ final class ReplicateCopyFileCommand extends PackageCommand
 
     protected function beforeProcessingPackages(InputInterface $input): void
     {
-        $this->source = (string)$input->getArgument('source');
-        $this->destination = (string)$input->getArgument('destination');
+        $this->source = (string) $input->getArgument('source');
+        $this->destination = (string) $input->getArgument('destination');
 
         if (realpath($this->source) === false) {
-            throw new \InvalidArgumentException("File \"{$this->source}\" not found.");
+            throw new InvalidArgumentException("File \"{$this->source}\" not found.");
         }
     }
 

@@ -13,20 +13,22 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageErrorList;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
 
+use const DIRECTORY_SEPARATOR;
+
 final class PackageService
 {
     public function composerInstall(
         Package $package,
         array $additionalOptions,
         PackageErrorList $errorList,
-        OutputManager $io
+        OutputManager $io,
     ): void {
         $this->composerInstallOrUpdate(
             'install',
             $package,
             $additionalOptions,
             $errorList,
-            $io
+            $io,
         );
     }
 
@@ -34,14 +36,14 @@ final class PackageService
         Package $package,
         array $additionalOptions,
         PackageErrorList $errorList,
-        OutputManager $io
+        OutputManager $io,
     ): void {
         $this->composerInstallOrUpdate(
             'update',
             $package,
             $additionalOptions,
             $errorList,
-            $io
+            $io,
         );
     }
 
@@ -49,7 +51,7 @@ final class PackageService
         Package $package,
         string $commandName,
         PackageErrorList $errorList,
-        OutputManager $io
+        OutputManager $io,
     ): void {
         $io
             ->important()
@@ -156,7 +158,7 @@ final class PackageService
         Package $package,
         array $additionalOptions,
         PackageErrorList $errorList,
-        OutputManager $io
+        OutputManager $io,
     ): void {
         $io
             ->important()

@@ -14,7 +14,7 @@ class NamespaceUsageFinderNameResolver extends NameResolver
         protected NamespaceUsageFinder $namespaceUsageFinder,
         protected string $environment,
         ?ErrorHandler $errorHandler = null,
-        array $options = []
+        array $options = [],
     ) {
         parent::__construct($errorHandler, $options);
     }

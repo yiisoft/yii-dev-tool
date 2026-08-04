@@ -12,7 +12,7 @@ use Yiisoft\YiiDevTool\App\Component\Package\Package;
 
 #[AsCommand(
     name: 'git:push',
-    description: 'Push changes into package repositories'
+    description: 'Push changes into package repositories',
 )]
 final class PushCommand extends PackageCommand
 {

@@ -27,7 +27,7 @@ final class ReleaseNews
             $note = preg_replace(
                 '~^- (?:' . implode('|', Changelog::TYPES) . ')(?: #\d+(?:, #\d+)*)?:\s+~',
                 '',
-                $note
+                $note,
             );
             $note = preg_replace('~^- \s*~', '', $note);
             $note = preg_replace('~\s+\(@[^)]*\)$~', '', $note);

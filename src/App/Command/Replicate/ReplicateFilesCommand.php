@@ -12,6 +12,10 @@ use Yiisoft\YiiDevTool\App\Component\Console\PackageCommand;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\ReplicationSet;
 
+use function array_key_exists;
+
+use const DIRECTORY_SEPARATOR;
+
 final class ReplicateFilesCommand extends PackageCommand
 {
     private array $sets = [];
@@ -25,6 +29,76 @@ final class ReplicateFilesCommand extends PackageCommand
             ->setDescription('Copy files specified in <fg=blue;options=bold>config/replicate/files.php</> into each package');
 
         parent::configure();
+    }
+
+    protected function beforeProcessingPackages(InputInterface $input): void
+    {
+        $this->sets = $input->getOption('sets');
+        foreach ($this->sets as $set) {
+            $this->checkReplicationSet($set);
+        }
+    }
+
+    protected function getMessageWhenNothingHasBeenOutput(): ?string
+    {
+        return '<success>✔ Done</success>';
+    }
+
+    protected function processPackage(Package $package): void
+    {
+        $io = $this->getIO();
+        $io->preparePackageHeader($package, 'Replication to package {package}');
+
+        foreach ($this->sets as $set) {
+            $replicationSet = $this->getReplicationSet($set);
+
+            if ($package->getId() === $replicationSet->getSourcePackage()) {
+                if ($this->areTargetPackagesSpecifiedExplicitly()) {
+                    $io->warning([
+                        'Cannot replicate into itself.',
+                        "Package <package>{$package->getId()}</package> skipped.",
+                    ]);
+                }
+
+                return;
+            }
+
+            if (!$replicationSet->appliesToPackage($package->getId())) {
+                $io->info("Skipping package <package>{$package->getId()}</package>.");
+                continue;
+            }
+
+            $sourcePackage = $this
+                ->getPackageList()
+                ->getPackage($replicationSet->getSourcePackage());
+
+            $fs = new Filesystem();
+            foreach ($replicationSet->getFiles() as $sourceFile) {
+                try {
+                    $sourceFilePath = $sourcePackage->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
+                    $targetFilePath = $package->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
+
+                    $io->info("Copying $sourceFilePath to $targetFilePath.");
+                    $fs->copy(
+                        $sourceFilePath,
+                        $targetFilePath,
+                        true,
+                    );
+                } catch (Throwable $e) {
+                    $io->error([
+                        "An error occurred during replicating file <file>{$sourceFile}</file>",
+                        $e->getMessage(),
+                        'Package replication aborted.',
+                    ]);
+
+                    $this->registerPackageError($package, $e->getMessage(), 'replication');
+
+                    return;
+                }
+            }
+        }
+
+        $io->done();
     }
 
     private function getReplicationSet(string $name): ?ReplicationSet
@@ -46,19 +120,6 @@ final class ReplicateFilesCommand extends PackageCommand
             $setConfig['packages']['include'],
             $setConfig['packages']['exclude'],
         );
-    }
-
-    protected function beforeProcessingPackages(InputInterface $input): void
-    {
-        $this->sets = $input->getOption('sets');
-        foreach ($this->sets as $set) {
-            $this->checkReplicationSet($set);
-        }
-    }
-
-    protected function getMessageWhenNothingHasBeenOutput(): ?string
-    {
-        return '<success>✔ Done</success>';
     }
 
     private function checkReplicationSet(string $set): void
@@ -100,62 +161,5 @@ final class ReplicateFilesCommand extends PackageCommand
 
             exit(1);
         }
-    }
-
-    protected function processPackage(Package $package): void
-    {
-        $io = $this->getIO();
-        $io->preparePackageHeader($package, 'Replication to package {package}');
-
-        foreach ($this->sets as $set) {
-            $replicationSet = $this->getReplicationSet($set);
-
-            if ($package->getId() === $replicationSet->getSourcePackage()) {
-                if ($this->areTargetPackagesSpecifiedExplicitly()) {
-                    $io->warning([
-                        'Cannot replicate into itself.',
-                        "Package <package>{$package->getId()}</package> skipped.",
-                    ]);
-                }
-
-                return;
-            }
-
-            if (!$replicationSet->appliesToPackage($package->getId())) {
-                $io->info("Skipping package <package>{$package->getId()}</package>.");
-                continue;
-            }
-
-            $sourcePackage = $this
-                ->getPackageList()
-                ->getPackage($replicationSet->getSourcePackage());
-
-            $fs = new Filesystem();
-            foreach ($replicationSet->getFiles() as $sourceFile) {
-                try {
-                    $sourceFilePath = $sourcePackage->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
-                    $targetFilePath = $package->getPath() . DIRECTORY_SEPARATOR . $sourceFile;
-
-                    $io->info("Copying $sourceFilePath to $targetFilePath.");
-                    $fs->copy(
-                        $sourceFilePath,
-                        $targetFilePath,
-                        true
-                    );
-                } catch (Throwable $e) {
-                    $io->error([
-                        "An error occurred during replicating file <file>{$sourceFile}</file>",
-                        $e->getMessage(),
-                        'Package replication aborted.',
-                    ]);
-
-                    $this->registerPackageError($package, $e->getMessage(), 'replication');
-
-                    return;
-                }
-            }
-        }
-
-        $io->done();
     }
 }
