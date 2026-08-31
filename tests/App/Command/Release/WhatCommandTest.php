@@ -8,36 +8,58 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Process\Process;
+use Yiisoft\YiiDevTool\App\Command\Release\WhatCommand;
 use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
-
-use const JSON_PRETTY_PRINT;
-use const JSON_UNESCAPED_SLASHES;
 
 final class WhatCommandTest extends TestCase
 {
     private string $rootDir;
     private string $packagesRootDir;
+    private string $packageDir;
+    private FakeGitHubReleaseInspector $gitHub;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->rootDir = sys_get_temp_dir() . '/yii-dev-tool-what-command-' . bin2hex(random_bytes(8));
-        $this->packagesRootDir = sys_get_temp_dir() . '/yii-dev-tool-what-command-packages-' . bin2hex(random_bytes(8));
-
-        (new Filesystem())->mkdir([$this->rootDir, $this->packagesRootDir]);
+        $suffix = bin2hex(random_bytes(8));
+        $this->rootDir = sys_get_temp_dir() . '/yii-dev-tool-release-what-' . $suffix;
+        $this->packagesRootDir = sys_get_temp_dir() . '/yii-dev-tool-release-what-packages-' . $suffix;
+        $this->packageDir = $this->packagesRootDir . '/demo';
+        (new Filesystem())->mkdir([$this->rootDir, $this->packageDir]);
 
         file_put_contents($this->rootDir . '/owner-packages.php', "<?php\n\nreturn 'yiisoft';\n");
-        file_put_contents(
-            $this->rootDir . '/packages.php',
-            "<?php\n\nreturn [\n    'demo' => true,\n    'input-http' => true,\n    'request-model' => true,\n    'validator' => true,\n];\n",
-        );
+        file_put_contents($this->rootDir . '/packages.php', "<?php\n\nreturn ['demo' => true];\n");
+        file_put_contents($this->packageDir . '/composer.json', <<<'JSON'
+        {
+            "name": "yiisoft/demo",
+            "require": {"php": "^8.1"}
+        }
+        JSON);
+        file_put_contents($this->packageDir . '/CHANGELOG.md', <<<'MARKDOWN'
+        # Demo Change Log
 
-        (new Filesystem())->mkdir($this->packagesRootDir . '/demo');
+        ## 1.0.1 under development
 
-        $this->createPackage('input-http', ['yiisoft/request-model' => '^1.0']);
-        $this->createPackage('request-model', ['yiisoft/validator' => '^1.0']);
-        $this->createPackage('validator');
+        - Bug #12: Fix the demo
+
+        ## 1.0.0 January 01, 2026
+
+        - Initial release.
+        MARKDOWN);
+
+        $this->git('init', '--quiet');
+        $this->git('config', 'user.email', 'test@example.com');
+        $this->git('config', 'user.name', 'Test');
+        $this->git('config', 'commit.gpgsign', 'false');
+        $this->git('add', '.');
+        $this->git('commit', '--quiet', '-m', 'Initial release');
+        $this->git('tag', '1.0.0');
+        file_put_contents($this->packageDir . '/change.txt', "change\n");
+        $this->git('add', '.');
+        $this->git('commit', '--quiet', '-m', 'Fix the demo');
+
+        $this->gitHub = new FakeGitHubReleaseInspector($this->git('rev-parse', 'HEAD'));
     }
 
     protected function tearDown(): void
@@ -47,43 +69,67 @@ final class WhatCommandTest extends TestCase
         parent::tearDown();
     }
 
-    public function testListsOnlyOutgoingPackages(): void
+    public function testListsReadyPackageWithSummary(): void
+    {
+        $tester = $this->createCommandTester();
+
+        self::assertSame(0, $tester->execute([]));
+        self::assertStringContainsString('Packages to release', $tester->getDisplay());
+        self::assertStringContainsString('yiisoft/demo', $tester->getDisplay());
+        self::assertStringContainsString('1.0.1', $tester->getDisplay());
+        self::assertStringContainsString('Bug #12: Fix the demo', $tester->getDisplay());
+    }
+
+    public function testListsBlockedPackageAndReturnsFailure(): void
+    {
+        $this->gitHub->checks[0]['conclusion'] = 'failure';
+        $this->gitHub->issueStates[12] = 'open';
+        $tester = $this->createCommandTester();
+
+        self::assertSame(1, $tester->execute([]));
+        self::assertStringContainsString('Blocked packages', $tester->getDisplay());
+        self::assertStringContainsString('GitHub check "phpunit" concluded with failure.', $tester->getDisplay());
+        self::assertStringContainsString('Issue #12 is still open.', $tester->getDisplay());
+    }
+
+    public function testOmitsPackageWithoutCommitsAfterTag(): void
+    {
+        $this->git('tag', '-f', '1.0.1');
+        $tester = $this->createCommandTester();
+
+        self::assertSame(0, $tester->execute([]));
+        self::assertStringNotContainsString('yiisoft/demo', $tester->getDisplay());
+    }
+
+    public function testTreatsRepositoryWithoutTagsAsInitialReleaseCandidate(): void
+    {
+        $this->git('tag', '--delete', '1.0.0');
+        $tester = $this->createCommandTester();
+
+        self::assertSame(0, $tester->execute([]));
+        self::assertStringContainsString('Packages to release', $tester->getDisplay());
+    }
+
+    public function testDirtyWorkingTreeBlocksRelease(): void
+    {
+        file_put_contents($this->packageDir . '/uncommitted.txt', "change\n");
+        $tester = $this->createCommandTester();
+
+        self::assertSame(1, $tester->execute([]));
+        self::assertStringContainsString('Working tree is not clean.', $tester->getDisplay());
+    }
+
+    private function createCommandTester(): CommandTester
     {
         $application = (new YiiDevToolApplication(['packagesRootDir' => $this->packagesRootDir]))
             ->setRootDir($this->rootDir);
-        $command = $application->find('release:what');
+        $application->add(new WhatCommand($this->gitHub));
 
-        $commandTester = new CommandTester($command);
-        $this->assertSame(0, $commandTester->execute([]));
-
-        $output = $commandTester->getDisplay();
-
-        $this->assertStringContainsString('Out packages', $output);
-        $this->assertMatchesRegularExpression(
-            '/\| yiisoft\/request-model\s+\| 1\s+\| 1\s+\| validator\s+\|/',
-            $output,
-        );
-        $this->assertDoesNotMatchRegularExpression(
-            '/\| yiisoft\/request-model\s+\| 1\s+\| 1\s+\|[^\n]*input-http/',
-            $output,
-        );
+        return new CommandTester($application->find('release:what'));
     }
 
-    private function createPackage(string $name, array $require = []): void
+    private function git(string ...$arguments): string
     {
-        $packageDir = $this->packagesRootDir . '/' . $name;
-        (new Filesystem())->mkdir($packageDir);
-
-        $composer = [
-            'name' => 'yiisoft/' . $name,
-            'require' => $require,
-        ];
-
-        file_put_contents(
-            $packageDir . '/composer.json',
-            json_encode($composer, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES) . "\n",
-        );
-
-        (new Process(['git', 'init', '--quiet'], $packageDir))->mustRun();
+        return trim((new Process(['git', ...$arguments], $this->packageDir))->mustRun()->getOutput());
     }
 }

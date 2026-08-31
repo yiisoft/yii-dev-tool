@@ -236,7 +236,9 @@ Remember that **yii-dev-tool** contains many other commands:
 | install                   | i         | Clone packages repositories and install composer dependencies.               |
 | update                    | u         | Pull changes from packages repositories and update composer dependencies.    |
 | lint                      | -         | Check packages according to PSR-12 standard.                                 |
+| release:deps              | -         | Show dependency order for packages without releases.                         |
 | release:make              | -         | Make a package release.                                                      |
+| release:what              | -         | Find packages that are ready to release.                                     |
 | replicate:files           | -         | Copy files specified in `config/replicate/files.php` into each package.      |
 | replicate:composer-config | -         | Merge `config/replicate/composer.json` into `composer.json` of each package. |
 | replicate:copy-file       | -         | Copy file into each package.                                                 |

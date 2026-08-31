@@ -17,7 +17,9 @@ final class Changelog
         'Enh',
     ];
 
-    public function __construct(private string $path) {}
+    public function __construct(private string $path)
+    {
+    }
 
     public function resort(): void
     {
@@ -91,9 +93,7 @@ final class Changelog
         );
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return list<string> */
     public function getReleaseNotes(Version $version): array
     {
         [, $changelog] = $this->splitChangelog($version->asString());
@@ -101,9 +101,7 @@ final class Changelog
         return $changelog;
     }
 
-    /**
-     * @return string[]
-     */
+    /** @return array{list<string>, list<string>, list<string>} */
     public function getReleaseLog(?Version $version = null): array
     {
         return $this->splitChangelog($version?->asString());
@@ -126,6 +124,7 @@ final class Changelog
 
     /**
      * @param string|null $version Version of package or null for "under development".
+     * @return array{list<string>, list<string>, list<string>}
      */
     private function splitChangelog(?string $version = null): array
     {
@@ -149,20 +148,37 @@ final class Changelog
             ) {
                 $state = 'changelog';
             }
-            if ($state === 'changelog' && isset($lines[$lineNumber + 1]) && str_starts_with(
-                $lines[$lineNumber + 1],
-                '## ',
-            )) {
+            if (
+                $state === 'changelog'
+                && isset($lines[$lineNumber + 1])
+                && str_starts_with($lines[$lineNumber + 1], '## ')
+            ) {
                 $state = 'end';
             }
-            // add continued lines to the last item to keep them together
-            if (!empty(${$state}) && trim($line) !== '' && !str_starts_with($line, '- ')) {
-                ${$state}[array_key_last(${$state})] .= "\n" . $line;
-            } else {
-                ${$state}[] = $line;
+            switch ($state) {
+                case 'start':
+                    $this->appendChangelogLine($start, $line);
+                    break;
+                case 'changelog':
+                    $this->appendChangelogLine($changelog, $line);
+                    break;
+                case 'end':
+                    $this->appendChangelogLine($end, $line);
+                    break;
             }
         }
 
         return [$start, $changelog, $end];
+    }
+
+    /** @param list<string> $target */
+    private function appendChangelogLine(array &$target, string $line): void
+    {
+        // Add continued lines to the last item to keep them together.
+        if ($target !== [] && trim($line) !== '' && !str_starts_with($line, '- ')) {
+            $target[array_key_last($target)] .= "\n" . $line;
+        } else {
+            $target[] = $line;
+        }
     }
 }
