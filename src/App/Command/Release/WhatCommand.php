@@ -93,12 +93,10 @@ final class WhatCommand extends Command
         $defaultBranchRequests = [];
         foreach ($candidates as $candidate) {
             $key = $candidate['remoteKey'];
-            if (!isset($defaultBranchRequests[$key])) {
-                $defaultBranchRequests[$key] = [
-                    'vendor' => $candidate['vendor'],
-                    'repository' => $candidate['repository'],
-                ];
-            }
+            $defaultBranchRequests[$key] ??= [
+                'vendor' => $candidate['vendor'],
+                'repository' => $candidate['repository'],
+            ];
         }
 
         $defaultBranches = [];

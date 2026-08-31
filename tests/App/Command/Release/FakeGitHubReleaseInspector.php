@@ -20,9 +20,7 @@ final class FakeGitHubReleaseInspector implements GitHubReleaseInspectorInterfac
     /** @var array<int, string> */
     public array $issueStates = [12 => 'closed'];
 
-    public function __construct(private string $sha)
-    {
-    }
+    public function __construct(private string $sha) {}
 
     public function getDefaultBranches(array $repositories): array
     {
