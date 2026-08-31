@@ -13,7 +13,7 @@ trait GitHubTokenAware
 {
     private ?string $gitHubToken = null;
 
-    public function getGitHubToken(): string
+    public function getGitHubToken(bool $validate = true): string
     {
         if ($this->gitHubToken !== null) {
             return $this->gitHubToken;
@@ -39,6 +39,10 @@ trait GitHubTokenAware
             exit(Command::FAILURE);
         }
 
+        if (!$validate) {
+            return $token;
+        }
+
         // Test the token by making an authenticated request
         $client = new Client();
         $client->authenticate($token, null, AuthMethod::ACCESS_TOKEN);
@@ -48,7 +52,8 @@ trait GitHubTokenAware
         } catch (Exception $e) {
             $io->error([
                 "Failed to authenticate with GitHub using the provided token from $tokenFile.",
-                '<href=https://github.com/settings/tokens>Please make sure the token is valid and has the required permissions</>.',
+                '<href=https://github.com/settings/tokens>Please make sure the token is valid '
+                . 'and has the required permissions</>.',
                 'Error: ' . $e->getMessage(),
             ]);
             exit(Command::FAILURE);

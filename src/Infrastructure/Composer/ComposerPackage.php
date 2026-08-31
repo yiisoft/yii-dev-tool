@@ -41,9 +41,7 @@ class ComposerPackage
             throw new RuntimeException('Failed to get ComposerConfig because composer.json does not exist.');
         }
 
-        if ($this->config === null) {
-            $this->config = ComposerConfig::createByFilePath($this->getComposerConfigPath());
-        }
+        $this->config ??= ComposerConfig::createByFilePath($this->getComposerConfigPath());
 
         return $this->config;
     }

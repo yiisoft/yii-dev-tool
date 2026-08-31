@@ -103,10 +103,7 @@ final class ReplicateFilesCommand extends PackageCommand
 
     private function getReplicationSet(string $name): ?ReplicationSet
     {
-        if ($this->replicationConfig === null) {
-            /** @noinspection PhpIncludeInspection */
-            $this->replicationConfig = require $this->getAppRootDir() . 'config/replicate/files.php';
-        }
+        $this->replicationConfig ??= require $this->getAppRootDir() . 'config/replicate/files.php';
 
         if (!array_key_exists($name, $this->replicationConfig)) {
             return null;
