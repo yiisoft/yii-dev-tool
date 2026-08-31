@@ -123,9 +123,10 @@ final class WhatCommandTest extends TestCase
     {
         $application = (new YiiDevToolApplication(['packagesRootDir' => $this->packagesRootDir]))
             ->setRootDir($this->rootDir);
-        $application->add(new WhatCommand($this->gitHub));
+        $command = new WhatCommand($this->gitHub);
+        $command->setApplication($application);
 
-        return new CommandTester($application->find('release:what'));
+        return new CommandTester($command);
     }
 
     private function git(string ...$arguments): string

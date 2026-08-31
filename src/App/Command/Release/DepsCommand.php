@@ -16,6 +16,7 @@ use Yiisoft\YiiDevTool\App\Component\Console\OutputManager;
 use Yiisoft\YiiDevTool\App\Component\Console\YiiDevToolStyle;
 use Yiisoft\YiiDevTool\App\Component\Package\Package;
 use Yiisoft\YiiDevTool\App\Component\Package\PackageList;
+use Yiisoft\YiiDevTool\App\YiiDevToolApplication;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\ComposerPackage;
 use Yiisoft\YiiDevTool\Infrastructure\Composer\Config\ComposerConfig;
 
@@ -24,6 +25,7 @@ use function count;
 
 use const DIRECTORY_SEPARATOR;
 
+/** @method YiiDevToolApplication getApplication() */
 final class DepsCommand extends Command
 {
     private ?OutputManager $io = null;
@@ -105,7 +107,8 @@ final class DepsCommand extends Command
 
                 $packagesWithoutRelease[$dependencyName]['dependents']++;
                 $packagesWithoutRelease[$installedPackage->getName()]['dependencies']++;
-                $packagesWithoutRelease[$installedPackage->getName()]['dependencyPackages'][] = $this->removeVendorName($dependencyName);
+                $packagesWithoutRelease[$installedPackage->getName()]['dependencyPackages'][] = $this
+                    ->removeVendorName($dependencyName);
             }
         }
 
@@ -198,7 +201,8 @@ final class DepsCommand extends Command
             $ownerPackages = require $this->getAppRootDir() . 'owner-packages.php';
             if (!preg_match('/^[a-z0-9][a-z0-9-]*[a-z0-9]$/i', $ownerPackages)) {
                 $io->error([
-                    'The packages owner can only contain the characters [a-z0-9-], and the character \'-\' cannot appear at the beginning or at the end.',
+                    'The packages owner can only contain the characters [a-z0-9-], '
+                    . 'and the character \'-\' cannot appear at the beginning or at the end.',
                     'See <file>owner-packages.php</file> to set the packages owner.',
                 ]);
 
@@ -226,9 +230,11 @@ final class DepsCommand extends Command
     private function hasRelease(Package $package): bool
     {
         $gitWorkingCopy = $package->getGitWorkingCopy();
-        foreach ($gitWorkingCopy
-                     ->tags()
-                     ->all() as $tag) {
+        foreach (
+            $gitWorkingCopy
+                ->tags()
+                ->all() as $tag
+        ) {
             if ($tag !== '') {
                 return true;
             }
@@ -241,6 +247,7 @@ final class DepsCommand extends Command
         return $this->packageList;
     }
 
+    /** @return list<string> */
     private function getDependencyNames(Package $package): array
     {
         $composerPackage = new ComposerPackage($package->getName(), $package->getPath());
@@ -261,12 +268,13 @@ final class DepsCommand extends Command
         return array_unique($names);
     }
 
-    private function removeVendorName(string $packageName): string|array
+    private function removeVendorName(string $packageName): string
     {
-        return preg_replace('/^[a-z0-9][a-z0-9-]*[a-z0-9]\//i', '', $packageName);
+        return preg_replace('/^[a-z0-9][a-z0-9-]*[a-z0-9]\//i', '', $packageName) ?? $packageName;
     }
 
-    private function concatDependencies($deps): string
+    /** @param list<string> $deps */
+    private function concatDependencies(array $deps): string
     {
         return implode("\n", array_map(fn(array $array) => implode(', ', $array), array_chunk($deps, 7)));
     }
