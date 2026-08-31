@@ -8,6 +8,9 @@ use Yiisoft\YiiDevTool\App\Command\Release\GitHubReleaseInspectorInterface;
 
 final class FakeGitHubReleaseInspector implements GitHubReleaseInspectorInterface
 {
+    public int $defaultBranchCalls = 0;
+    public int $inspectCalls = 0;
+
     /** @var list<array{name: string, status: string, conclusion: ?string}> */
     public array $checks = [
         ['name' => 'phpunit', 'status' => 'completed', 'conclusion' => 'success'],
@@ -17,20 +20,36 @@ final class FakeGitHubReleaseInspector implements GitHubReleaseInspectorInterfac
     /** @var array<int, string> */
     public array $issueStates = [12 => 'closed'];
 
-    public function __construct(private string $sha) {}
-
-    public function getDefaultBranch(string $vendor, string $repository): array
+    public function __construct(private string $sha)
     {
-        return ['branch' => 'master', 'sha' => $this->sha];
     }
 
-    public function getCheckRuns(string $vendor, string $repository, string $sha): array
+    public function getDefaultBranches(array $repositories): array
     {
-        return $this->checks;
+        $this->defaultBranchCalls++;
+        $result = [];
+        foreach ($repositories as $key => $_repository) {
+            $result[$key] = ['branch' => 'master', 'sha' => $this->sha];
+        }
+
+        return $result;
     }
 
-    public function getIssueState(string $vendor, string $repository, int $issue): string
+    public function inspect(array $repositories): array
     {
-        return $this->issueStates[$issue] ?? 'closed';
+        $this->inspectCalls++;
+        $result = [];
+        foreach ($repositories as $key => $repository) {
+            $issueStates = [];
+            foreach ($repository['issues'] as $issue) {
+                $issueStates[$issue] = $this->issueStates[$issue] ?? 'closed';
+            }
+            $result[$key] = [
+                'checks' => $this->checks,
+                'issueStates' => $issueStates,
+            ];
+        }
+
+        return $result;
     }
 }

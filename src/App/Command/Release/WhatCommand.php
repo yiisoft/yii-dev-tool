@@ -69,6 +69,7 @@ final class WhatCommand extends Command
         $this->initPackageList();
         $ready = [];
         $blocked = [];
+        $candidates = [];
 
         foreach ($this->packageList->getInstalledAndEnabledPackages() as $package) {
             if (!$package->isGitRepositoryCloned()) {
@@ -76,7 +77,7 @@ final class WhatCommand extends Command
             }
 
             try {
-                $candidate = $this->inspectCandidate($package);
+                $candidate = $this->inspectLocalCandidate($package);
             } catch (Throwable $e) {
                 $blocked[] = [$package->getName(), '', $e->getMessage()];
                 continue;
@@ -86,12 +87,94 @@ final class WhatCommand extends Command
                 continue;
             }
 
-            $row = [$package->getName(), $candidate['version'], implode("\n", $candidate['summary'])];
+            $candidates[$package->getName()] = $candidate;
+        }
+
+        $defaultBranchRequests = [];
+        foreach ($candidates as $candidate) {
+            $key = $candidate['remoteKey'];
+            if (!isset($defaultBranchRequests[$key])) {
+                $defaultBranchRequests[$key] = [
+                    'vendor' => $candidate['vendor'],
+                    'repository' => $candidate['repository'],
+                ];
+            }
+        }
+
+        $defaultBranches = [];
+        $remoteError = null;
+        if ($defaultBranchRequests !== []) {
+            try {
+                $defaultBranches = $this->getGitHub()->getDefaultBranches($defaultBranchRequests);
+            } catch (Throwable $e) {
+                $remoteError = $e->getMessage();
+            }
+        }
+
+        $detailRequests = [];
+        foreach ($candidates as $packageName => $candidate) {
+            if ($remoteError !== null) {
+                $candidates[$packageName]['problems'][] = $remoteError;
+                continue;
+            }
+
+            $key = $candidate['remoteKey'];
+            if (!isset($defaultBranches[$key])) {
+                $candidates[$packageName]['problems'][] = 'GitHub default branch result is missing.';
+                continue;
+            }
+            if ($candidate['head'] !== $defaultBranches[$key]['sha']) {
+                $candidates[$packageName]['problems'][] = sprintf(
+                    'HEAD does not match origin/%s.',
+                    $defaultBranches[$key]['branch'],
+                );
+                continue;
+            }
+            if ($candidate['problems'] !== []) {
+                continue;
+            }
+
+            if (isset($detailRequests[$key])) {
+                $detailRequests[$key]['issues'] = array_values(array_unique([
+                    ...$detailRequests[$key]['issues'],
+                    ...$candidate['issues'],
+                ]));
+            } else {
+                $detailRequests[$key] = [
+                    'vendor' => $candidate['vendor'],
+                    'repository' => $candidate['repository'],
+                    'sha' => $candidate['head'],
+                    'issues' => $candidate['issues'],
+                ];
+            }
+        }
+
+        $detailResults = [];
+        if ($detailRequests !== []) {
+            try {
+                $detailResults = $this->getGitHub()->inspect($detailRequests);
+            } catch (Throwable $e) {
+                foreach ($candidates as $packageName => $candidate) {
+                    if (isset($detailRequests[$candidate['remoteKey']])) {
+                        $candidates[$packageName]['problems'][] = $e->getMessage();
+                    }
+                }
+            }
+        }
+
+        foreach ($candidates as $packageName => $candidate) {
+            $key = $candidate['remoteKey'];
+            if ($candidate['problems'] === [] && isset($detailResults[$key])) {
+                array_push($candidate['problems'], ...$this->checkRemote($candidate, $detailResults[$key]));
+            } elseif ($candidate['problems'] === [] && isset($detailRequests[$key])) {
+                $candidate['problems'][] = 'GitHub inspection result is missing.';
+            }
+            $row = [$packageName, $candidate['version'], implode("\n", $candidate['summary'])];
             if ($candidate['problems'] === []) {
                 $ready[] = $row;
             } else {
                 $blocked[] = [
-                    $package->getName(),
+                    $packageName,
                     $candidate['version'],
                     implode("\n", $candidate['problems']),
                 ];
@@ -118,9 +201,18 @@ final class WhatCommand extends Command
     }
 
     /**
-     * @return array{version: string, summary: list<string>, problems: list<string>}|null
+     * @return array{
+     *     version: string,
+     *     summary: list<string>,
+     *     problems: list<string>,
+     *     vendor: string,
+     *     repository: string,
+     *     head: string,
+     *     issues: list<int>,
+     *     remoteKey: string
+     * }|null
      */
-    private function inspectCandidate(Package $package): ?array
+    private function inspectLocalCandidate(Package $package): ?array
     {
         $git = $package->getGitWorkingCopy();
         $tags = array_values(array_filter(
@@ -148,13 +240,32 @@ final class WhatCommand extends Command
         $vendor = $repositoryPackage->getVendor();
         $repository = $repositoryPackage->getId();
         $head = trim($git->run('rev-parse', ['HEAD']));
-        $gitHub = $this->getGitHub();
-        $defaultBranch = $gitHub->getDefaultBranch($vendor, $repository);
-        if ($head !== $defaultBranch['sha']) {
-            $problems[] = sprintf('HEAD does not match origin/%s.', $defaultBranch['branch']);
-        }
+        $issues = $this->extractIssueNumbers($summary);
 
-        $checks = $gitHub->getCheckRuns($vendor, $repository, $head);
+        return [
+            'version' => $version,
+            'summary' => $summary,
+            'problems' => array_values(array_unique($problems)),
+            'vendor' => $vendor,
+            'repository' => $repository,
+            'head' => $head,
+            'issues' => $issues,
+            'remoteKey' => "$vendor/$repository",
+        ];
+    }
+
+    /**
+     * @param array{head: string, issues: list<int>} $candidate
+     * @param array{
+     *     checks: list<array{name: string, status: string, conclusion: ?string}>,
+     *     issueStates: array<int, string>
+     * } $remote
+     * @return list<string>
+     */
+    private function checkRemote(array $candidate, array $remote): array
+    {
+        $problems = [];
+        $checks = $remote['checks'];
         if ($checks === []) {
             $problems[] = 'No GitHub checks found for HEAD.';
         }
@@ -170,17 +281,13 @@ final class WhatCommand extends Command
             }
         }
 
-        foreach ($this->extractIssueNumbers($summary) as $issue) {
-            if ($gitHub->getIssueState($vendor, $repository, $issue) !== 'closed') {
+        foreach ($candidate['issues'] as $issue) {
+            if (($remote['issueStates'][$issue] ?? 'unknown') !== 'closed') {
                 $problems[] = "Issue #$issue is still open.";
             }
         }
 
-        return [
-            'version' => $version,
-            'summary' => $summary,
-            'problems' => array_values(array_unique($problems)),
-        ];
+        return $problems;
     }
 
     /** @return array{string, list<string>, list<string>} */
@@ -290,7 +397,7 @@ final class WhatCommand extends Command
 
     private function getGitHub(): GitHubReleaseInspectorInterface
     {
-        return $this->gitHub ??= new GitHubReleaseInspector($this->getGitHubToken());
+        return $this->gitHub ??= new GitHubReleaseInspector($this->getGitHubToken(validate: false));
     }
 
     private function initPackageList(): void

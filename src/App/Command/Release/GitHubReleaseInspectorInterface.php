@@ -6,11 +6,23 @@ namespace Yiisoft\YiiDevTool\App\Command\Release;
 
 interface GitHubReleaseInspectorInterface
 {
-    /** @return array{branch: string, sha: string} */
-    public function getDefaultBranch(string $vendor, string $repository): array;
+    /**
+     * @param array<string, array{vendor: string, repository: string}> $repositories
+     * @return array<string, array{branch: string, sha: string}>
+     */
+    public function getDefaultBranches(array $repositories): array;
 
-    /** @return list<array{name: string, status: string, conclusion: ?string}> */
-    public function getCheckRuns(string $vendor, string $repository, string $sha): array;
-
-    public function getIssueState(string $vendor, string $repository, int $issue): string;
+    /**
+     * @param array<string, array{
+     *     vendor: string,
+     *     repository: string,
+     *     sha: string,
+     *     issues: list<int>
+     * }> $repositories
+     * @return array<string, array{
+     *     checks: list<array{name: string, status: string, conclusion: ?string}>,
+     *     issueStates: array<int, string>
+     * }>
+     */
+    public function inspect(array $repositories): array;
 }

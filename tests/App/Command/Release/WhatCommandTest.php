@@ -117,6 +117,8 @@ final class WhatCommandTest extends TestCase
 
         self::assertSame(1, $tester->execute([]));
         self::assertStringContainsString('Working tree is not clean.', $tester->getDisplay());
+        self::assertSame(1, $this->gitHub->defaultBranchCalls);
+        self::assertSame(0, $this->gitHub->inspectCalls);
     }
 
     private function createCommandTester(): CommandTester
