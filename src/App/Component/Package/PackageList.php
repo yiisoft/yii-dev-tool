@@ -80,12 +80,10 @@ class PackageList
      */
     public function getInstalledAndEnabledPackages(): array
     {
-        if ($this->installedAndEnabledList === null) {
-            $this->installedAndEnabledList = array_filter(
-                $this->getInstalledPackages(),
-                static fn(Package $package) => $package->enabled(),
-            );
-        }
+        $this->installedAndEnabledList ??= array_filter(
+            $this->getInstalledPackages(),
+            static fn(Package $package) => $package->enabled(),
+        );
 
         return $this->installedAndEnabledList;
     }
