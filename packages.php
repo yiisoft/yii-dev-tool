@@ -85,6 +85,9 @@ $packages = [
     'queue-db' => true,
     'queue-redis' => true,
 
+    // Scheduler
+    'scheduler' => true,
+
     // Mutex
     'mutex' => true,
     'mutex-file' => true,
